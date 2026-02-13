@@ -23,6 +23,33 @@ This repo is designed to publish:
 - Prefer on-chain truths over off-chain narratives.
 - No secrets committed. API keys/tokens belong in local credential stores.
 
-## Quickstart (coming)
+## Quickstart
 
-See `docs/methodology.md` and `scripts/`.
+### db-sync mode (audit-grade)
+
+1) Export db-sync connection string:
+
+```bash
+export DATABASE_URL="postgresql://USER:PASSWORD:5432/DB"
+```
+
+2) Run pipeline:
+
+```bash
+cd scripts/dbsync
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+
+python treasury_fees.py --dsn "" --out ../../outputs
+```
+
+3) Plot yearly chart:
+
+```bash
+python ../plot_yearly.py --in ../../outputs/year_treasury_fees.csv --out ../../outputs/year_treasury_fees.png
+```
+
+See `docs/data_dictionary.md` for column definitions.
+
+See `docs/methodology.md` for caveats and reconciliation notes.`.
