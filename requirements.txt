@@ -1,0 +1,5 @@
+# repo-level tooling
+# (db-sync pipeline uses its own venv + requirements under scripts/dbsync/)
+duckdb>=1.1.0
+pandas>=2.1
+matplotlib>=3.8

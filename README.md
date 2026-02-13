@@ -52,4 +52,22 @@ python ../plot_yearly.py --in ../../outputs/year_treasury_fees.csv --out ../../o
 
 See `docs/data_dictionary.md` for column definitions.
 
+### Build a local query index (DuckDB)
+
+After generating CSVs, create a local analytics index:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+
+python scripts/index_duckdb.py --out outputs/treasury.duckdb
+```
+
+Then you can query it:
+
+```bash
+duckdb outputs/treasury.duckdb "SELECT * FROM year_overview LIMIT 5"
+```
+
 See `docs/methodology.md` for caveats and reconciliation notes.`.

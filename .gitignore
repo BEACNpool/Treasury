@@ -9,3 +9,4 @@ outputs/*.db
 
 # notebooks
 .ipynb_checkpoints/
+outputs/treasury.duckdb
