@@ -1,0 +1,11 @@
+# local
+.env
+*.sqlite
+outputs/*.parquet
+outputs/*.db
+
+# raw pulls
+/data/raw/
+
+# notebooks
+.ipynb_checkpoints/
