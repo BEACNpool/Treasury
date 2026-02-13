@@ -10,3 +10,5 @@ outputs/*.db
 # notebooks
 .ipynb_checkpoints/
 outputs/treasury.duckdb
+.venv/
+scripts/dbsync/.venv/
