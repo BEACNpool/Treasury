@@ -14,7 +14,9 @@ Caveats are documented in the SQL.
 from __future__ import annotations
 
 import argparse
+import json
 import os
+from datetime import datetime, timezone
 from pathlib import Path
 
 import pandas as pd
@@ -30,6 +32,11 @@ def main() -> None:
     ap.add_argument("--dsn", required=False, default=os.getenv("DATABASE_URL"), help="Postgres DSN")
     ap.add_argument("--out", required=True, help="Output directory")
     ap.add_argument("--sql", required=False, default=str(Path(__file__).with_name("treasury_fees.sql")))
+    ap.add_argument(
+        "--allow-non-mainnet",
+        action="store_true",
+        help="Allow running against non-mainnet db-sync (NEVER publish those outputs).",
+    )
     args = ap.parse_args()
 
     if not args.dsn:
@@ -41,6 +48,16 @@ def main() -> None:
     sql = read_sql_file(Path(args.sql))
 
     with psycopg2.connect(args.dsn) as conn:
+        # Hard provenance gate: do not generate publishable outputs from preview/preprod.
+        meta = pd.read_sql_query("select network_name, start_time from meta limit 1", conn)
+        network_name = meta.iloc[0]["network_name"] if len(meta) else None
+        if network_name != "mainnet" and not args.allow_non_mainnet:
+            raise SystemExit(
+                f"Refusing to run: meta.network_name={network_name!r} (pass --allow-non-mainnet for local testing only)"
+            )
+
+        tip = pd.read_sql_query("select max(block_no) as tip_block_no, max(time) as tip_time from block", conn)
+
         df = pd.read_sql_query(sql, conn)
 
     # Convert Lovelace to ADA convenience columns
@@ -97,8 +114,20 @@ def main() -> None:
     year_csv = out_dir / "year_treasury_fees.csv"
     year.to_csv(year_csv, index=False)
 
+    # Write a machine-readable status bundle for GitHub Pages.
+    status = {
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+        "source_kind": "dbsync",
+        "network_name": network_name,
+        "db_start_time": str(meta.iloc[0]["start_time"]) if len(meta) else None,
+        "tip_block_no": int(tip.iloc[0]["tip_block_no"]) if len(tip) and tip.iloc[0]["tip_block_no"] is not None else None,
+        "tip_time": str(tip.iloc[0]["tip_time"]) if len(tip) else None,
+    }
+    (out_dir / "status.json").write_text(json.dumps(status, indent=2) + "\n", encoding="utf-8")
+
     print(f"Wrote {epoch_csv}")
     print(f"Wrote {year_csv}")
+    print(f"Wrote {out_dir / 'status.json'}")
 
 
 if __name__ == "__main__":

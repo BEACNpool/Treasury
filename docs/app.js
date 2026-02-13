@@ -106,6 +106,13 @@ function plotYearly(rows){
 async function main(){
   const status = document.getElementById('status');
   try{
+    let meta = null;
+    try{
+      meta = JSON.parse(await fetchText('outputs/status.json'));
+    }catch(e){
+      // status.json not present yet
+    }
+
     // GitHub Pages root will be /docs; this file is /docs/site.
     const csvText = await fetchText('outputs/year_treasury_fees.csv');
     const {headers, rows} = parseCSV(csvText);
@@ -119,7 +126,12 @@ async function main(){
     });
 
     const years = enriched.map(r => r.year).filter(Boolean);
-    status.textContent = `Loaded ${enriched.length} rows (years ${years[0]}–${years[years.length-1]}).`;
+    if(meta && meta.network_name){
+      const tip = meta.tip_time ? `tip ${meta.tip_time}` : 'tip unknown';
+      status.textContent = `Network: ${meta.network_name} • Source: ${meta.source_kind || 'unknown'} • ${tip} • Generated: ${meta.generated_at_utc || 'unknown'} • Rows: ${enriched.length} (years ${years[0]}–${years[years.length-1]}).`;
+    }else{
+      status.textContent = `Loaded ${enriched.length} rows (years ${years[0]}–${years[years.length-1]}).`;
+    }
 
     plotYearly(enriched);
     buildTable(document.getElementById('table'), headers, enriched);
