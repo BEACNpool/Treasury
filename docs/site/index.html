@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Cardano Treasury — Flows Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <h1>Cardano Treasury — Flows Dashboard</h1>
+      <p class="sub">
+        Open research: fees, estimated treasury inflows, withdrawals, and treasury balance delta.
+      </p>
+      <nav class="nav">
+        <a href="../../README.md">Repo</a>
+        <a href="../../docs/methodology.md">Methodology</a>
+        <a href="../../docs/sources.md">Sources</a>
+        <a href="../../docs/data_dictionary.md">Data dictionary</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="card">
+      <h2>Status</h2>
+      <div id="status" class="mono">Loading…</div>
+      <div class="hint">
+        Data source: <code>outputs/year_treasury_fees.csv</code> (generated from db-sync).
+      </div>
+    </section>
+
+    <section class="grid">
+      <section class="card">
+        <h2>Yearly overview</h2>
+        <div id="chart_yearly" class="chart"></div>
+        <p class="hint">Lines: Fees, Est. inflow (fees+expansion), Treasury Δ, Withdrawals (MIR+Conway enacted).</p>
+      </section>
+
+      <section class="card">
+        <h2>Fees vs Withdrawals</h2>
+        <div id="chart_fees_withdrawals" class="chart"></div>
+        <p class="hint">Quick “bull market earned vs spent” lens. Withdrawals are explicit; inflows are estimated.</p>
+      </section>
+    </section>
+
+    <section class="card">
+      <h2>Table (year)</h2>
+      <div class="table-wrap">
+        <table id="table"></table>
+      </div>
+      <p class="hint">Tip: download the raw CSV from the repo for auditing.</p>
+    </section>
+
+    <footer class="footer">
+      <p>
+        Built for reproducibility. Numbers are only as good as their receipts — see methodology + sources.
+      </p>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -70,4 +70,15 @@ Then you can query it:
 duckdb outputs/treasury.duckdb "SELECT * FROM year_overview LIMIT 5"
 ```
 
+### GitHub Pages dashboard (docs)
+
+This repo includes a minimal dashboard at:
+- `docs/site/index.html`
+
+GitHub Pages can serve the `docs/` folder. The page reads:
+- `docs/outputs/year_treasury_fees.csv`
+
+After generating outputs, copy them into `docs/outputs/` (or adjust the JS path).
+
+
 See `docs/methodology.md` for caveats and reconciliation notes.`.
