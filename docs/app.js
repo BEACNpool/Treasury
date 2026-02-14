@@ -129,10 +129,21 @@ function plotYearly(rows, offchainYearly=null) {
   const delta = rows.map(r => toNum(r.treasury_delta_ada));
   const withdrawals = rows.map(r => toNum(r.withdrawals_ada));
 
+  const impliedOther = rows.map(r => toNum(r.implied_outflow_other_ada));
+
+  const withdrawalsAllZero = withdrawals.every(v => !v || v === 0);
+
   const traces = [
     { x: year, y: fees, name: 'Fees (on-chain)', mode: 'lines+markers', line: { color: COLORS.fees } },
     { x: year, y: inflow, name: 'Est. Inflow (on-chain)', mode: 'lines+markers', line: { color: COLORS.inflow } },
-    { x: year, y: withdrawals, name: 'Withdrawals (explicit, on-chain)', mode: 'lines+markers', line: { color: COLORS.withdrawals } },
+
+    // "Explicit" withdrawals are what we can attribute cleanly from known tables.
+    // If this is all-zero, keep it out of the way by default.
+    { x: year, y: withdrawals, name: 'Withdrawals (explicit, on-chain)', mode: 'lines+markers', line: { color: COLORS.withdrawals }, visible: withdrawalsAllZero ? 'legendonly' : true },
+
+    // Ledger-reconciled outflow that makes the identity balance.
+    { x: year, y: impliedOther, name: 'Outflow (implied, on-chain)', mode: 'lines+markers', line: { color: '#f97316', width: 2 } },
+
     { x: year, y: delta, name: 'Treasury Δ (on-chain)', mode: 'lines+markers', line: { color: COLORS.delta } },
   ];
 
@@ -294,10 +305,12 @@ async function main() {
 
     // Status text
     const years = enrichedYear.map(r => r.year).filter(Boolean);
+    const withdrawalsAllZero = enrichedYear.every(r => (toNum(r.withdrawals_ada) || 0) === 0);
+    const withdrawNote = withdrawalsAllZero ? ' · note: explicit withdrawals currently 0; using implied outflow series' : '';
     if (meta && meta.network_name) {
       const tip = meta.tip_time ? meta.tip_time.split('T')[0] : 'unknown';
       const gen = meta.generated_at_utc ? meta.generated_at_utc.split('T')[0] : 'unknown';
-      status.innerHTML = `<strong>${meta.network_name}</strong> · ${meta.source_kind || '?'} · tip: ${tip} · generated: ${gen} · ${enrichedYear.length} years (${years[0]}–${years[years.length - 1]})`;
+      status.innerHTML = `<strong>${meta.network_name}</strong> · ${meta.source_kind || '?'} · tip: ${tip} · generated: ${gen} · ${enrichedYear.length} years (${years[0]}–${years[years.length - 1]})${withdrawNote}`;
     } else {
       status.textContent = `Loaded ${enrichedYear.length} years (${years[0]}–${years[years.length - 1]})`;
     }
