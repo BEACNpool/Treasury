@@ -12,3 +12,7 @@ outputs/*.db
 outputs/treasury.duckdb
 .venv/
 scripts/dbsync/.venv/
+
+# python cache
+__pycache__/
+*.pyc
