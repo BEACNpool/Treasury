@@ -36,6 +36,16 @@
         <h2>Treasury vs Reserves (on-chain)</h2>
         <div id="chart_treasury" class="chart"></div>
         <p class="hint">Source: db-sync (`ada_pots.treasury`, `ada_pots.reserves`). Split view for context.</p>
+
+        <h3 style="margin-top:16px">Largest reserves drops (v1 breakdown)</h3>
+        <p class="hint">This table lists the biggest negative epoch-to-epoch moves in reserves, plus explicit drivers we can cheaply compute today (pot transfers + net deposits). Rewards-by-epoch is not yet included (table too large; will be materialized separately).</p>
+        <div class="actions" style="margin:10px 0">
+          <a class="btn" href="outputs/onchain/reserves_drivers.csv" target="_blank" rel="noreferrer">Download reserves_drivers.csv</a>
+          <a class="btn" href="outputs/onchain/reserves_biggest_drops.csv" target="_blank" rel="noreferrer">Download biggest_drops.csv</a>
+        </div>
+        <div class="table-wrap">
+          <table id="table-reserves-drops"></table>
+        </div>
       </section>
 
       <section class="card">

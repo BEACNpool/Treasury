@@ -110,6 +110,26 @@ async function main() {
     // leave blank
   }
 
+  // Reserves drops table (v1)
+  try {
+    const dropsText = await fetchText('outputs/onchain/reserves_biggest_drops.csv');
+    const drops = parseCSV(dropsText).rows;
+    buildTable(
+      document.getElementById('table-reserves-drops'),
+      ['epoch_no', 'reserves_delta_ada', 'deposit_net_ada', 'pot_transfer_reserves_ada', 'pot_transfer_treasury_ada'],
+      {
+        epoch_no: 'Epoch',
+        reserves_delta_ada: 'Reserves Δ (ADA)',
+        deposit_net_ada: 'Net deposits (ADA)',
+        pot_transfer_reserves_ada: 'Pot xfer reserves',
+        pot_transfer_treasury_ada: 'Pot xfer treasury',
+      },
+      drops
+    );
+  } catch (e) {
+    // ignore
+  }
+
   // Catalyst summary + table
   try {
     const sum = JSON.parse(await fetchText('outputs/offchain/catalyst/summary.json'));
