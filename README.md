@@ -1,84 +1,134 @@
 # Treasury — Cardano Treasury Inflows/Outflows (Open Research)
 
-Goal: produce an auditable, reproducible view of Cardano treasury **inflows** (fees + expansion + other) and **outflows** (withdrawals / distributions), with multiple levels of rigor:
+[![Validate Outputs](https://github.com/BEACNpool/Treasury/actions/workflows/validate.yml/badge.svg)](https://github.com/BEACNpool/Treasury/actions/workflows/validate.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-- **Fast path (API-derived):** Koios / public endpoints for quick iteration.
-- **Audit path (ledger/db-sync):** reproducible SQL against cardano-db-sync (gold standard).
+**Goal:** produce an auditable, reproducible view of Cardano treasury **inflows** (fees + expansion + other) and **outflows** (withdrawals / distributions), with multiple levels of rigor.
 
-This repo is designed to publish:
-- clean CSV exports,
-- methodology + caveats,
-- source receipts.
+| Mode | Source | Use case |
+|------|--------|----------|
+| **Audit path** | `cardano-db-sync` + PostgreSQL | Gold-standard, reproducible SQL |
+| **Fast path** | Blockfrost API | Quick iteration while db-sync syncs |
 
-## Outputs (planned)
+This repo publishes clean CSV exports, methodology + caveats, and source receipts.
 
-- `outputs/epoch_treasury_flows.csv`
-- `outputs/year_treasury_flows.csv`
-- `outputs/withdrawals_index.csv`
-- `docs/methodology.md`
+🔗 **[Live Dashboard](https://beacnpool.github.io/Treasury/)** · [Methodology](docs/methodology.md) · [Data Dictionary](docs/data_dictionary.md) · [Sources](docs/sources.md)
+
+## Outputs
+
+| File | Description |
+|------|-------------|
+| `outputs/epoch_treasury_fees.csv` | Per-epoch treasury flows (lovelace + ADA) |
+| `outputs/year_treasury_fees.csv` | Calendar-year aggregation |
+| `outputs/status.json` | Machine-readable provenance (network, tip, timestamp) |
+| `outputs/treasury.duckdb` | Local analytics index (optional) |
 
 ## Principles
 
-- Evidence-first: every computed number traces to a source query + timestamp.
-- Prefer on-chain truths over off-chain narratives.
-- No secrets committed. API keys/tokens belong in local credential stores.
+- **Evidence-first:** every computed number traces to a source query + timestamp.
+- **Prefer on-chain truths** over off-chain narratives.
+- **No secrets committed.** API keys/tokens belong in local credential stores.
+- **Mainnet-only publishing.** All scripts refuse non-mainnet by default.
 
 ## Quickstart
 
-### db-sync mode (audit-grade)
+### 1. db-sync mode (audit-grade)
 
-1) Export db-sync connection string:
-
-```bash
-export DATABASE_URL="postgresql://USER:PASSWORD:5432/DB"
-```
-
-2) Run pipeline:
+Requires a synced `cardano-db-sync` PostgreSQL database.
 
 ```bash
+# Set your db-sync connection string
+export DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/cexplorer"
+
+# Run the pipeline
 cd scripts/dbsync
-python3 -m venv .venv
-source .venv/bin/activate
+python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 
-python treasury_fees.py --dsn "" --out ../../outputs
+python treasury_fees.py --dsn "$DATABASE_URL" --out ../../outputs
 ```
 
-3) Plot yearly chart:
+### 2. Blockfrost mode (fast snapshot)
+
+Useful while db-sync is still syncing.
 
 ```bash
-python ../plot_yearly.py --in ../../outputs/year_treasury_fees.csv --out ../../outputs/year_treasury_fees.png
+export BLOCKFROST_PROJECT_ID="your-mainnet-project-id"
+
+python3 scripts/blockfrost/treasury_snapshot.py --out outputs/blockfrost
 ```
 
-See `docs/data_dictionary.md` for column definitions.
+### 3. Validate outputs
 
-### Build a local query index (DuckDB)
-
-After generating CSVs, create a local analytics index:
+Run reconciliation checks to verify data integrity:
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-
-python scripts/index_duckdb.py --out outputs/treasury.duckdb
+pip install pandas --break-system-packages  # or use a venv
+python3 scripts/validate.py --epoch outputs/epoch_treasury_fees.csv
 ```
 
-Then you can query it:
+### 4. Plot yearly chart
 
 ```bash
+python3 scripts/plot_yearly.py \
+  --in outputs/year_treasury_fees.csv \
+  --out outputs/year_treasury_fees.png
+```
+
+### 5. Build a local DuckDB index
+
+```bash
+pip install -r requirements.txt  # or use a venv
+python3 scripts/index_duckdb.py --out outputs/treasury.duckdb
+
+# Query it
 duckdb outputs/treasury.duckdb "SELECT * FROM year_overview LIMIT 5"
 ```
 
-### GitHub Pages dashboard (docs)
+### 6. Publish to GitHub Pages
 
-This repo includes a minimal dashboard at:
-- `docs/site/index.html`
+After generating mainnet outputs:
 
-GitHub Pages can serve the `docs/` folder. The page reads:
-- `docs/outputs/year_treasury_fees.csv`
+```bash
+bash scripts/publish.sh
+```
 
-After generating outputs, copy them into `docs/outputs/` (or adjust the JS path).
+This copies validated outputs into `docs/outputs/` for the live dashboard.
 
+## Dashboard
 
-See `docs/methodology.md` for caveats and reconciliation notes.`.
+The live dashboard at `docs/index.html` is served via GitHub Pages. It provides:
+
+- **Yearly overview chart** — fees, estimated inflows, withdrawals, treasury delta
+- **Fees vs Withdrawals** — bar chart comparison
+- **Treasury balance** — absolute balance over time (epoch-level)
+- **Interactive data table** with CSV download
+
+See `docs/methodology.md` for caveats and reconciliation notes.
+
+## Project structure
+
+```
+Treasury/
+├── scripts/
+│   ├── dbsync/           # Audit-grade pipeline (SQL + Python)
+│   ├── blockfrost/       # Fast API snapshot
+│   ├── validate.py       # Data reconciliation checks
+│   ├── publish.sh        # Publish outputs to docs/ for Pages
+│   ├── plot_yearly.py    # Matplotlib chart generation
+│   └── index_duckdb.py   # DuckDB analytics index builder
+├── outputs/              # Generated data (CSV, PNG, JSON)
+├── docs/                 # GitHub Pages dashboard + methodology
+│   ├── index.html        # Dashboard entry point
+│   ├── outputs/          # Published mainnet data (for Pages)
+│   └── *.md              # Methodology, data dictionary, etc.
+└── .github/workflows/    # CI validation
+```
+
+## Contributing
+
+Contributions welcome. Please open an issue first for significant changes.
+
+## License
+
+[MIT](LICENSE)

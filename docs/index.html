@@ -12,10 +12,11 @@
     <div class="wrap">
       <h1>Cardano Treasury — Flows Dashboard</h1>
       <p class="sub">
-        Open research: fees, estimated treasury inflows, withdrawals, and treasury balance delta.
+        Open research by <a href="https://github.com/BEACNpool" target="_blank" rel="noreferrer">BEACNpool</a>:
+        fees, estimated treasury inflows, withdrawals, and treasury balance delta.
       </p>
       <nav class="nav">
-        <a href="https://github.com/BEACNpool/Treasury" target="_blank" rel="noreferrer">Repo</a>
+        <a href="https://github.com/BEACNpool/Treasury" target="_blank" rel="noreferrer">GitHub</a>
         <a href="https://github.com/BEACNpool/Treasury/blob/main/docs/methodology.md" target="_blank" rel="noreferrer">Methodology</a>
         <a href="https://github.com/BEACNpool/Treasury/blob/main/docs/sources.md" target="_blank" rel="noreferrer">Sources</a>
         <a href="https://github.com/BEACNpool/Treasury/blob/main/docs/data_dictionary.md" target="_blank" rel="noreferrer">Data dictionary</a>
@@ -25,39 +26,77 @@
   </header>
 
   <main class="wrap">
-    <section class="card">
-      <h2>Status</h2>
-      <div id="status" class="mono">Loading…</div>
-      <div class="hint">
-        Data source: <code>outputs/year_treasury_fees.csv</code> (generated from db-sync).
+    <!-- Status bar -->
+    <section class="card status-card">
+      <div class="status-row">
+        <div id="status" class="mono">Loading…</div>
+        <div class="status-actions">
+          <button id="btn-download-year" class="btn-sm" disabled>⬇ Year CSV</button>
+          <button id="btn-download-epoch" class="btn-sm" disabled>⬇ Epoch CSV</button>
+        </div>
       </div>
     </section>
 
-    <section class="grid">
-      <section class="card">
-        <h2>Yearly overview</h2>
-        <div id="chart_yearly" class="chart"></div>
-        <p class="hint">Lines: Fees, Est. inflow (fees+expansion), Treasury Δ, Withdrawals (MIR+Conway enacted).</p>
+    <!-- Tab navigation -->
+    <div class="tabs">
+      <button class="tab active" data-tab="yearly">Yearly</button>
+      <button class="tab" data-tab="epoch">Epoch</button>
+    </div>
+
+    <!-- Yearly view -->
+    <div id="tab-yearly" class="tab-content active">
+      <section class="grid">
+        <section class="card">
+          <h2>Yearly Overview</h2>
+          <div id="chart_yearly" class="chart"></div>
+          <p class="hint">Fees, Est. inflow (fees+expansion), Withdrawals (MIR+Conway), Treasury Δ.</p>
+        </section>
+
+        <section class="card">
+          <h2>Fees vs Withdrawals</h2>
+          <div id="chart_fees_withdrawals" class="chart"></div>
+          <p class="hint">"Bull market earned vs spent" — explicit withdrawals vs fee revenue.</p>
+        </section>
       </section>
 
       <section class="card">
-        <h2>Fees vs Withdrawals</h2>
-        <div id="chart_fees_withdrawals" class="chart"></div>
-        <p class="hint">Quick “bull market earned vs spent” lens. Withdrawals are explicit; inflows are estimated.</p>
+        <h2>Yearly Data</h2>
+        <div class="table-wrap">
+          <table id="table-year"></table>
+        </div>
       </section>
-    </section>
+    </div>
 
-    <section class="card">
-      <h2>Table (year)</h2>
-      <div class="table-wrap">
-        <table id="table"></table>
-      </div>
-      <p class="hint">Tip: download the raw CSV from the repo for auditing.</p>
-    </section>
+    <!-- Epoch view -->
+    <div id="tab-epoch" class="tab-content">
+      <section class="grid">
+        <section class="card">
+          <h2>Treasury Balance (by Epoch)</h2>
+          <div id="chart_balance" class="chart"></div>
+          <p class="hint">Absolute treasury balance from ada_pots snapshots.</p>
+        </section>
+
+        <section class="card">
+          <h2>Fee Revenue (by Epoch)</h2>
+          <div id="chart_epoch_fees" class="chart"></div>
+          <p class="hint">Per-epoch transaction fee revenue.</p>
+        </section>
+      </section>
+
+      <section class="card">
+        <h2>Epoch Data <span id="epoch-count" class="hint"></span></h2>
+        <div class="table-wrap">
+          <table id="table-epoch"></table>
+        </div>
+        <p class="hint">Showing most recent 50 epochs. Download CSV for full dataset.</p>
+      </section>
+    </div>
 
     <footer class="footer">
       <p>
-        Built for reproducibility. Numbers are only as good as their receipts — see methodology + sources.
+        Built for reproducibility. Numbers are only as good as their receipts — see
+        <a href="https://github.com/BEACNpool/Treasury/blob/main/docs/methodology.md">methodology</a> +
+        <a href="https://github.com/BEACNpool/Treasury/blob/main/docs/sources.md">sources</a>.
       </p>
     </footer>
   </main>

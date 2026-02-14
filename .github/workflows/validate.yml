@@ -1,0 +1,48 @@
+name: Validate Outputs
+
+on:
+  push:
+    paths:
+      - 'outputs/**'
+      - 'scripts/**'
+      - 'docs/outputs/**'
+  pull_request:
+    paths:
+      - 'outputs/**'
+      - 'scripts/**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pandas
+
+      - name: Validate outputs (if present)
+        run: |
+          if [ -f outputs/epoch_treasury_fees.csv ]; then
+            echo "📋 Validating outputs/"
+            python scripts/validate.py \
+              --epoch outputs/epoch_treasury_fees.csv \
+              --year outputs/year_treasury_fees.csv
+          else
+            echo "⏭️ No outputs to validate yet"
+          fi
+
+      - name: Validate published outputs (if present)
+        run: |
+          if [ -f docs/outputs/epoch_treasury_fees.csv ]; then
+            echo "📋 Validating docs/outputs/"
+            python scripts/validate.py \
+              --epoch docs/outputs/epoch_treasury_fees.csv \
+              --year docs/outputs/year_treasury_fees.csv
+          else
+            echo "⏭️ No published outputs to validate yet"
+          fi

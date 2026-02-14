@@ -1,18 +1,26 @@
 # local
 .env
 *.sqlite
+
+# DuckDB
 outputs/*.parquet
 outputs/*.db
+outputs/treasury.duckdb
 
 # raw pulls
 /data/raw/
 
 # notebooks
 .ipynb_checkpoints/
-outputs/treasury.duckdb
+
+# virtualenvs
 .venv/
 scripts/dbsync/.venv/
 
 # python cache
 __pycache__/
 *.pyc
+
+# OS
+.DS_Store
+Thumbs.db
