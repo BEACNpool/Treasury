@@ -122,19 +122,35 @@ function initTabs() {
 }
 
 // ── Yearly charts ────────────────────────────────────
-function plotYearly(rows) {
+function plotYearly(rows, offchainYearly=null) {
   const year = rows.map(r => toNum(r.year));
   const fees = rows.map(r => toNum(r.fees_ada));
   const inflow = rows.map(r => toNum(r.inflow_fees_plus_reserves_ada));
   const delta = rows.map(r => toNum(r.treasury_delta_ada));
   const withdrawals = rows.map(r => toNum(r.withdrawals_ada));
 
-  Plotly.newPlot('chart_yearly', [
-    { x: year, y: fees, name: 'Fees', mode: 'lines+markers', line: { color: COLORS.fees } },
-    { x: year, y: inflow, name: 'Est. Inflow', mode: 'lines+markers', line: { color: COLORS.inflow } },
-    { x: year, y: withdrawals, name: 'Withdrawals', mode: 'lines+markers', line: { color: COLORS.withdrawals } },
-    { x: year, y: delta, name: 'Treasury Δ', mode: 'lines+markers', line: { color: COLORS.delta } },
-  ], {
+  const traces = [
+    { x: year, y: fees, name: 'Fees (on-chain)', mode: 'lines+markers', line: { color: COLORS.fees } },
+    { x: year, y: inflow, name: 'Est. Inflow (on-chain)', mode: 'lines+markers', line: { color: COLORS.inflow } },
+    { x: year, y: withdrawals, name: 'Withdrawals (explicit, on-chain)', mode: 'lines+markers', line: { color: COLORS.withdrawals } },
+    { x: year, y: delta, name: 'Treasury Δ (on-chain)', mode: 'lines+markers', line: { color: COLORS.delta } },
+  ];
+
+  if (offchainYearly && offchainYearly.length) {
+    const oy = offchainYearly.map(r => toNum(r.year));
+    const ada = offchainYearly.map(r => toNum(r.distributed_ada));
+    traces.push({
+      x: oy,
+      y: ada,
+      name: 'Catalyst Distributed (off-chain, ADA)',
+      mode: 'lines+markers',
+      line: { color: '#a78bfa', dash: 'dot', width: 2 },
+      marker: { color: '#a78bfa' },
+      opacity: 0.9,
+    });
+  }
+
+  Plotly.newPlot('chart_yearly', traces, {
     ...PLOT_LAYOUT_BASE,
     xaxis: { ...PLOT_LAYOUT_BASE.xaxis, title: 'Year' },
     yaxis: { ...PLOT_LAYOUT_BASE.yaxis, title: 'ADA' },
@@ -286,8 +302,15 @@ async function main() {
       status.textContent = `Loaded ${enrichedYear.length} years (${years[0]}–${years[years.length - 1]})`;
     }
 
-    // Yearly charts + table
-    plotYearly(enrichedYear);
+    // Off-chain yearly (optional): Catalyst distributions
+    let catalystYearly = null;
+    try {
+      const cyText = await fetchText('outputs/offchain/catalyst/yearly_distributions.csv');
+      catalystYearly = parseCSV(cyText).rows;
+    } catch (e) { /* not present yet */ }
+
+    // Yearly charts + table (combo: on-chain + off-chain)
+    plotYearly(enrichedYear, catalystYearly);
 
     buildTable(
       document.getElementById('table-year'),
