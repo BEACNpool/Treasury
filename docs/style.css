@@ -69,3 +69,17 @@ tr:hover td{background:rgba(96,165,250,0.05)}
 /* Positive / negative coloring */
 .val-pos{color:var(--accent2)}
 .val-neg{color:var(--red)}
+
+/* Flags */
+.flags{display:flex;flex-direction:column;gap:10px}
+.flag{border:1px solid var(--border);border-radius:10px;padding:10px 12px;background:rgba(255,255,255,0.02)}
+.flag-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.flag-title{font-weight:600}
+.flag-src{color:var(--muted);font-size:12px}
+.flag-body{margin-top:6px;color:var(--fg);opacity:0.9;font-size:13px}
+.flag-small{margin-top:6px;color:var(--muted);font-size:12px}
+.flag-badge{font-family:var(--mono);font-size:11px;padding:2px 7px;border-radius:999px;border:1px solid var(--border)}
+.sev-red{background:rgba(248,113,113,0.12);border-color:rgba(248,113,113,0.4);color:#fecaca}
+.sev-orange{background:rgba(251,191,36,0.10);border-color:rgba(251,191,36,0.35);color:#fde68a}
+.sev-yellow{background:rgba(96,165,250,0.10);border-color:rgba(96,165,250,0.35);color:#bfdbfe}
+.sev-green{background:rgba(52,211,153,0.10);border-color:rgba(52,211,153,0.35);color:#bbf7d0}

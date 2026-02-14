@@ -176,6 +176,70 @@ function plotEpoch(rows) {
   }, PLOT_CFG);
 }
 
+function sevLabel(sev){
+  const s = (sev || '').toLowerCase();
+  if(['red','orange','yellow','green'].includes(s)) return s;
+  return 'yellow';
+}
+
+function renderFlags(flags, metaFlags){
+  if(!flags || flags.length === 0) return;
+  const card = document.getElementById('flags-card');
+  const metaEl = document.getElementById('flags-meta');
+  const list = document.getElementById('flags-list');
+  card.style.display = '';
+
+  if(metaFlags){
+    const parts = [];
+    if(metaFlags.generated_at_utc) parts.push(`generated: ${metaFlags.generated_at_utc}`);
+    if(metaFlags.data_tip_time) parts.push(`tip: ${metaFlags.data_tip_time}`);
+    if(metaFlags.source_kind) parts.push(`source: ${metaFlags.source_kind}`);
+    metaEl.textContent = parts.join(' · ');
+  }
+
+  list.innerHTML = '';
+  flags.slice(0, 50).forEach(f => {
+    const item = document.createElement('div');
+    item.className = 'flag';
+
+    const sev = sevLabel(f.severity);
+    const badge = document.createElement('span');
+    badge.className = `flag-badge sev-${sev}`;
+    badge.textContent = sev.toUpperCase();
+
+    const title = document.createElement('span');
+    title.className = 'flag-title';
+    title.textContent = f.title || f.flag_id || 'Flag';
+
+    const src = document.createElement('span');
+    src.className = 'flag-src';
+    const sk = (f.source_kind || '').toLowerCase();
+    src.textContent = sk === 'onchain' ? '● on-chain' : sk === 'offchain' ? '■ off-chain' : sk === 'heuristic' ? '▲ heuristic' : '';
+
+    const body = document.createElement('div');
+    body.className = 'flag-body';
+    body.textContent = f.summary || f.definition || '';
+
+    const small = document.createElement('div');
+    small.className = 'flag-small';
+    const conf = f.confidence ? `confidence: ${f.confidence}` : '';
+    const ent = f.entity_id ? `entity: ${f.entity_id}` : '';
+    small.textContent = [src.textContent, conf, ent].filter(Boolean).join(' · ');
+
+    const head = document.createElement('div');
+    head.className = 'flag-head';
+    head.appendChild(badge);
+    head.appendChild(title);
+    if(src.textContent) head.appendChild(src);
+
+    item.appendChild(head);
+    if(body.textContent) item.appendChild(body);
+    if(small.textContent) item.appendChild(small);
+
+    list.appendChild(item);
+  });
+}
+
 // ── Main ─────────────────────────────────────────────
 async function main() {
   const status = document.getElementById('status');
@@ -189,6 +253,15 @@ async function main() {
     let meta = null;
     try {
       meta = JSON.parse(await fetchText('outputs/status.json'));
+    } catch (e) { /* not present yet */ }
+
+    // Load flags.json (optional)
+    try {
+      const flagsText = await fetchText('outputs/flags.json');
+      const flagsPayload = JSON.parse(flagsText);
+      const flags = Array.isArray(flagsPayload) ? flagsPayload : (flagsPayload.flags || []);
+      const metaFlags = flagsPayload.meta || null;
+      renderFlags(flags, metaFlags);
     } catch (e) { /* not present yet */ }
 
     // Load year CSV
