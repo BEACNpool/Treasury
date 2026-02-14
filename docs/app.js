@@ -73,9 +73,11 @@ async function main() {
     const { rows } = parseCSV(epochText);
     const x = rows.map((r) => toNum(r.epoch_no));
     const y = rows.map((r) => toNum(r.treasury_end_ada));
+    const rsv = rows.map((r) => toNum(r.reserves_start_ada));
 
     Plotly.newPlot('chart_treasury', [
       { x, y, name: 'Treasury (ADA)', mode: 'lines', line: { color: '#34d399', width: 2 } },
+      { x, y: rsv, name: 'Reserves (ADA)', mode: 'lines', line: { color: '#60a5fa', width: 2 } },
     ], {
       paper_bgcolor: 'rgba(0,0,0,0)',
       plot_bgcolor: 'rgba(0,0,0,0)',
