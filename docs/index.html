@@ -3,132 +3,56 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Cardano Treasury — Flows Dashboard</title>
+  <title>BEACN Treasury + Catalyst</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
 </head>
 <body>
   <header class="top">
     <div class="wrap">
-      <h1>Cardano Treasury — Flows Dashboard</h1>
-      <p class="sub">
-        Open research by <a href="https://github.com/BEACNpool" target="_blank" rel="noreferrer">BEACNpool</a>:
-        fees, estimated treasury inflows, withdrawals, and treasury balance delta.
-      </p>
+      <h1>Treasury + Catalyst</h1>
+      <p class="sub">Two datasets, clearly labeled: <strong>on-chain treasury amount</strong> and <strong>off-chain Catalyst scrape</strong>.</p>
       <nav class="nav">
         <a href="https://github.com/BEACNpool/Treasury" target="_blank" rel="noreferrer">GitHub</a>
         <a href="https://github.com/BEACNpool/Treasury/blob/main/docs/methodology.md" target="_blank" rel="noreferrer">Methodology</a>
-        <a href="https://github.com/BEACNpool/Treasury/blob/main/docs/sources.md" target="_blank" rel="noreferrer">Sources</a>
-        <a href="https://github.com/BEACNpool/Treasury/blob/main/docs/data_dictionary.md" target="_blank" rel="noreferrer">Data dictionary</a>
         <a href="https://github.com/BEACNpool/Treasury/blob/main/docs/offchain_catalyst.md" target="_blank" rel="noreferrer">Catalyst dataset</a>
-        <a href="https://github.com/BEACNpool/Treasury/blob/main/docs/flag_taxonomy.md" target="_blank" rel="noreferrer">Flag taxonomy</a>
       </nav>
     </div>
   </header>
 
   <main class="wrap">
-    <!-- Status bar -->
     <section class="card status-card">
-      <div class="status-row">
-        <div id="status" class="mono">Loading…</div>
-        <div class="status-actions">
-          <button id="btn-download-year" class="btn-sm" disabled>⬇ Year CSV</button>
-          <button id="btn-download-epoch" class="btn-sm" disabled>⬇ Epoch CSV</button>
-        </div>
-      </div>
+      <div id="status" class="mono">Loading…</div>
     </section>
 
-    <!-- Flags (optional) -->
-    <section class="card" id="flags-card" style="display:none">
-      <h2>Flags (analysis signals, not accusations)</h2>
-      <div id="flags-meta" class="hint"></div>
-      <div id="flags-list" class="flags"></div>
-      <p class="hint">See <a href="https://github.com/BEACNpool/Treasury/blob/main/docs/flag_taxonomy.md" target="_blank" rel="noreferrer">flag taxonomy</a> for meaning + clearing conditions.</p>
-    </section>
-
-    <!-- Tab navigation -->
-    <div class="tabs">
-      <button class="tab active" data-tab="yearly">On-chain</button>
-      <button class="tab" data-tab="epoch">Epoch</button>
-      <button class="tab" data-tab="offchain">Off-chain</button>
-    </div>
-
-    <!-- On-chain view -->
-    <div id="tab-yearly" class="tab-content active">
-      <section class="grid">
-        <section class="card">
-          <h2>Yearly Overview</h2>
-          <div id="chart_yearly" class="chart"></div>
-          <p class="hint">Fees, Est. inflow (fees+expansion), Withdrawals (MIR+Conway), Treasury Δ.</p>
-        </section>
-
-        <section class="card">
-          <h2>Fees vs Outflow</h2>
-          <div id="chart_fees_withdrawals" class="chart"></div>
-          <p class="hint">Fees vs outflow (uses explicit withdrawals when available; otherwise implied outflow).</p>
-        </section>
+    <section class="grid">
+      <section class="card">
+        <h2>Treasury amount (on-chain)</h2>
+        <div id="chart_treasury" class="chart"></div>
+        <p class="hint">Source: db-sync (`ada_pots.treasury`). Displays treasury balance over time (by epoch).</p>
       </section>
 
       <section class="card">
-        <h2>Yearly Data</h2>
-        <div class="table-wrap">
-          <table id="table-year"></table>
-        </div>
-      </section>
-    </div>
+        <h2>Catalyst (off-chain)</h2>
+        <p class="hint">Source: projectcatalyst.io scrape (verbatim). Used for analysis context; not ledger-truth.</p>
 
-    <!-- Epoch view -->
-    <div id="tab-epoch" class="tab-content">
-      <section class="grid">
-        <section class="card">
-          <h2>Treasury Balance (by Epoch)</h2>
-          <div id="chart_balance" class="chart"></div>
-          <p class="hint">Absolute treasury balance from ada_pots snapshots.</p>
-        </section>
-
-        <section class="card">
-          <h2>Fee Revenue (by Epoch)</h2>
-          <div id="chart_epoch_fees" class="chart"></div>
-          <p class="hint">Per-epoch transaction fee revenue.</p>
-        </section>
-      </section>
-
-      <section class="card">
-        <h2>Epoch Data <span id="epoch-count" class="hint"></span></h2>
-        <div class="table-wrap">
-          <table id="table-epoch"></table>
-        </div>
-        <p class="hint">Showing most recent 50 epochs. Download CSV for full dataset.</p>
-      </section>
-    </div>
-
-    <!-- Off-chain view -->
-    <div id="tab-offchain" class="tab-content">
-      <section class="card">
-        <h2>Project Catalyst (off-chain)</h2>
-        <p class="hint">Source: scraped from projectcatalyst.io proposers index. Used for analysis signals/flags; not guilt.</p>
-
-        <div id="catalyst-summary" class="mono">Loading…</div>
-
-        <div class="status-actions" style="margin-top:10px">
-          <button id="btn-download-catalyst-top" class="btn-sm" disabled>⬇ Top recipients CSV</button>
-          <a class="btn-sm" href="outputs/offchain/catalyst/catalyst_proposers_full.json.gz" target="_blank" rel="noreferrer">⬇ Full dataset (json.gz)</a>
-          <a class="btn-sm" href="outputs/offchain/catalyst/manifest.sha256" target="_blank" rel="noreferrer">sha256</a>
+        <div class="actions">
+          <a class="btn" href="outputs/offchain/catalyst/catalyst_proposers_full.json.gz" target="_blank" rel="noreferrer">Download full json.gz</a>
+          <a class="btn" href="outputs/offchain/catalyst/manifest.sha256" target="_blank" rel="noreferrer">sha256</a>
+          <a class="btn" href="outputs/offchain/catalyst/top_recipients.csv" target="_blank" rel="noreferrer">Top recipients CSV</a>
         </div>
 
-        <h3 style="margin-top:16px">Top recipients (by total distributed USD)</h3>
+        <div id="catalyst-summary" class="mono" style="margin-top:10px">Loading…</div>
+
+        <h3 style="margin-top:16px">Top recipients (by distributed USD)</h3>
         <div class="table-wrap">
           <table id="table-catalyst-top"></table>
         </div>
       </section>
-    </div>
+    </section>
 
     <footer class="footer">
-      <p>
-        Built for reproducibility. Numbers are only as good as their receipts — see
-        <a href="https://github.com/BEACNpool/Treasury/blob/main/docs/methodology.md">methodology</a> +
-        <a href="https://github.com/BEACNpool/Treasury/blob/main/docs/sources.md">sources</a>.
-      </p>
+      <p>Keep it simple. Publish receipts. Don’t imply guilt from flags.</p>
     </footer>
   </main>
 
