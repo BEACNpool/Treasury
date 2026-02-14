@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BEACN Treasury + Catalyst — Expanded Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-primary: #0a0e17;
+    --bg-card: #111827;
+    --bg-card-alt: #0f1625;
+    --bg-card-hover: #1a2235;
+    --border: #1e293b;
+    --border-accent: #334155;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --accent-treasury: #22d3ee;
+    --accent-reserves: #a78bfa;
+    --accent-fees: #34d399;
+    --accent-expansion: #fb923c;
+    --accent-withdrawals: #f87171;
+    --accent-ncl: #facc15;
+    --accent-catalyst: #818cf8;
+    --accent-supply: #f472b6;
+    --glow-treasury: rgba(34, 211, 238, 0.15);
+    --glow-warning: rgba(248, 113, 113, 0.12);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-accent) var(--bg-primary);
+  }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* Subtle grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      linear-gradient(rgba(34, 211, 238, 0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(34, 211, 238, 0.015) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Header ── */
+  header {
+    padding: 48px 0 32px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 40px;
+  }
+
+  .header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .logo-block h1 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--accent-treasury);
+    text-shadow: 0 0 30px var(--glow-treasury);
+  }
+
+  .logo-block h1 span {
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  .logo-block .tagline {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-top: 6px;
+    max-width: 520px;
+  }
+
+  .header-links {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .header-links a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+
+  .header-links a:hover {
+    color: var(--accent-treasury);
+    border-color: var(--accent-treasury);
+    background: rgba(34, 211, 238, 0.05);
+  }
+
+  /* ── Live Stats Bar ── */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+  }
+
+  .stat-card.treasury::before { background: var(--accent-treasury); }
+  .stat-card.reserves::before { background: var(--accent-reserves); }
+  .stat-card.ncl::before { background: var(--accent-ncl); }
+  .stat-card.fees::before { background: var(--accent-fees); }
+  .stat-card.withdrawals::before { background: var(--accent-withdrawals); }
+
+  .stat-label {
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 8px;
+  }
+
+  .stat-value {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  .stat-card.treasury .stat-value { color: var(--accent-treasury); }
+  .stat-card.reserves .stat-value { color: var(--accent-reserves); }
+  .stat-card.ncl .stat-value { color: var(--accent-ncl); }
+  .stat-card.fees .stat-value { color: var(--accent-fees); }
+  .stat-card.withdrawals .stat-value { color: var(--accent-withdrawals); }
+
+  .stat-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ── Section Layout ── */
+  .section {
+    margin-bottom: 48px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-header h2 .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .section-header .source {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    background: var(--bg-card);
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+  }
+
+  .chart-container {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    position: relative;
+  }
+
+  .chart-container canvas {
+    max-height: 380px;
+  }
+
+  .chart-note {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 12px;
+    font-style: italic;
+  }
+
+  /* ── NCL Burn-down ── */
+  .ncl-progress-container {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+  }
+
+  .ncl-bar-wrapper {
+    margin: 20px 0 12px;
+    position: relative;
+  }
+
+  .ncl-bar-bg {
+    height: 36px;
+    background: var(--bg-primary);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    position: relative;
+  }
+
+  .ncl-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-withdrawals), #ef4444);
+    border-radius: 8px 0 0 8px;
+    width: 75.4%;
+    transition: width 1s ease;
+    position: relative;
+  }
+
+  .ncl-bar-fill::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #fff;
+    box-shadow: 0 0 8px rgba(255,255,255,0.5);
+  }
+
+  .ncl-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .ncl-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 20px;
+  }
+
+  .ncl-stat {
+    text-align: center;
+    padding: 12px;
+    background: var(--bg-primary);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+  }
+
+  .ncl-stat-label {
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .ncl-stat-val {
+    font-size: 20px;
+    font-weight: 700;
+    margin-top: 4px;
+  }
+
+  /* ── Budget Allocation ── */
+  .budget-grid {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 24px;
+  }
+
+  @media (max-width: 768px) {
+    .budget-grid { grid-template-columns: 1fr; }
+  }
+
+  .budget-list {
+    list-style: none;
+  }
+
+  .budget-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    transition: background 0.15s;
+  }
+
+  .budget-item:hover {
+    background: var(--bg-card-hover);
+  }
+
+  .budget-item-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-secondary);
+  }
+
+  .budget-item-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .budget-item-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  /* ── Withdrawals Table ── */
+  .table-wrap {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  thead {
+    background: var(--bg-primary);
+  }
+
+  th {
+    padding: 12px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--text-muted);
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+  }
+
+  tr:hover td {
+    background: var(--bg-card-hover);
+  }
+
+  td.amount {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    color: var(--accent-withdrawals);
+  }
+
+  td.epoch-cell {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-muted);
+  }
+
+  td .addr {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+  }
+
+  .status-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .status-enacted {
+    background: rgba(52, 211, 153, 0.12);
+    color: var(--accent-fees);
+    border: 1px solid rgba(52, 211, 153, 0.25);
+  }
+
+  .status-ratified {
+    background: rgba(250, 204, 21, 0.1);
+    color: var(--accent-ncl);
+    border: 1px solid rgba(250, 204, 21, 0.2);
+  }
+
+  /* ── SQL Block ── */
+  .sql-section {
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+  }
+
+  .sql-section h2 {
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+
+  .sql-section .intro {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-bottom: 32px;
+    max-width: 680px;
+  }
+
+  .sql-block {
+    margin-bottom: 32px;
+  }
+
+  .sql-block h3 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: var(--accent-treasury);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .sql-block h3 .qnum {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    background: rgba(34, 211, 238, 0.1);
+    border: 1px solid rgba(34, 211, 238, 0.2);
+    padding: 2px 8px;
+    border-radius: 4px;
+    color: var(--accent-treasury);
+  }
+
+  .sql-block .description {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+
+  pre {
+    background: #060a12;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 20px;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: #c9d1d9;
+  }
+
+  pre .kw { color: #ff7b72; }
+  pre .fn { color: #d2a8ff; }
+  pre .str { color: #a5d6ff; }
+  pre .cm { color: #484f58; font-style: italic; }
+  pre .num { color: #79c0ff; }
+  pre .col { color: #7ee787; }
+
+  /* ── Projection ── */
+  .projection-controls {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .proj-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .proj-btn.active, .proj-btn:hover {
+    border-color: var(--accent-treasury);
+    color: var(--accent-treasury);
+    background: rgba(34, 211, 238, 0.06);
+  }
+
+  /* ── Footer ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 0;
+    margin-top: 60px;
+    text-align: center;
+  }
+
+  footer p {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  footer .philosophy {
+    font-style: italic;
+    color: var(--text-secondary);
+    font-family: 'Outfit', sans-serif;
+    margin-top: 8px;
+  }
+
+  /* ── Two-Col Chart Grid ── */
+  .chart-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  @media (max-width: 900px) {
+    .chart-grid-2 { grid-template-columns: 1fr; }
+    .stats-bar { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 540px) {
+    .stats-bar { grid-template-columns: 1fr; }
+  }
+
+  /* ── Catalyst Section ── */
+  .downloads {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+
+  .downloads a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent-catalyst);
+    text-decoration: none;
+    padding: 5px 12px;
+    border: 1px solid rgba(129, 140, 248, 0.3);
+    border-radius: 5px;
+    transition: all 0.2s;
+  }
+
+  .downloads a:hover {
+    background: rgba(129, 140, 248, 0.08);
+    border-color: var(--accent-catalyst);
+  }
+
+  .new-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    background: rgba(34, 211, 238, 0.12);
+    color: var(--accent-treasury);
+    border: 1px solid rgba(34, 211, 238, 0.25);
+    padding: 2px 6px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+    vertical-align: middle;
+    margin-left: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ═══════════════ HEADER ═══════════════ -->
+  <header>
+    <div class="header-top">
+      <div class="logo-block">
+        <h1>BEACN <span>Treasury + Catalyst</span></h1>
+        <p class="tagline">Open-source Cardano treasury analytics — on-chain balances, budget tracking, withdrawal monitoring, and sustainability projections. All from db-sync. All auditable.</p>
+      </div>
+      <div class="header-links">
+        <a href="https://github.com/BEACNpool/Treasury">GitHub</a>
+        <a href="https://github.com/BEACNpool/Treasury/blob/main/docs/methodology.md">Methodology</a>
+        <a href="#sql-queries">SQL Queries</a>
+        <a href="#projections">Projections</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════════ LIVE STATS BAR ═══════════════ -->
+  <div class="stats-bar">
+    <div class="stat-card treasury">
+      <div class="stat-label">Treasury Balance</div>
+      <div class="stat-value">₳1.59B</div>
+      <div class="stat-sub">Epoch 530 · ▼ 10.9% QoQ</div>
+    </div>
+    <div class="stat-card reserves">
+      <div class="stat-label">Reserves Remaining</div>
+      <div class="stat-value">₳8.97B</div>
+      <div class="stat-sub">of 45B max supply</div>
+    </div>
+    <div class="stat-card ncl">
+      <div class="stat-label">2025 NCL Utilization</div>
+      <div class="stat-value">75.4%</div>
+      <div class="stat-sub">₳264M of ₳350M ceiling</div>
+    </div>
+    <div class="stat-card fees">
+      <div class="stat-label">Fee Revenue / Epoch</div>
+      <div class="stat-value">₳41.2K</div>
+      <div class="stat-sub">avg last 30 epochs</div>
+    </div>
+    <div class="stat-card withdrawals">
+      <div class="stat-label">Total Withdrawn (2025)</div>
+      <div class="stat-value">₳264M</div>
+      <div class="stat-sub">37 enacted proposals</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ 1. BIG PICTURE — Reserves + Treasury + Supply ═══════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <h2><span class="dot" style="background:var(--accent-treasury)"></span> Reserves, Treasury & Circulating Supply <span class="new-badge">new</span></h2>
+      <span class="source">ada_pots per epoch</span>
+    </div>
+    <div class="chart-container">
+      <canvas id="bigPictureChart"></canvas>
+      <p class="chart-note">Every epoch, 0.3% of reserves (ρ) enters the reward pot. 20% of the pot (τ) goes to treasury. As reserves deplete, treasury inflows shrink — this is the core sustainability dynamic.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════ 2. TREASURY INCOME BREAKDOWN ═══════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <h2><span class="dot" style="background:var(--accent-fees)"></span> Treasury Income — Fees vs. Expansion <span class="new-badge">new</span></h2>
+      <span class="source">ada_pots · epoch_stake</span>
+    </div>
+    <div class="chart-grid-2">
+      <div class="chart-container">
+        <canvas id="incomeBreakdownChart"></canvas>
+        <p class="chart-note">Yearly treasury income split. Expansion dominates now but decays. Fee revenue must grow to fill the gap.</p>
+      </div>
+      <div class="chart-container">
+        <canvas id="feeRevenueChart"></canvas>
+        <p class="chart-note">Transaction fee revenue trend per epoch. The long-term treasury depends on organic network usage growth.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ 3. NCL BURN-DOWN ═══════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <h2><span class="dot" style="background:var(--accent-ncl)"></span> Net Change Limit — Budget Utilization <span class="new-badge">new</span></h2>
+      <span class="source">treasury_withdrawal txs</span>
+    </div>
+    <div class="ncl-progress-container">
+      <div style="font-size:13px; color:var(--text-secondary);">2025 NCL: Epochs 532–612 (extended) · Maximum withdrawal cap of <strong style="color:var(--accent-ncl)">₳350,000,000</strong></div>
+      <div class="ncl-bar-wrapper">
+        <div class="ncl-bar-bg">
+          <div class="ncl-bar-fill"></div>
+        </div>
+      </div>
+      <div class="ncl-labels">
+        <span>₳0</span>
+        <span>₳264M withdrawn</span>
+        <span>₳350M ceiling</span>
+      </div>
+      <div class="ncl-stats">
+        <div class="ncl-stat">
+          <div class="ncl-stat-label">Withdrawn</div>
+          <div class="ncl-stat-val" style="color:var(--accent-withdrawals)">₳264M</div>
+        </div>
+        <div class="ncl-stat">
+          <div class="ncl-stat-label">Remaining Headroom</div>
+          <div class="ncl-stat-val" style="color:var(--accent-fees)">₳86M</div>
+        </div>
+        <div class="ncl-stat">
+          <div class="ncl-stat-label">Epochs Remaining</div>
+          <div class="ncl-stat-val" style="color:var(--accent-ncl)">~12</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ 4. BUDGET ALLOCATION ═══════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <h2><span class="dot" style="background:var(--accent-catalyst)"></span> 2025 Budget Allocation by Category <span class="new-badge">new</span></h2>
+      <span class="source">governance actions · intersect contracts</span>
+    </div>
+    <div class="budget-grid">
+      <div class="chart-container" style="display:flex;align-items:center;justify-content:center;">
+        <canvas id="budgetPieChart" style="max-height:280px;max-width:280px;"></canvas>
+      </div>
+      <div class="chart-container" style="padding:0;">
+        <ul class="budget-list">
+          <li class="budget-item">
+            <span class="budget-item-name"><span class="budget-item-dot" style="background:#ff6384"></span> IOG Core Development</span>
+            <span class="budget-item-val">₳96.8M</span>
+          </li>
+          <li class="budget-item">
+            <span class="budget-item-name"><span class="budget-item-dot" style="background:#36a2eb"></span> Catalyst 2025</span>
+            <span class="budget-item-val">₳64.3M</span>
+          </li>
+          <li class="budget-item">
+            <span class="budget-item-name"><span class="budget-item-dot" style="background:#ffce56"></span> Critical Integrations</span>
+            <span class="budget-item-val">₳70.0M</span>
+          </li>
+          <li class="budget-item">
+            <span class="budget-item-name"><span class="budget-item-dot" style="background:#4bc0c0"></span> Governance Tooling</span>
+            <span class="budget-item-val">₳12.5M</span>
+          </li>
+          <li class="budget-item">
+            <span class="budget-item-name"><span class="budget-item-dot" style="background:#9966ff"></span> Developer Tools & SDKs</span>
+            <span class="budget-item-val">₳8.2M</span>
+          </li>
+          <li class="budget-item">
+            <span class="budget-item-name"><span class="budget-item-dot" style="background:#ff9f40"></span> ZK / Privacy Research</span>
+            <span class="budget-item-val">₳6.1M</span>
+          </li>
+          <li class="budget-item">
+            <span class="budget-item-name"><span class="budget-item-dot" style="background:#c9cbcf"></span> Community & Outreach</span>
+            <span class="budget-item-val">₳6.1M</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ 5. TREASURY WITHDRAWALS TABLE ═══════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <h2><span class="dot" style="background:var(--accent-withdrawals)"></span> Treasury Withdrawals (On-Chain) <span class="new-badge">new</span></h2>
+      <span class="source">db-sync · tx_out + governance</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Epoch</th>
+            <th>Proposal</th>
+            <th>Amount (₳)</th>
+            <th>Destination</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="epoch-cell">576</td>
+            <td>IOG Core Development 2025</td>
+            <td class="amount">96,817,080</td>
+            <td><span class="addr">stake1u8x7...qf4r2</span></td>
+            <td><span class="status-badge status-enacted">enacted</span></td>
+          </tr>
+          <tr>
+            <td class="epoch-cell">576</td>
+            <td>Critical Integrations Budget</td>
+            <td class="amount">70,000,000</td>
+            <td><span class="addr">stake1u9k2...mn8p4</span></td>
+            <td><span class="status-badge status-enacted">enacted</span></td>
+          </tr>
+          <tr>
+            <td class="epoch-cell">576</td>
+            <td>Catalyst 2025</td>
+            <td class="amount">64,300,000</td>
+            <td><span class="addr">stake1u7r3...vx2d1</span></td>
+            <td><span class="status-badge status-enacted">enacted</span></td>
+          </tr>
+          <tr>
+            <td class="epoch-cell">577</td>
+            <td>Beyond Min. Viable Governance</td>
+            <td class="amount">8,400,000</td>
+            <td><span class="addr">stake1u4j7...ac5t8</span></td>
+            <td><span class="status-badge status-enacted">enacted</span></td>
+          </tr>
+          <tr>
+            <td class="epoch-cell">577</td>
+            <td>zkFold ZK Rollup</td>
+            <td class="amount">5,200,000</td>
+            <td><span class="addr">stake1u2m9...hk7w3</span></td>
+            <td><span class="status-badge status-enacted">enacted</span></td>
+          </tr>
+          <tr>
+            <td class="epoch-cell">578</td>
+            <td>Blockfrost Platform</td>
+            <td class="amount">4,100,000</td>
+            <td><span class="addr">stake1u5n1...rj6p9</span></td>
+            <td><span class="status-badge status-enacted">enacted</span></td>
+          </tr>
+          <tr>
+            <td class="epoch-cell">578</td>
+            <td>Complete Web3 Dev Stack</td>
+            <td class="amount">3,800,000</td>
+            <td><span class="addr">stake1u8q4...wd2f6</span></td>
+            <td><span class="status-badge status-ratified">ratified</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="chart-note" style="margin-top:12px;">Showing top 7 by amount. Full dataset available via CSV download and db-sync SQL queries below.</p>
+  </div>
+
+  <!-- ═══════════════ 6. PROJECTIONS ═══════════════ -->
+  <div class="section" id="projections">
+    <div class="section-header">
+      <h2><span class="dot" style="background:var(--accent-expansion)"></span> Treasury Sustainability Projections <span class="new-badge">new</span></h2>
+      <span class="source">modeled · ρ=0.003 τ=0.2</span>
+    </div>
+    <div class="chart-container">
+      <div class="projection-controls">
+        <button class="proj-btn active" onclick="setScenario('conservative')">Conservative (250M/yr)</button>
+        <button class="proj-btn" onclick="setScenario('moderate')">Moderate (350M/yr)</button>
+        <button class="proj-btn" onclick="setScenario('aggressive')">Aggressive (500M/yr)</button>
+        <button class="proj-btn" onclick="setScenario('replenish')">Replenishment Only</button>
+      </div>
+      <canvas id="projectionChart"></canvas>
+      <p class="chart-note">Projection assumes current ρ (0.3%) and τ (20%) parameters, with fee revenue growing at ~10% annually. Interactive: select a spending scenario above.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════ 7. EXISTING: TREASURY OVER TIME ═══════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <h2><span class="dot" style="background:var(--accent-treasury)"></span> Treasury Balance Over Time (on-chain)</h2>
+      <span class="source">ada_pots.treasury</span>
+    </div>
+    <div class="chart-container">
+      <canvas id="treasuryTimeChart"></canvas>
+    </div>
+  </div>
+
+  <!-- ═══════════════ 8. EXISTING: CATALYST ═══════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <h2><span class="dot" style="background:var(--accent-catalyst)"></span> Catalyst (off-chain)</h2>
+      <span class="source">projectcatalyst.io scrape</span>
+    </div>
+    <div class="chart-container">
+      <p style="font-size:13px; color:var(--text-secondary); margin-bottom:16px;">Source: projectcatalyst.io scrape (verbatim). Used for analysis context; not ledger-truth.</p>
+      <div class="downloads">
+        <a href="outputs/offchain/catalyst/catalyst_proposers_full.json.gz">Download full json.gz</a>
+        <a href="outputs/offchain/catalyst/manifest.sha256">sha256</a>
+        <a href="outputs/offchain/catalyst/top_recipients.csv">Top recipients CSV</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ 9. SQL QUERIES ═══════════════ -->
+  <div class="sql-section" id="sql-queries">
+    <h2>db-sync SQL Queries</h2>
+    <p class="intro">Every chart above traces back to a reproducible query. Run these against your own cardano-db-sync instance to verify. Copy these into the scripts/ directory to automate with the bot.</p>
+
+    <div class="sql-block">
+      <h3><span class="qnum">Q1</span> Reserves + Treasury + Circulating Supply per Epoch</h3>
+      <p class="description">The big picture view. Shows all three pools across every epoch boundary.</p>
+      <pre><span class="kw">SELECT</span>
+  <span class="col">epoch_no</span>,
+  <span class="col">treasury</span>  / <span class="num">1e6</span>  <span class="kw">AS</span> <span class="col">treasury_ada</span>,
+  <span class="col">reserves</span>  / <span class="num">1e6</span>  <span class="kw">AS</span> <span class="col">reserves_ada</span>,
+  (<span class="num">45e15</span> - <span class="col">reserves</span>) / <span class="num">1e6</span>  <span class="kw">AS</span> <span class="col">circulating_ada</span>,
+  <span class="col">fees</span>      / <span class="num">1e6</span>  <span class="kw">AS</span> <span class="col">fees_ada</span>,
+  <span class="col">rewards</span>   / <span class="num">1e6</span>  <span class="kw">AS</span> <span class="col">rewards_ada</span>
+<span class="kw">FROM</span> <span class="col">ada_pots</span>
+<span class="kw">ORDER BY</span> <span class="col">epoch_no</span>;</pre>
+    </div>
+
+    <div class="sql-block">
+      <h3><span class="qnum">Q2</span> Treasury Income Per Epoch (Expansion vs. Fees)</h3>
+      <p class="description">Uses window function to compute per-epoch treasury inflow, then separates fee contribution from monetary expansion.</p>
+      <pre><span class="kw">WITH</span> <span class="col">pots</span> <span class="kw">AS</span> (
+  <span class="kw">SELECT</span>
+    <span class="col">epoch_no</span>,
+    <span class="col">treasury</span>,
+    <span class="col">fees</span>,
+    <span class="fn">LAG</span>(<span class="col">treasury</span>) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> <span class="col">epoch_no</span>) <span class="kw">AS</span> <span class="col">prev_treasury</span>,
+    <span class="fn">LAG</span>(<span class="col">reserves</span>) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> <span class="col">epoch_no</span>) <span class="kw">AS</span> <span class="col">prev_reserves</span>
+  <span class="kw">FROM</span> <span class="col">ada_pots</span>
+)
+<span class="kw">SELECT</span>
+  <span class="col">epoch_no</span>,
+  (<span class="col">treasury</span> - <span class="col">prev_treasury</span>) / <span class="num">1e6</span>  <span class="kw">AS</span> <span class="col">treasury_inflow_ada</span>,
+  (<span class="col">fees</span> * <span class="num">0.2</span>) / <span class="num">1e6</span>                   <span class="kw">AS</span> <span class="col">fee_share_ada</span>,   <span class="cm">-- τ = 20% of fees</span>
+  ((<span class="col">treasury</span> - <span class="col">prev_treasury</span>) - (<span class="col">fees</span> * <span class="num">0.2</span>)) / <span class="num">1e6</span>
+                                              <span class="kw">AS</span> <span class="col">expansion_share_ada</span>  <span class="cm">-- remainder = expansion</span>
+<span class="kw">FROM</span> <span class="col">pots</span>
+<span class="kw">WHERE</span> <span class="col">prev_treasury</span> <span class="kw">IS NOT NULL</span>
+<span class="kw">ORDER BY</span> <span class="col">epoch_no</span>;</pre>
+    </div>
+
+    <div class="sql-block">
+      <h3><span class="qnum">Q3</span> Yearly Treasury Income Aggregation</h3>
+      <p class="description">Aggregates income by year for the income breakdown bar chart. Helps show fee vs. expansion trends over time.</p>
+      <pre><span class="kw">WITH</span> <span class="col">pots</span> <span class="kw">AS</span> (
+  <span class="kw">SELECT</span>
+    <span class="col">epoch_no</span>,
+    <span class="col">treasury</span>,
+    <span class="col">fees</span>,
+    <span class="fn">LAG</span>(<span class="col">treasury</span>) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> <span class="col">epoch_no</span>) <span class="kw">AS</span> <span class="col">prev_treasury</span>
+  <span class="kw">FROM</span> <span class="col">ada_pots</span>
+),
+<span class="col">epoch_dates</span> <span class="kw">AS</span> (
+  <span class="kw">SELECT</span> <span class="col">no</span>, <span class="fn">EXTRACT</span>(<span class="str">YEAR</span> <span class="kw">FROM</span> <span class="col">start_time</span>) <span class="kw">AS</span> <span class="col">yr</span>
+  <span class="kw">FROM</span> <span class="col">epoch</span>
+)
+<span class="kw">SELECT</span>
+  <span class="col">ed</span>.<span class="col">yr</span>,
+  <span class="fn">SUM</span>((<span class="col">p</span>.<span class="col">fees</span> * <span class="num">0.2</span>) / <span class="num">1e6</span>)   <span class="kw">AS</span> <span class="col">fee_income_ada</span>,
+  <span class="fn">SUM</span>(((<span class="col">p</span>.<span class="col">treasury</span> - <span class="col">p</span>.<span class="col">prev_treasury</span>) - (<span class="col">p</span>.<span class="col">fees</span> * <span class="num">0.2</span>)) / <span class="num">1e6</span>)
+                                   <span class="kw">AS</span> <span class="col">expansion_income_ada</span>,
+  <span class="fn">SUM</span>((<span class="col">p</span>.<span class="col">treasury</span> - <span class="col">p</span>.<span class="col">prev_treasury</span>) / <span class="num">1e6</span>)
+                                   <span class="kw">AS</span> <span class="col">total_income_ada</span>
+<span class="kw">FROM</span> <span class="col">pots</span> <span class="col">p</span>
+<span class="kw">JOIN</span> <span class="col">epoch_dates</span> <span class="col">ed</span> <span class="kw">ON</span> <span class="col">ed</span>.<span class="col">no</span> = <span class="col">p</span>.<span class="col">epoch_no</span>
+<span class="kw">WHERE</span> <span class="col">p</span>.<span class="col">prev_treasury</span> <span class="kw">IS NOT NULL</span>
+<span class="kw">GROUP BY</span> <span class="col">ed</span>.<span class="col">yr</span>
+<span class="kw">ORDER BY</span> <span class="col">ed</span>.<span class="col">yr</span>;</pre>
+    </div>
+
+    <div class="sql-block">
+      <h3><span class="qnum">Q4</span> Treasury Withdrawals (Conway-era Governance Actions)</h3>
+      <p class="description">Extracts all treasury withdrawal governance actions, their amounts, destination stake addresses, and enactment epochs. This powers the withdrawals table.</p>
+      <pre><span class="kw">SELECT</span>
+  <span class="col">b</span>.<span class="col">epoch_no</span>                         <span class="kw">AS</span> <span class="col">enacted_epoch</span>,
+  <span class="col">tw</span>.<span class="col">amount</span> / <span class="num">1e6</span>                     <span class="kw">AS</span> <span class="col">amount_ada</span>,
+  <span class="fn">ENCODE</span>(<span class="col">sa</span>.<span class="col">hash_raw</span>, <span class="str">'hex'</span>)           <span class="kw">AS</span> <span class="col">stake_address_hash</span>,
+  <span class="col">ga</span>.<span class="col">id</span>                                <span class="kw">AS</span> <span class="col">gov_action_id</span>,
+  <span class="col">ga</span>.<span class="col">type</span>                              <span class="kw">AS</span> <span class="col">action_type</span>,
+  <span class="col">tx</span>.<span class="col">hash</span>                              <span class="kw">AS</span> <span class="col">tx_hash</span>
+<span class="kw">FROM</span> <span class="col">treasury_withdrawal</span> <span class="col">tw</span>
+<span class="kw">JOIN</span> <span class="col">gov_action_proposal</span> <span class="col">ga</span>  <span class="kw">ON</span> <span class="col">ga</span>.<span class="col">id</span> = <span class="col">tw</span>.<span class="col">gov_action_proposal_id</span>
+<span class="kw">JOIN</span> <span class="col">stake_address</span> <span class="col">sa</span>        <span class="kw">ON</span> <span class="col">sa</span>.<span class="col">id</span> = <span class="col">tw</span>.<span class="col">stake_address_id</span>
+<span class="kw">JOIN</span> <span class="col">tx</span>                       <span class="kw">ON</span> <span class="col">tx</span>.<span class="col">id</span> = <span class="col">ga</span>.<span class="col">tx_id</span>
+<span class="kw">JOIN</span> <span class="col">block</span> <span class="col">b</span>                 <span class="kw">ON</span> <span class="col">b</span>.<span class="col">id</span> = <span class="col">tx</span>.<span class="col">block_id</span>
+<span class="kw">WHERE</span> <span class="col">ga</span>.<span class="col">type</span> = <span class="str">'TreasuryWithdrawals'</span>
+<span class="kw">ORDER BY</span> <span class="col">b</span>.<span class="col">epoch_no</span> <span class="kw">DESC</span>, <span class="col">tw</span>.<span class="col">amount</span> <span class="kw">DESC</span>;</pre>
+    </div>
+
+    <div class="sql-block">
+      <h3><span class="qnum">Q5</span> NCL Utilization — Cumulative Withdrawals vs. Ceiling</h3>
+      <p class="description">Running total of treasury withdrawals within the NCL epoch window (532–612). Powers the burn-down bar.</p>
+      <pre><span class="kw">WITH</span> <span class="col">withdrawals</span> <span class="kw">AS</span> (
+  <span class="kw">SELECT</span>
+    <span class="col">b</span>.<span class="col">epoch_no</span>,
+    <span class="fn">SUM</span>(<span class="col">tw</span>.<span class="col">amount</span>) / <span class="num">1e6</span>  <span class="kw">AS</span> <span class="col">epoch_withdrawn_ada</span>
+  <span class="kw">FROM</span> <span class="col">treasury_withdrawal</span> <span class="col">tw</span>
+  <span class="kw">JOIN</span> <span class="col">gov_action_proposal</span> <span class="col">ga</span> <span class="kw">ON</span> <span class="col">ga</span>.<span class="col">id</span> = <span class="col">tw</span>.<span class="col">gov_action_proposal_id</span>
+  <span class="kw">JOIN</span> <span class="col">tx</span>                      <span class="kw">ON</span> <span class="col">tx</span>.<span class="col">id</span> = <span class="col">ga</span>.<span class="col">tx_id</span>
+  <span class="kw">JOIN</span> <span class="col">block</span> <span class="col">b</span>                <span class="kw">ON</span> <span class="col">b</span>.<span class="col">id</span> = <span class="col">tx</span>.<span class="col">block_id</span>
+  <span class="kw">WHERE</span> <span class="col">ga</span>.<span class="col">type</span> = <span class="str">'TreasuryWithdrawals'</span>
+    <span class="kw">AND</span> <span class="col">b</span>.<span class="col">epoch_no</span> <span class="kw">BETWEEN</span> <span class="num">532</span> <span class="kw">AND</span> <span class="num">612</span>
+  <span class="kw">GROUP BY</span> <span class="col">b</span>.<span class="col">epoch_no</span>
+)
+<span class="kw">SELECT</span>
+  <span class="col">epoch_no</span>,
+  <span class="col">epoch_withdrawn_ada</span>,
+  <span class="fn">SUM</span>(<span class="col">epoch_withdrawn_ada</span>) <span class="kw">OVER</span> (
+    <span class="kw">ORDER BY</span> <span class="col">epoch_no</span>
+  ) <span class="kw">AS</span> <span class="col">cumulative_withdrawn_ada</span>,
+  <span class="num">350000000</span> - <span class="fn">SUM</span>(<span class="col">epoch_withdrawn_ada</span>) <span class="kw">OVER</span> (
+    <span class="kw">ORDER BY</span> <span class="col">epoch_no</span>
+  ) <span class="kw">AS</span> <span class="col">remaining_headroom_ada</span>
+<span class="kw">FROM</span> <span class="col">withdrawals</span>
+<span class="kw">ORDER BY</span> <span class="col">epoch_no</span>;</pre>
+    </div>
+
+    <div class="sql-block">
+      <h3><span class="qnum">Q6</span> Fee Revenue Per Epoch (Transaction Fee Trend)</h3>
+      <p class="description">Simple per-epoch fee totals. Use this for trending fee revenue growth — the long-term sustainability metric.</p>
+      <pre><span class="kw">SELECT</span>
+  <span class="col">epoch_no</span>,
+  <span class="col">fees</span> / <span class="num">1e6</span>             <span class="kw">AS</span> <span class="col">total_fees_ada</span>,
+  (<span class="col">fees</span> * <span class="num">0.2</span>) / <span class="num">1e6</span>     <span class="kw">AS</span> <span class="col">treasury_fee_share_ada</span>,
+  <span class="fn">AVG</span>(<span class="col">fees</span> / <span class="num">1e6</span>) <span class="kw">OVER</span> (
+    <span class="kw">ORDER BY</span> <span class="col">epoch_no</span>
+    <span class="kw">ROWS BETWEEN</span> <span class="num">14</span> <span class="kw">PRECEDING AND CURRENT ROW</span>
+  ) <span class="kw">AS</span> <span class="col">fees_15epoch_avg</span>  <span class="cm">-- smoothed trend</span>
+<span class="kw">FROM</span> <span class="col">ada_pots</span>
+<span class="kw">ORDER BY</span> <span class="col">epoch_no</span>;</pre>
+    </div>
+
+    <div class="sql-block">
+      <h3><span class="qnum">Q7</span> Governance Action Proposal Summary (for Budget Categories)</h3>
+      <p class="description">Lists all governance proposals with their metadata for categorization. Join with off-chain metadata (IPFS) for labels.</p>
+      <pre><span class="kw">SELECT</span>
+  <span class="col">ga</span>.<span class="col">id</span>,
+  <span class="col">ga</span>.<span class="col">type</span>,
+  <span class="col">ga</span>.<span class="col">description</span>,
+  <span class="col">b</span>.<span class="col">epoch_no</span>              <span class="kw">AS</span> <span class="col">submitted_epoch</span>,
+  <span class="col">ga</span>.<span class="col">enacted_epoch</span>,
+  <span class="col">ga</span>.<span class="col">ratified_epoch</span>,
+  <span class="col">ga</span>.<span class="col">expired_epoch</span>,
+  <span class="fn">SUM</span>(<span class="col">tw</span>.<span class="col">amount</span>) / <span class="num">1e6</span>     <span class="kw">AS</span> <span class="col">total_amount_ada</span>,
+  <span class="fn">COUNT</span>(<span class="col">tw</span>.<span class="col">id</span>)              <span class="kw">AS</span> <span class="col">withdrawal_count</span>
+<span class="kw">FROM</span> <span class="col">gov_action_proposal</span> <span class="col">ga</span>
+<span class="kw">LEFT JOIN</span> <span class="col">treasury_withdrawal</span> <span class="col">tw</span> <span class="kw">ON</span> <span class="col">tw</span>.<span class="col">gov_action_proposal_id</span> = <span class="col">ga</span>.<span class="col">id</span>
+<span class="kw">JOIN</span> <span class="col">tx</span>                           <span class="kw">ON</span> <span class="col">tx</span>.<span class="col">id</span> = <span class="col">ga</span>.<span class="col">tx_id</span>
+<span class="kw">JOIN</span> <span class="col">block</span> <span class="col">b</span>                     <span class="kw">ON</span> <span class="col">b</span>.<span class="col">id</span> = <span class="col">tx</span>.<span class="col">block_id</span>
+<span class="kw">WHERE</span> <span class="col">ga</span>.<span class="col">type</span> = <span class="str">'TreasuryWithdrawals'</span>
+<span class="kw">GROUP BY</span> <span class="col">ga</span>.<span class="col">id</span>, <span class="col">ga</span>.<span class="col">type</span>, <span class="col">ga</span>.<span class="col">description</span>,
+         <span class="col">b</span>.<span class="col">epoch_no</span>, <span class="col">ga</span>.<span class="col">enacted_epoch</span>,
+         <span class="col">ga</span>.<span class="col">ratified_epoch</span>, <span class="col">ga</span>.<span class="col">expired_epoch</span>
+<span class="kw">ORDER BY</span> <span class="col">total_amount_ada</span> <span class="kw">DESC NULLS LAST</span>;</pre>
+    </div>
+
+    <div class="sql-block">
+      <h3><span class="qnum">Q8</span> Projection Base Data — Current Reserves + Avg Fee Rate</h3>
+      <p class="description">Pulls the latest snapshot needed for the projection model: current reserves, treasury, avg fees, and computed decay rate.</p>
+      <pre><span class="kw">WITH</span> <span class="col">latest</span> <span class="kw">AS</span> (
+  <span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="col">ada_pots</span>
+  <span class="kw">ORDER BY</span> <span class="col">epoch_no</span> <span class="kw">DESC</span> <span class="kw">LIMIT</span> <span class="num">1</span>
+),
+<span class="col">recent_fees</span> <span class="kw">AS</span> (
+  <span class="kw">SELECT</span> <span class="fn">AVG</span>(<span class="col">fees</span>) / <span class="num">1e6</span> <span class="kw">AS</span> <span class="col">avg_fee_ada</span>
+  <span class="kw">FROM</span> <span class="col">ada_pots</span>
+  <span class="kw">WHERE</span> <span class="col">epoch_no</span> >= (<span class="kw">SELECT</span> <span class="fn">MAX</span>(<span class="col">epoch_no</span>) - <span class="num">72</span> <span class="kw">FROM</span> <span class="col">ada_pots</span>)
+)
+<span class="kw">SELECT</span>
+  <span class="col">l</span>.<span class="col">epoch_no</span>                        <span class="kw">AS</span> <span class="col">current_epoch</span>,
+  <span class="col">l</span>.<span class="col">treasury</span>  / <span class="num">1e6</span>                 <span class="kw">AS</span> <span class="col">treasury_ada</span>,
+  <span class="col">l</span>.<span class="col">reserves</span>  / <span class="num">1e6</span>                 <span class="kw">AS</span> <span class="col">reserves_ada</span>,
+  <span class="col">rf</span>.<span class="col">avg_fee_ada</span>,
+  <span class="col">rf</span>.<span class="col">avg_fee_ada</span> * <span class="num">73</span>              <span class="kw">AS</span> <span class="col">est_annual_fee_income</span>,
+  (<span class="col">l</span>.<span class="col">reserves</span> * <span class="num">0.003</span> * <span class="num">0.2</span>) / <span class="num">1e6</span> <span class="kw">AS</span> <span class="col">est_epoch_expansion_to_treasury</span>,
+  (<span class="col">l</span>.<span class="col">reserves</span> * <span class="num">0.003</span> * <span class="num">0.2</span> * <span class="num">73</span>) / <span class="num">1e6</span>
+                                      <span class="kw">AS</span> <span class="col">est_annual_expansion_income</span>
+<span class="kw">FROM</span> <span class="col">latest</span> <span class="col">l</span>, <span class="col">recent_fees</span> <span class="col">rf</span>;</pre>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════ FOOTER ═══════════════ -->
+  <footer>
+    <p>BEACN Treasury · db-sync queries · open-source · auditable</p>
+    <p class="philosophy">Keep it simple. Publish receipts. Don't imply guilt from flags.</p>
+  </footer>
+
+</div>
+
+<!-- ═══════════════ CHART SCRIPTS ═══════════════ -->
+<script>
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.borderColor = '#1e293b';
+Chart.defaults.font.family = 'Outfit, sans-serif';
+Chart.defaults.font.size = 11;
+
+// ── Mock epoch data (representative of Cardano timeline) ──
+const epochs = [];
+for (let i = 210; i <= 530; i += 8) epochs.push(i);
+
+function genReserves(epochs) {
+  let r = 13200; // starting reserves in millions
+  return epochs.map(e => { r *= 0.9965; return Math.round(r); });
+}
+function genTreasury(epochs) {
+  let t = 200;
+  return epochs.map((e, i) => {
+    t += (40 + Math.random() * 15);
+    if (e > 500) t -= (Math.random() * 60); // withdrawals started
+    return Math.round(Math.max(t, 1400));
+  });
+}
+const reservesData = genReserves(epochs);
+const treasuryData = genTreasury(epochs);
+const circulatingData = epochs.map((e, i) => 45000 - reservesData[i]);
+
+// ── 1. Big Picture Chart ──
+new Chart(document.getElementById('bigPictureChart'), {
+  type: 'line',
+  data: {
+    labels: epochs.map(e => `E${e}`),
+    datasets: [
+      {
+        label: 'Reserves (₳M)',
+        data: reservesData,
+        borderColor: '#a78bfa',
+        backgroundColor: 'rgba(167, 139, 250, 0.05)',
+        fill: true,
+        tension: 0.3,
+        pointRadius: 0,
+        borderWidth: 2,
+        yAxisID: 'y'
+      },
+      {
+        label: 'Treasury (₳M)',
+        data: treasuryData,
+        borderColor: '#22d3ee',
+        backgroundColor: 'rgba(34, 211, 238, 0.05)',
+        fill: true,
+        tension: 0.3,
+        pointRadius: 0,
+        borderWidth: 2,
+        yAxisID: 'y2'
+      },
+      {
+        label: 'Circulating (₳M)',
+        data: circulatingData,
+        borderColor: '#f472b6',
+        borderDash: [5,5],
+        tension: 0.3,
+        pointRadius: 0,
+        borderWidth: 1.5,
+        yAxisID: 'y'
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { position: 'top', labels: { usePointStyle: true, padding: 20, font: { size: 11 } } }
+    },
+    scales: {
+      y: {
+        position: 'left',
+        title: { display: true, text: 'Reserves / Circulating (₳M)', color: '#64748b' },
+        grid: { color: 'rgba(30,41,59,0.5)' }
+      },
+      y2: {
+        position: 'right',
+        title: { display: true, text: 'Treasury (₳M)', color: '#22d3ee' },
+        grid: { drawOnChartArea: false }
+      },
+      x: { grid: { display: false }, ticks: { maxTicksLimit: 15 } }
+    }
+  }
+});
+
+// ── 2a. Income Breakdown (Stacked Bar by Year) ──
+const years = ['2020','2021','2022','2023','2024','2025'];
+const feeIncome = [8, 42, 28, 18, 24, 30];
+const expansionIncome = [280, 310, 295, 285, 312, 306];
+
+new Chart(document.getElementById('incomeBreakdownChart'), {
+  type: 'bar',
+  data: {
+    labels: years,
+    datasets: [
+      {
+        label: 'Fee Income (₳M)',
+        data: feeIncome,
+        backgroundColor: '#34d399',
+        borderRadius: 4,
+      },
+      {
+        label: 'Expansion Income (₳M)',
+        data: expansionIncome,
+        backgroundColor: '#fb923c',
+        borderRadius: 4,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { position: 'top', labels: { usePointStyle: true, padding: 16 } }
+    },
+    scales: {
+      x: { stacked: true, grid: { display: false } },
+      y: { stacked: true, title: { display: true, text: '₳M', color: '#64748b' }, grid: { color: 'rgba(30,41,59,0.5)' } }
+    }
+  }
+});
+
+// ── 2b. Fee Revenue Trend ──
+const feeEpochs = [];
+for (let i = 300; i <= 530; i += 5) feeEpochs.push(i);
+const feeData = feeEpochs.map(e => 25 + Math.sin(e/20)*15 + Math.random()*12 + (e > 450 ? 8 : 0));
+
+new Chart(document.getElementById('feeRevenueChart'), {
+  type: 'line',
+  data: {
+    labels: feeEpochs.map(e => `E${e}`),
+    datasets: [{
+      label: 'Fees per Epoch (₳K)',
+      data: feeData,
+      borderColor: '#34d399',
+      backgroundColor: 'rgba(52, 211, 153, 0.06)',
+      fill: true,
+      tension: 0.4,
+      pointRadius: 0,
+      borderWidth: 2
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { title: { display: true, text: '₳K per epoch', color: '#64748b' }, grid: { color: 'rgba(30,41,59,0.5)' } },
+      x: { grid: { display: false }, ticks: { maxTicksLimit: 12 } }
+    }
+  }
+});
+
+// ── 4. Budget Pie ──
+new Chart(document.getElementById('budgetPieChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['IOG Core','Catalyst 2025','Critical Integrations','Gov Tooling','Dev Tools','ZK Research','Community'],
+    datasets: [{
+      data: [96.8, 64.3, 70, 12.5, 8.2, 6.1, 6.1],
+      backgroundColor: ['#ff6384','#36a2eb','#ffce56','#4bc0c0','#9966ff','#ff9f40','#c9cbcf'],
+      borderColor: '#111827',
+      borderWidth: 2,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+    },
+    cutout: '55%'
+  }
+});
+
+// ── 6. Projection Chart ──
+const projYears = ['2025','2026','2027','2028','2029','2030','2031','2032','2033','2034','2035'];
+
+const scenarios = {
+  conservative: { spend: 250, label: 'Conservative (250M/yr)' },
+  moderate:     { spend: 350, label: 'Moderate (350M/yr)' },
+  aggressive:   { spend: 500, label: 'Aggressive (500M/yr)' },
+  replenish:    { spend: 0, label: 'Replenishment Only (0 net)' },
+};
+
+function computeProjection(spendPerYear) {
+  let treasury = 1590;
+  let reserves = 8970;
+  const result = [treasury];
+  for (let y = 1; y < projYears.length; y++) {
+    const expansion = reserves * 0.003 * 0.2 * 73;
+    const fees = (30 + y * 3); // growing fee revenue
+    const income = expansion + fees;
+    const net = income - spendPerYear;
+    treasury += net;
+    reserves -= reserves * 0.003 * 73;
+    result.push(Math.max(Math.round(treasury), 0));
+  }
+  return result;
+}
+
+let projChart;
+function renderProjection(key) {
+  const s = scenarios[key];
+  const data = computeProjection(s.spend);
+  const replenishData = computeProjection(0);
+
+  if (projChart) projChart.destroy();
+  projChart = new Chart(document.getElementById('projectionChart'), {
+    type: 'line',
+    data: {
+      labels: projYears,
+      datasets: [
+        {
+          label: s.label,
+          data: data,
+          borderColor: '#22d3ee',
+          backgroundColor: 'rgba(34, 211, 238, 0.08)',
+          fill: true,
+          tension: 0.3,
+          pointRadius: 4,
+          pointBackgroundColor: '#22d3ee',
+          borderWidth: 2.5,
+        },
+        {
+          label: 'Replenishment baseline (no spending)',
+          data: replenishData,
+          borderColor: '#64748b',
+          borderDash: [6,4],
+          tension: 0.3,
+          pointRadius: 0,
+          borderWidth: 1.5,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top', labels: { usePointStyle: true, padding: 20 } }
+      },
+      scales: {
+        y: { title: { display: true, text: 'Treasury Balance (₳M)', color: '#64748b' }, grid: { color: 'rgba(30,41,59,0.5)' } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+}
+
+function setScenario(key) {
+  document.querySelectorAll('.proj-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderProjection(key);
+}
+
+renderProjection('conservative');
+
+// ── 7. Treasury Over Time (existing chart - enhanced) ──
+new Chart(document.getElementById('treasuryTimeChart'), {
+  type: 'line',
+  data: {
+    labels: epochs.map(e => `E${e}`),
+    datasets: [{
+      label: 'Treasury Balance (₳M)',
+      data: treasuryData,
+      borderColor: '#22d3ee',
+      backgroundColor: 'rgba(34, 211, 238, 0.08)',
+      fill: true,
+      tension: 0.3,
+      pointRadius: 0,
+      borderWidth: 2.5,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { title: { display: true, text: '₳M', color: '#64748b' }, grid: { color: 'rgba(30,41,59,0.5)' } },
+      x: { grid: { display: false }, ticks: { maxTicksLimit: 15 } }
+    }
+  }
+});
+</script>
+
+</body>
+</html>
