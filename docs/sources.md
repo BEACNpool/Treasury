@@ -6,6 +6,7 @@
 ## Secondary (fast iteration)
 - Koios endpoints (via BEACN worker if configured)
 - Blockfrost API (fast snapshot mode; clearly labeled; not audit-grade)
+- **Project Catalyst (off-chain scrape)**: see `docs/offchain_catalyst.md`
 - Explorer APIs as cross-checks
 
 ## Receipts discipline
