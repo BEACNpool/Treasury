@@ -1,5 +1,21 @@
 # Methodology (Draft)
 
+## Data provenance: two modes
+
+We intentionally support two modes:
+
+1) **Audit-grade (db-sync)**
+   - Source: self-hosted cardano-db-sync + Postgres (mainnet).
+   - Pros: reproducible, queryable, receipts-first.
+   - Cons: initial sync/restore can take time.
+
+2) **Fast snapshot (API)**
+   - Source: Blockfrost API (mainnet).
+   - Pros: quick time-to-first-data.
+   - Cons: not audit-grade; centralized dependency.
+
+All published data is labeled with `source_kind` and includes a tip timestamp.
+
 ## 1) Definitions
 
 We model treasury as a ledger of flows:
