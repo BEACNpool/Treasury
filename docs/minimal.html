@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BEACN Treasury + Catalyst</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <h1>Treasury + Catalyst</h1>
+      <p class="sub">Two datasets, clearly labeled: <strong>on-chain treasury amount</strong> and <strong>off-chain Catalyst scrape</strong>.</p>
+      <nav class="nav">
+        <a href="https://github.com/BEACNpool/Treasury" target="_blank" rel="noreferrer">GitHub</a>
+        <a href="https://github.com/BEACNpool/Treasury/blob/main/docs/methodology.md" target="_blank" rel="noreferrer">Methodology</a>
+        <a href="https://github.com/BEACNpool/Treasury/blob/main/docs/offchain_catalyst.md" target="_blank" rel="noreferrer">Catalyst dataset</a>
+        <a href="prototypes/treasury_dashboard_expanded.html" target="_blank" rel="noreferrer">Expanded prototype</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="card status-card">
+      <div id="status" class="mono">Loading…</div>
+    </section>
+
+    <section class="grid">
+      <section class="card">
+        <h2>Total pots: Treasury + Reserves (on-chain)</h2>
+        <div id="chart_total_pots" class="chart"></div>
+        <p class="hint">Source: db-sync (`ada_pots.treasury + ada_pots.reserves`). Total ADA held in the two pots (by epoch).</p>
+      </section>
+
+      <section class="card">
+        <h2>Treasury vs Reserves (on-chain)</h2>
+        <div id="chart_treasury" class="chart"></div>
+        <p class="hint">Source: db-sync (`ada_pots.treasury`, `ada_pots.reserves`). Split view for context.</p>
+
+        <h3 style="margin-top:16px">Why reserves trend down</h3>
+        <p class="hint">On Cardano, <strong>reserves are designed to decrease over time</strong>: monetary expansion (new ADA used for rewards) ultimately comes out of reserves. That creates constant downward pressure even when other effects offset it.</p>
+        <p class="hint">What we publish here is receipts-first: observed reserves balance changes (from <code>ada_pots</code>) plus the explicit drivers we can attribute today (pot transfers via <code>pot_transfer</code>, and net deposits/refunds via <code>tx.deposit</code>). The largest missing driver is <strong>rewards-by-epoch</strong> (from the <code>reward</code> table), which we are materializing separately because it’s huge on mainnet.</p>
+
+        <h3 style="margin-top:16px">Largest reserves drops (v1 breakdown)</h3>
+        <p class="hint">Biggest negative epoch-to-epoch reserves moves, with explicit line items currently available. Anything not explained yet should be treated as residual/unattributed until rewards-by-epoch lands.</p>
+        <div class="actions" style="margin:10px 0">
+          <a class="btn" href="outputs/onchain/reserves_drivers.csv" target="_blank" rel="noreferrer">Download reserves_drivers.csv</a>
+          <a class="btn" href="outputs/onchain/reserves_biggest_drops.csv" target="_blank" rel="noreferrer">Download biggest_drops.csv</a>
+        </div>
+        <div class="table-wrap">
+          <table id="table-reserves-drops"></table>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Catalyst (off-chain)</h2>
+        <p class="hint">Source: projectcatalyst.io scrape (verbatim). Used for analysis context; not ledger-truth.</p>
+
+        <div class="actions">
+          <a class="btn" href="outputs/offchain/catalyst/catalyst_proposers_full.json.gz" target="_blank" rel="noreferrer">Download full json.gz</a>
+          <a class="btn" href="outputs/offchain/catalyst/manifest.sha256" target="_blank" rel="noreferrer">sha256</a>
+          <a class="btn" href="outputs/offchain/catalyst/top_recipients.csv" target="_blank" rel="noreferrer">Top recipients CSV</a>
+        </div>
+
+        <div id="catalyst-summary" class="mono" style="margin-top:10px">Loading…</div>
+
+        <h3 style="margin-top:16px">Top recipients (by distributed USD)</h3>
+        <div class="table-wrap">
+          <table id="table-catalyst-top"></table>
+        </div>
+      </section>
+    </section>
+
+    <footer class="footer">
+      <p>Keep it simple. Publish receipts. Don’t imply guilt from flags.</p>
+    </footer>
+  </main>
+
+  <script src="app.js?v=2026-02-14-1"></script>
+</body>
+</html>
