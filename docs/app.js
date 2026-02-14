@@ -77,13 +77,16 @@ async function main() {
 
     Plotly.newPlot('chart_treasury', [
       { x, y, name: 'Treasury (ADA)', mode: 'lines', line: { color: '#34d399', width: 2 } },
-      { x, y: rsv, name: 'Reserves (ADA)', mode: 'lines', line: { color: '#60a5fa', width: 2 } },
+      // Reserves are much larger; put on secondary axis so both are readable.
+      { x, y: rsv, name: 'Reserves (ADA)', mode: 'lines', yaxis: 'y2', line: { color: '#60a5fa', width: 2 } },
     ], {
       paper_bgcolor: 'rgba(0,0,0,0)',
       plot_bgcolor: 'rgba(0,0,0,0)',
-      margin: { l: 70, r: 20, t: 10, b: 50 },
+      margin: { l: 70, r: 70, t: 10, b: 50 },
       xaxis: { title: 'Epoch', gridcolor: '#233044', color: '#9fb0c0' },
-      yaxis: { title: 'ADA', gridcolor: '#233044', color: '#9fb0c0' },
+      yaxis: { title: 'Treasury (ADA)', gridcolor: '#233044', color: '#9fb0c0' },
+      yaxis2: { title: 'Reserves (ADA)', overlaying: 'y', side: 'right', gridcolor: 'rgba(0,0,0,0)', color: '#9fb0c0' },
+      legend: { orientation: 'h', y: -0.22, font: { color: '#9fb0c0', size: 11 } },
       font: { color: '#e6edf3' },
     }, { displayModeBar: false, responsive: true });
   } catch (e) {
