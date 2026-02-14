@@ -167,9 +167,12 @@ function plotYearly(rows, offchainYearly=null) {
     yaxis: { ...PLOT_LAYOUT_BASE.yaxis, title: 'ADA' },
   }, PLOT_CFG);
 
+  const bar2 = withdrawalsAllZero ? impliedOther : withdrawals;
+  const bar2Name = withdrawalsAllZero ? 'Outflow (implied)' : 'Withdrawals (explicit)';
+
   Plotly.newPlot('chart_fees_withdrawals', [
     { x: year, y: fees, name: 'Fees', type: 'bar', marker: { color: COLORS.fees } },
-    { x: year, y: withdrawals, name: 'Withdrawals', type: 'bar', marker: { color: COLORS.withdrawals } },
+    { x: year, y: bar2, name: bar2Name, type: 'bar', marker: { color: withdrawalsAllZero ? '#f97316' : COLORS.withdrawals } },
   ], {
     ...PLOT_LAYOUT_BASE,
     barmode: 'group',
