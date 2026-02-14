@@ -345,6 +345,49 @@ async function main() {
       document.getElementById('epoch-count').textContent = '(epoch data not available yet)';
     }
 
+    // Off-chain: Catalyst (optional)
+    try {
+      const sumText = await fetchText('outputs/offchain/catalyst/summary.json');
+      const summary = JSON.parse(sumText);
+      const el = document.getElementById('catalyst-summary');
+      if (el) {
+        const c = summary.counts || {};
+        const t = summary.totals_usd || {};
+        el.innerHTML = `rows: ${fmt(c.proposers_total)} · funded: ${fmt(c.proposers_with_funded_projects)} · completed: ${fmt(c.proposers_with_completed_projects)}<br>` +
+          `distributed (USD): ${fmt(t.distributed_usd)} · remaining (USD): ${fmt(t.remaining_usd)} · requested (USD): ${fmt(t.requested_usd)}<br>` +
+          `generated: ${summary.generated_at_utc || 'unknown'}`;
+      }
+
+      const topText = await fetchText('outputs/offchain/catalyst/top_recipients.csv');
+      const { rows: topRows } = parseCSV(topText);
+      const tbl = document.getElementById('table-catalyst-top');
+      if (tbl) {
+        buildTable(
+          tbl,
+          ['name', 'username', 'total_distributed_usd', 'funded_projects', 'completed_projects', 'total_projects'],
+          {
+            name: 'Name',
+            username: 'Handle',
+            total_distributed_usd: 'Distributed (USD)',
+            funded_projects: 'Funded',
+            completed_projects: 'Completed',
+            total_projects: 'Total',
+          },
+          topRows,
+          { colorDelta: false }
+        );
+      }
+
+      const btn = document.getElementById('btn-download-catalyst-top');
+      if (btn) {
+        btn.disabled = false;
+        btn.addEventListener('click', () => downloadCSV(topText, 'catalyst_top_recipients.csv'));
+      }
+    } catch (e) {
+      const el = document.getElementById('catalyst-summary');
+      if (el) el.textContent = 'No off-chain Catalyst data published yet.';
+    }
+
   } catch (e) {
     status.textContent = `No data yet. Run the pipeline and publish outputs first. (${e.message})`;
   }

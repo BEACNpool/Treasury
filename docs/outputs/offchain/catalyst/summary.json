@@ -1,0 +1,22 @@
+{
+  "generated_at_utc": "2026-02-14T14:34:36.937771+00:00",
+  "source_kind": "catalyst",
+  "source_url": "https://projectcatalyst.io/search?type=proposers",
+  "input_csv": "data/offchain/catalyst/catalyst_proposers.csv",
+  "input_sha256": "1fbfc3fd2ee77039b20b8c6b851fd259952fad13224224c6afdd48e41101a62f",
+  "counts": {
+    "proposers_total": 5516,
+    "proposers_with_funded_projects": 1495,
+    "proposers_with_completed_projects": 1225
+  },
+  "totals_usd": {
+    "distributed_usd": 266375931.76,
+    "remaining_usd": 63966238.28,
+    "requested_usd": 3464616426.79
+  },
+  "totals_ada": {
+    "distributed_ada_reported": 0.0,
+    "note": "ADA fields in current scrape appear to be 0; use USD totals until verified."
+  },
+  "top_recipients_csv": "top_recipients.csv"
+}

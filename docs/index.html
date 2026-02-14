@@ -47,11 +47,12 @@
 
     <!-- Tab navigation -->
     <div class="tabs">
-      <button class="tab active" data-tab="yearly">Yearly</button>
+      <button class="tab active" data-tab="yearly">On-chain</button>
       <button class="tab" data-tab="epoch">Epoch</button>
+      <button class="tab" data-tab="offchain">Off-chain</button>
     </div>
 
-    <!-- Yearly view -->
+    <!-- On-chain view -->
     <div id="tab-yearly" class="tab-content active">
       <section class="grid">
         <section class="card">
@@ -97,6 +98,25 @@
           <table id="table-epoch"></table>
         </div>
         <p class="hint">Showing most recent 50 epochs. Download CSV for full dataset.</p>
+      </section>
+    </div>
+
+    <!-- Off-chain view -->
+    <div id="tab-offchain" class="tab-content">
+      <section class="card">
+        <h2>Project Catalyst (off-chain)</h2>
+        <p class="hint">Source: scraped from projectcatalyst.io proposers index. Used for analysis signals/flags; not guilt.</p>
+
+        <div id="catalyst-summary" class="mono">Loading…</div>
+
+        <div class="status-actions" style="margin-top:10px">
+          <button id="btn-download-catalyst-top" class="btn-sm" disabled>⬇ Top recipients CSV</button>
+        </div>
+
+        <h3 style="margin-top:16px">Top recipients (by total distributed USD)</h3>
+        <div class="table-wrap">
+          <table id="table-catalyst-top"></table>
+        </div>
       </section>
     </div>
 
