@@ -27,9 +27,15 @@
 
     <section class="grid">
       <section class="card">
-        <h2>Treasury + Reserves (on-chain)</h2>
+        <h2>Total pots: Treasury + Reserves (on-chain)</h2>
+        <div id="chart_total_pots" class="chart"></div>
+        <p class="hint">Source: db-sync (`ada_pots.treasury + ada_pots.reserves`). Total ADA held in the two pots (by epoch).</p>
+      </section>
+
+      <section class="card">
+        <h2>Treasury vs Reserves (on-chain)</h2>
         <div id="chart_treasury" class="chart"></div>
-        <p class="hint">Source: db-sync (`ada_pots.treasury`, `ada_pots.reserves`). Displays balances over time (by epoch).</p>
+        <p class="hint">Source: db-sync (`ada_pots.treasury`, `ada_pots.reserves`). Split view for context.</p>
       </section>
 
       <section class="card">

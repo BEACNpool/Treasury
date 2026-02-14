@@ -67,17 +67,34 @@ async function main() {
     status.textContent = 'No status.json yet.';
   }
 
-  // Treasury amount chart
+  // Treasury/reserves charts
   try {
     const epochText = await fetchText('outputs/epoch_treasury_fees.csv');
     const { rows } = parseCSV(epochText);
     const x = rows.map((r) => toNum(r.epoch_no));
-    const y = rows.map((r) => toNum(r.treasury_end_ada));
+    const t = rows.map((r) => toNum(r.treasury_end_ada));
     const rsv = rows.map((r) => toNum(r.reserves_start_ada));
+    const total = rows.map((r, i) => {
+      const a = t[i] || 0;
+      const b = rsv[i] || 0;
+      return a + b;
+    });
 
+    // Total pots
+    Plotly.newPlot('chart_total_pots', [
+      { x, y: total, name: 'Treasury + Reserves (ADA)', mode: 'lines', line: { color: '#fbbf24', width: 2 } },
+    ], {
+      paper_bgcolor: 'rgba(0,0,0,0)',
+      plot_bgcolor: 'rgba(0,0,0,0)',
+      margin: { l: 70, r: 20, t: 10, b: 50 },
+      xaxis: { title: 'Epoch', gridcolor: '#233044', color: '#9fb0c0' },
+      yaxis: { title: 'ADA', gridcolor: '#233044', color: '#9fb0c0' },
+      font: { color: '#e6edf3' },
+    }, { displayModeBar: false, responsive: true });
+
+    // Split view
     Plotly.newPlot('chart_treasury', [
-      { x, y, name: 'Treasury (ADA)', mode: 'lines', line: { color: '#34d399', width: 2 } },
-      // Reserves are much larger; put on secondary axis so both are readable.
+      { x, y: t, name: 'Treasury (ADA)', mode: 'lines', line: { color: '#34d399', width: 2 } },
       { x, y: rsv, name: 'Reserves (ADA)', mode: 'lines', yaxis: 'y2', line: { color: '#60a5fa', width: 2 } },
     ], {
       paper_bgcolor: 'rgba(0,0,0,0)',
