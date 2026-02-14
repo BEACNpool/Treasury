@@ -84,11 +84,30 @@ donations AS (
 pot_xfers AS (
   SELECT
     b.epoch_no,
-    SUM(pt.treasury) AS pot_transfer_treasury
+    SUM(pt.treasury) AS pot_transfer_treasury,
+    SUM(pt.reserves) AS pot_transfer_reserves
   FROM pot_transfer pt
   JOIN tx     ON tx.id = pt.tx_id
   JOIN block b ON b.id = tx.block_id
   GROUP BY b.epoch_no
+),
+-- Net deposit movements (key deposits, pool deposits, refunds) by epoch.
+-- Note: tx.deposit is net for the transaction and may be negative in refund cases.
+deposits AS (
+  SELECT
+    b.epoch_no,
+    SUM(tx.deposit)::numeric AS deposit_net
+  FROM tx
+  JOIN block b ON b.id = tx.block_id
+  GROUP BY b.epoch_no
+),
+-- Total rewards earned per epoch (proxy for reserves drawdown into reward distribution).
+rewards AS (
+  SELECT
+    earned_epoch AS epoch_no,
+    SUM(amount) AS rewards_earned
+  FROM reward
+  GROUP BY earned_epoch
 )
 SELECT
   p.epoch_no,
@@ -101,6 +120,9 @@ SELECT
   (p.treasury_end - p.treasury_start) AS treasury_delta,
 
   p.reserves_start,
+  p.reserves_end,
+  (p.reserves_end - p.reserves_start) AS reserves_delta,
+
   par.rho,
   par.tau,
 
@@ -112,6 +134,9 @@ SELECT
 
   COALESCE(d.treasury_donations,0) AS treasury_donations,
   COALESCE(px.pot_transfer_treasury,0) AS pot_transfer_treasury,
+  COALESCE(px.pot_transfer_reserves,0) AS pot_transfer_reserves,
+  COALESCE(dep.deposit_net,0) AS deposit_net,
+  COALESCE(rw.rewards_earned,0) AS rewards_earned,
 
   COALESCE(mir.mir_treasury_payments,0) AS mir_treasury_payments,
   COALESCE(cw.conway_enacted_withdrawals,0) AS conway_enacted_withdrawals
@@ -122,4 +147,6 @@ LEFT JOIN mir_treasury_out mir ON mir.epoch_no = p.epoch_no
 LEFT JOIN conway_withdrawals cw ON cw.epoch_no = p.epoch_no
 LEFT JOIN donations d ON d.epoch_no = p.epoch_no
 LEFT JOIN pot_xfers px ON px.epoch_no = p.epoch_no
+LEFT JOIN deposits dep ON dep.epoch_no = p.epoch_no
+LEFT JOIN rewards rw ON rw.epoch_no = p.epoch_no
 ORDER BY p.epoch_no;
