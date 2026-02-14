@@ -107,6 +107,7 @@ rewards AS (
     earned_epoch AS epoch_no,
     SUM(amount) AS rewards_earned
   FROM reward
+  WHERE earned_epoch BETWEEN (SELECT MIN(epoch_no) FROM paired) AND (SELECT MAX(epoch_no) FROM paired)
   GROUP BY earned_epoch
 )
 SELECT
