@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Treasury — Treasury-only</title>
+  <link rel="stylesheet" href="site.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="nav">
+    <div class="wrap">
+      <div class="brand">BEACN · treasury</div>
+      <div class="links">
+        <a href="./">Home</a>
+        <a href="pots.html">Treasury+Reserves</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="h1">Treasury-only</div>
+    <p class="sub">On-chain historical series from db-sync (<code>ada_pots.treasury</code> via our epoch export). Includes an <strong>AI projection</strong> section with explicit assumptions.</p>
+
+    <div class="card">
+      <div class="row">
+        <div>
+          <strong>History:</strong> treasury balance
+          <div class="note">No mock data. Source: <code>outputs/epoch_treasury_fees.csv</code>.</div>
+        </div>
+      </div>
+      <canvas id="treasuryChart" class="chart"></canvas>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <div>
+          <strong>AI projection (clearly labeled model):</strong> simple scenario view
+          <div class="note">Assumes spending per year and fee income growth; does not claim to predict governance decisions.</div>
+        </div>
+      </div>
+      <details open>
+        <summary>Assumptions (amendment)</summary>
+        <ul class="note" style="margin-top:8px">
+          <li>Start from latest published treasury balance.</li>
+          <li>Annual inflow proxy = last 10 epochs average (treasury delta) × epochs/year.</li>
+          <li>Annual spend scenario subtracts fixed ADA/year (250M / 350M / 500M).</li>
+          <li>This is a model for discussion, not a ledger fact.</li>
+        </ul>
+      </details>
+      <canvas id="treasuryProj" class="chart"></canvas>
+    </div>
+  </div>
+
+  <script type="module">
+    import { fetchText, parseCSV, toNum } from './site.js';
+
+    const text = await fetchText('outputs/epoch_treasury_fees.csv');
+    const rows = parseCSV(text).rows;
+
+    const epoch = rows.map(r=>toNum(r.epoch_no));
+    const t = rows.map(r=>toNum(r.treasury_end_ada) || 0);
+
+    new Chart(document.getElementById('treasuryChart'), {
+      type:'line',
+      data:{ labels: epoch, datasets:[{label:'Treasury (ADA)', data: t.map(v=>v/1e6), borderColor:'#22d3ee', backgroundColor:'rgba(34,211,238,.08)', fill:true, pointRadius:0, tension:0.25, borderWidth:2.5}]},
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, interaction:{mode:'index',intersect:false}, scales:{x:{grid:{display:false},ticks:{maxTicksLimit:10,color:'#94a3b8'}}, y:{grid:{color:'rgba(26,35,50,.6)'},ticks:{color:'#94a3b8'}}}}
+    });
+
+    // Projection
+    const lastN = 10;
+    const deltas = rows.slice(-lastN).map(r=>toNum(r.treasury_delta_ada)||0);
+    const avgDelta = deltas.reduce((a,b)=>a+b,0)/Math.max(1,deltas.length);
+    const epochsPerYear = 73;
+    const inflowAnnual = avgDelta * epochsPerYear;
+
+    const years = Array.from({length:11},(_,i)=>2026+i);
+    const scenarios = [
+      {name:'250M/yr spend', spend:250e6, color:'#34d399'},
+      {name:'350M/yr spend', spend:350e6, color:'#facc15'},
+      {name:'500M/yr spend', spend:500e6, color:'#f87171'},
+    ];
+
+    const start = t[t.length-1];
+    const ds = scenarios.map(s=>{
+      let cur = start;
+      const out=[cur/1e6];
+      for(let i=1;i<years.length;i++){
+        cur = Math.max(0, cur + inflowAnnual - s.spend);
+        out.push(cur/1e6);
+      }
+      return {label:s.name, data: out, borderColor:s.color, backgroundColor:'rgba(0,0,0,0)', borderWidth:2, pointRadius:0, tension:0.2};
+    });
+
+    new Chart(document.getElementById('treasuryProj'), {
+      type:'line',
+      data:{ labels: years, datasets: ds },
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom',labels:{color:'#94a3b8'}}}, interaction:{mode:'index',intersect:false}, scales:{x:{grid:{display:false},ticks:{color:'#94a3b8'}}, y:{grid:{color:'rgba(26,35,50,.6)'},ticks:{color:'#94a3b8'}}}}
+    });
+  </script>
+</body>
+</html>

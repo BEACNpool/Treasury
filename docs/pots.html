@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Treasury — Total Pots (Treasury+Reserves)</title>
+  <link rel="stylesheet" href="site.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="nav">
+    <div class="wrap">
+      <div class="brand">BEACN · treasury</div>
+      <div class="links">
+        <a href="./">Home</a>
+        <a href="fees.html">Fee income</a>
+        <a href="treasury.html">Treasury-only</a>
+        <a href="reserves.html">Reserves-only</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="h1">Total Pots: Treasury + Reserves</div>
+    <p class="sub">On-chain, ledger-derived from db-sync <code>ada_pots</code> snapshots (via our exported epoch series).</p>
+
+    <div class="card">
+      <div class="row">
+        <div>
+          <strong>Chart:</strong> total unallocated ADA (treasury + reserves)
+          <div class="note">Source: <code>docs/outputs/epoch_treasury_fees.csv</code> (treasury_end_ada + reserves_start_ada).</div>
+        </div>
+        <a class="btn" href="outputs/epoch_treasury_fees.csv" target="_blank" rel="noreferrer">Download epoch CSV</a>
+      </div>
+      <canvas id="potsChart" class="chart"></canvas>
+      <div class="note" style="margin-top:10px">We’ll add explicit driver breakdowns (rewards, deposits, pot transfers) as those datasets are materialized and published. No mock data.</div>
+    </div>
+
+    <details>
+      <summary>Viewer: biggest moves (up/down) in total pots</summary>
+      <div class="note" style="margin-top:8px">Shows top 25 increases and top 25 decreases by epoch-to-epoch change.</div>
+      <div class="tableWrap" style="margin-top:10px"><table id="movesTable"></table></div>
+    </details>
+
+    <div class="card">
+      <div class="row">
+        <div>
+          <strong>Sub-pages:</strong> deeper focus
+          <div class="note">Treasury-only and Reserves-only pages include history + clearly-labeled AI projections.</div>
+        </div>
+        <div class="links">
+          <a class="btn" href="treasury.html">Treasury-only</a>
+          <a class="btn" href="reserves.html">Reserves-only</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { fetchText, parseCSV, toNum, fmtAda, renderTable } from './site.js';
+
+    const text = await fetchText('outputs/epoch_treasury_fees.csv');
+    const rows = parseCSV(text).rows;
+
+    const epoch = rows.map(r=>toNum(r.epoch_no));
+    const treasury = rows.map(r=>toNum(r.treasury_end_ada) || 0);
+    const reserves = rows.map(r=>toNum(r.reserves_start_ada) || 0);
+    const total = treasury.map((v,i)=>v + (reserves[i]||0));
+
+    const totalM = total.map(v=>v/1e6);
+
+    new Chart(document.getElementById('potsChart'), {
+      type: 'line',
+      data: {
+        labels: epoch,
+        datasets: [{
+          label: 'Treasury + Reserves (₳M)',
+          data: totalM,
+          borderColor: '#38bdf8',
+          backgroundColor: 'rgba(56,189,248,.08)',
+          fill: true,
+          borderWidth: 2.5,
+          pointRadius: 0,
+          tension: 0.25,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        interaction: { mode: 'index', intersect: false },
+        scales: {
+          x: { grid: { display: false }, ticks: { maxTicksLimit: 10, color: '#94a3b8' } },
+          y: { grid: { color: 'rgba(26,35,50,.6)' }, ticks: { color: '#94a3b8' } },
+        }
+      }
+    });
+
+    // moves
+    const moves = [];
+    for(let i=1;i<rows.length;i++){
+      const d = total[i]-total[i-1];
+      moves.push({
+        epoch: rows[i].epoch_no,
+        change_ada: d,
+        change_fmt: fmtAda(d),
+        total_fmt: fmtAda(total[i]),
+      });
+    }
+    const up = [...moves].sort((a,b)=>b.change_ada-a.change_ada).slice(0,25);
+    const dn = [...moves].sort((a,b)=>a.change_ada-b.change_ada).slice(0,25);
+    const merged = [{epoch:'TOP INCREASES', change_fmt:'', total_fmt:''}, ...up, {epoch:'TOP DECREASES', change_fmt:'', total_fmt:''}, ...dn];
+    renderTable(document.getElementById('movesTable'), merged, ['epoch','change_fmt','total_fmt'], 999);
+  </script>
+</body>
+</html>

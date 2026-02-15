@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Treasury — Cumulative TX Fee Income</title>
+  <link rel="stylesheet" href="site.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="nav">
+    <div class="wrap">
+      <div class="brand">BEACN · treasury</div>
+      <div class="links">
+        <a href="./">Home</a>
+        <a href="pots.html">Treasury+Reserves</a>
+        <a href="https://github.com/BEACNpool/Treasury" target="_blank" rel="noreferrer">GitHub</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="h1">Cumulative TX Fee Income</div>
+    <p class="sub">On-chain, ledger-derived from db-sync <code>epoch.fees</code> (per-epoch) with a cumulative sum (epoch 0 → tip).</p>
+
+    <div class="card kpis" id="kpis">
+      <div class="kpi">
+        <div class="lbl">Lifetime fees (cumulative)</div>
+        <div class="val" id="fee_total">—</div>
+        <div class="note" id="fee_tip">—</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">Fees at Shelley start (epoch 209)</div>
+        <div class="val" id="fee_shelley">—</div>
+        <div class="note">Reference point only</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">Why it looks flat early</div>
+        <div class="val">Scale</div>
+        <div class="note">Chart is in ₳M; early epochs have tiny cumulative fees.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <div>
+          <strong>Chart:</strong> cumulative fees over time
+          <div class="note">Left axis: ₳M (cumulative). No zoom/pinch interactions.</div>
+        </div>
+        <a class="btn" href="outputs/onchain/fee_income_epoch.csv" target="_blank" rel="noreferrer">Download CSV</a>
+      </div>
+      <canvas id="feeChart" class="chart"></canvas>
+      <details style="margin-top:12px">
+        <summary>How this number is accumulated (receipts)</summary>
+        <p class="note" style="margin-top:8px">
+          Source table: <code>epoch</code>. Column: <code>fees</code> (lovelace) for each epoch. We compute:
+          <code>cumulative_fees = SUM(epoch.fees) OVER (ORDER BY epoch_no)</code>, then divide by 1e6 for ADA.
+        </p>
+      </details>
+    </div>
+  </div>
+
+  <script type="module">
+    import { fetchText, parseCSV, toNum, fmtAda } from './site.js';
+
+    const text = await fetchText('outputs/onchain/fee_income_epoch.csv');
+    const rows = parseCSV(text).rows;
+
+    const epoch = rows.map(r=>toNum(r.epoch_no));
+    const cumAda = rows.map(r=>toNum(r.cumulative_fees_ada));
+
+    const last = rows[rows.length-1];
+    document.getElementById('fee_total').textContent = fmtAda(toNum(last.cumulative_fees_ada));
+    document.getElementById('fee_tip').textContent = `tip epoch ${last.epoch_no} · ${last.start_time}`;
+
+    const shelley = rows.find(r=>String(r.epoch_no)==='209');
+    if(shelley) document.getElementById('fee_shelley').textContent = fmtAda(toNum(shelley.cumulative_fees_ada));
+
+    const dataM = cumAda.map(v=>v===null?null:(v/1e6));
+
+    new Chart(document.getElementById('feeChart'), {
+      type: 'line',
+      data: {
+        labels: epoch,
+        datasets: [{
+          label: 'Cumulative fees (₳M)',
+          data: dataM,
+          borderColor: '#34d399',
+          backgroundColor: 'rgba(52,211,153,.08)',
+          fill: true,
+          borderWidth: 2.5,
+          pointRadius: 0,
+          tension: 0.25,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        interaction: { mode: 'index', intersect: false },
+        scales: {
+          x: { grid: { display: false }, ticks: { maxTicksLimit: 10, color: '#94a3b8' } },
+          y: { grid: { color: 'rgba(26,35,50,.6)' }, ticks: { color: '#94a3b8' } },
+        }
+      }
+    });
+  </script>
+</body>
+</html>

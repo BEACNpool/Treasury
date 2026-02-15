@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Treasury — Reserves-only</title>
+  <link rel="stylesheet" href="site.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="nav">
+    <div class="wrap">
+      <div class="brand">BEACN · treasury</div>
+      <div class="links">
+        <a href="./">Home</a>
+        <a href="pots.html">Treasury+Reserves</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="h1">Reserves-only</div>
+    <p class="sub">On-chain historical series from db-sync (<code>ada_pots.reserves</code> via our epoch export). Includes an <strong>AI projection</strong> section with explicit assumptions.</p>
+
+    <div class="card">
+      <div class="row">
+        <div>
+          <strong>History:</strong> reserves balance
+          <div class="note">No mock data. Source: <code>outputs/epoch_treasury_fees.csv</code>.</div>
+        </div>
+      </div>
+      <canvas id="resChart" class="chart"></canvas>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <div>
+          <strong>AI projection (model):</strong> reserves depletion
+          <div class="note">This model assumes a constant monetary expansion rate ρ and epochs/year. It is a projection, not a ledger fact.</div>
+        </div>
+      </div>
+      <details open>
+        <summary>Assumptions (amendment)</summary>
+        <ul class="note" style="margin-top:8px">
+          <li>Start from latest published reserves balance.</li>
+          <li>Default ρ = 0.003 (0.3% per epoch). This is a parameter and can change via governance.</li>
+          <li>Epochs/year ≈ 73.</li>
+        </ul>
+      </details>
+      <canvas id="resProj" class="chart"></canvas>
+    </div>
+  </div>
+
+  <script type="module">
+    import { fetchText, parseCSV, toNum } from './site.js';
+
+    const text = await fetchText('outputs/epoch_treasury_fees.csv');
+    const rows = parseCSV(text).rows;
+
+    const epoch = rows.map(r=>toNum(r.epoch_no));
+    const rsv = rows.map(r=>toNum(r.reserves_start_ada) || 0);
+
+    new Chart(document.getElementById('resChart'), {
+      type:'line',
+      data:{ labels: epoch, datasets:[{label:'Reserves (ADA)', data: rsv.map(v=>v/1e6), borderColor:'#a78bfa', backgroundColor:'rgba(167,139,250,.08)', fill:true, pointRadius:0, tension:0.25, borderWidth:2.5}]},
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, interaction:{mode:'index',intersect:false}, scales:{x:{grid:{display:false},ticks:{maxTicksLimit:10,color:'#94a3b8'}}, y:{grid:{color:'rgba(26,35,50,.6)'},ticks:{color:'#94a3b8'}}}}
+    });
+
+    // Projection
+    const years = Array.from({length:31},(_,i)=>2026+i);
+    const rho = 0.003;
+    const epochsPerYear = 73;
+    const decay = Math.pow(1 - rho, epochsPerYear);
+    let cur = rsv[rsv.length-1];
+    const series=[cur/1e6];
+    for(let i=1;i<years.length;i++){
+      cur = cur * decay;
+      series.push(cur/1e6);
+    }
+
+    new Chart(document.getElementById('resProj'), {
+      type:'line',
+      data:{ labels: years, datasets:[{label:`Reserves projection (ρ=${rho})`, data: series, borderColor:'#38bdf8', backgroundColor:'rgba(56,189,248,.06)', fill:true, pointRadius:0, tension:0.2, borderWidth:2.2}]},
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom',labels:{color:'#94a3b8'}}}, interaction:{mode:'index',intersect:false}, scales:{x:{grid:{display:false},ticks:{color:'#94a3b8'}}, y:{grid:{color:'rgba(26,35,50,.6)'},ticks:{color:'#94a3b8'}}}}
+    });
+  </script>
+</body>
+</html>
