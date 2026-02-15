@@ -202,23 +202,23 @@ footer .f2{font-size:13px;color:var(--text-2);font-style:italic;margin-top:6px;}
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════════════════
-     CHART 1: Treasury, Reserves, and Fee Income over the life of the chain
+     CHART 1: Cumulative TX Fee Income (revenue)
      ═══════════════════════════════════════════════════════════════════════════ -->
 <div class="card">
-  <div class="card-title">Treasury, Reserves & Cumulative Fee Income — Life of Chain</div>
-  <canvas id="threeLineChart" height="150"></canvas>
-  <p class="chart-note">Treasury (teal) is the spending pool — it grows from expansion until withdrawals begin. Reserves (violet) only shrink. Cumulative fee income (green) is the long-term revenue source that must eventually replace expansion as reserves deplete.</p>
-  <span class="source-tag">ada_pots · all epochs</span>
+  <div class="card-title">Cumulative TX Fee Income — Life of Chain</div>
+  <canvas id="feeIncomeChart" height="150"></canvas>
+  <p class="chart-note">This is the cleanest, ledger-native revenue signal: total transaction fees collected over time. It only goes up. As reserves deplete, fees become the long-run source of treasury replenishment.</p>
+  <span class="source-tag">ada_pots.fees (cumulative)</span>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════════════════
-     CHART 2: Combined Treasury+Reserves vs Cumulative Fee Income
+     CHART 2: Treasury + Reserves (spending pools)
      ═══════════════════════════════════════════════════════════════════════════ -->
 <div class="card">
-  <div class="card-title">Combined Treasury + Reserves vs. Cumulative Fee Income</div>
-  <canvas id="combinedVsFeesChart" height="150"></canvas>
-  <p class="chart-note">The blue line is total unallocated ADA (treasury + reserves). It only trends down structurally. The green line is total fees ever collected — the organic revenue the chain generates. The gap between these tells the sustainability story: as the blue shrinks and the green grows, Cardano transitions from reserve-funded to fee-funded.</p>
-  <span class="source-tag">ada_pots · computed</span>
+  <div class="card-title">Treasury & Reserves — Life of Chain</div>
+  <canvas id="treasuryReservesChart" height="150"></canvas>
+  <p class="chart-note">Treasury (teal) is the spending pool; reserves (violet) are the emission source and trend down structurally. This chart focuses only on the two pots (no fee line) so the outflow picture is clear.</p>
+  <span class="source-tag">ada_pots (balances)</span>
 </div>
 
 <div class="divider"></div>
@@ -515,16 +515,37 @@ const R=mkRes(eps),T=mkTrs(eps),CF=mkCumFees(eps);
 const combined=eps.map((_,i)=>R[i]+T[i]);
 
 // ════════════════════════════════════════════════════════════════
-// CHART 1: Treasury, Reserves & Cumulative Fee Income
+// CHART 1: Cumulative TX Fee Income (revenue)
 // ════════════════════════════════════════════════════════════════
-new Chart(document.getElementById('threeLineChart'),{
+new Chart(document.getElementById('feeIncomeChart'),{
   type:'line',
   data:{
     labels:eps.map(e=>'E'+e),
     datasets:[
-      {label:'Reserves (₳M)',data:R,borderColor:'#a78bfa',backgroundColor:'rgba(167,139,250,.03)',fill:true,tension:.3,pointRadius:0,borderWidth:2,yAxisID:'y'},
-      {label:'Treasury (₳M)',data:T,borderColor:'#22d3ee',backgroundColor:'rgba(34,211,238,.03)',fill:true,tension:.3,pointRadius:0,borderWidth:2,yAxisID:'y'},
-      {label:'Cumulative Fee Income (₳M)',data:CF,borderColor:'#34d399',backgroundColor:'rgba(52,211,153,.03)',fill:true,tension:.3,pointRadius:0,borderWidth:2.5,yAxisID:'y2'}
+      {label:'Cumulative Fee Income (₳M)',data:CF,borderColor:'#34d399',backgroundColor:'rgba(52,211,153,.06)',fill:true,tension:.3,pointRadius:0,borderWidth:2.5,yAxisID:'y'}
+    ]
+  },
+  options:{
+    responsive:true,
+    interaction:{mode:'index',intersect:false},
+    plugins:{legend:{display:false}},
+    scales:{
+      y:{position:'left',title:{display:true,text:'₳M (Cumulative Fees)',color:'#34d399'},grid:cG},
+      x:{grid:nG,ticks:{maxTicksLimit:14}}
+    }
+  }
+});
+
+// ════════════════════════════════════════════════════════════════
+// CHART 2: Treasury + Reserves (spending pools only)
+// ════════════════════════════════════════════════════════════════
+new Chart(document.getElementById('treasuryReservesChart'),{
+  type:'line',
+  data:{
+    labels:eps.map(e=>'E'+e),
+    datasets:[
+      {label:'Reserves (₳M)',data:R,borderColor:'#a78bfa',backgroundColor:'rgba(167,139,250,.04)',fill:true,tension:.3,pointRadius:0,borderWidth:2,yAxisID:'y'},
+      {label:'Treasury (₳M)',data:T,borderColor:'#22d3ee',backgroundColor:'rgba(34,211,238,.04)',fill:true,tension:.3,pointRadius:0,borderWidth:2,yAxisID:'y'}
     ]
   },
   options:{
@@ -533,31 +554,6 @@ new Chart(document.getElementById('threeLineChart'),{
     plugins:{legend:{position:'top',labels:{usePointStyle:true,padding:16}}},
     scales:{
       y:{position:'left',title:{display:true,text:'₳M (Treasury & Reserves)',color:'#4f6479'},grid:cG},
-      y2:{position:'right',title:{display:true,text:'₳M (Cumulative Fees)',color:'#34d399'},grid:{drawOnChartArea:false}},
-      x:{grid:nG,ticks:{maxTicksLimit:14}}
-    }
-  }
-});
-
-// ════════════════════════════════════════════════════════════════
-// CHART 2: Combined Treasury+Reserves vs Cumulative Fee Income
-// ════════════════════════════════════════════════════════════════
-new Chart(document.getElementById('combinedVsFeesChart'),{
-  type:'line',
-  data:{
-    labels:eps.map(e=>'E'+e),
-    datasets:[
-      {label:'Treasury + Reserves (₳M)',data:combined,borderColor:'#38bdf8',backgroundColor:'rgba(56,189,248,.04)',fill:true,tension:.3,pointRadius:0,borderWidth:2.5,yAxisID:'y'},
-      {label:'Cumulative Fee Income (₳M)',data:CF,borderColor:'#34d399',backgroundColor:'rgba(52,211,153,.04)',fill:true,tension:.3,pointRadius:0,borderWidth:2.5,yAxisID:'y2'}
-    ]
-  },
-  options:{
-    responsive:true,
-    interaction:{mode:'index',intersect:false},
-    plugins:{legend:{position:'top',labels:{usePointStyle:true,padding:16}}},
-    scales:{
-      y:{position:'left',title:{display:true,text:'₳M (Combined Balance)',color:'#38bdf8'},grid:cG},
-      y2:{position:'right',title:{display:true,text:'₳M (Cumulative Fees)',color:'#34d399'},grid:{drawOnChartArea:false}},
       x:{grid:nG,ticks:{maxTicksLimit:14}}
     }
   }
