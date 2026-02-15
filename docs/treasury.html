@@ -70,7 +70,7 @@
   </div>
 
   <script type="module">
-    import { fetchText, parseCSV, toNum } from './site.js';
+    import { fetchText, parseCSV, toNum, renderTable } from './site.js';
 
     const text = await fetchText('outputs/epoch_treasury_fees.csv');
     const rows = parseCSV(text).rows;
