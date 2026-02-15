@@ -138,7 +138,17 @@ td.num{font-family:var(--mono);font-weight:500;}
 /* ── Scenario Buttons ── */
 .scn-btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
 .scn-btn{font-family:var(--mono);font-size:11px;padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-3);cursor:pointer;transition:all .15s;}
-.scn-btn.on,.scn-btn:hover{border-color:var(--combined);color:var(--combined);background:rgba(56,189,248,.05);}
+.scn-btn.on,.scn-btn:hover{border-color:var(--combined);color:var(--combined);background:rgba(56,189,248,.05);} 
+
+/* ── Inline leaderboard viewer ── */
+.btn{font-family:var(--mono);font-size:10px;color:var(--text-3);text-decoration:none;padding:4px 10px;border:1px solid var(--border);border-radius:5px;transition:all .15s;background:transparent;cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
+.btn:hover{color:var(--trs);border-color:var(--trs);}
+.btn-mini{padding:3px 8px;font-size:10px;border-radius:5px;}
+.viewer{margin-top:14px;border:1px solid var(--border);border-radius:10px;padding:12px 14px;background:rgba(255,255,255,0.02)}
+.viewer summary{cursor:pointer;color:var(--text-2);font-size:13px}
+.viewer[open] summary{color:var(--text)}
+#viewer-table th, #viewer-table td{font-size:11px}
+
 
 /* ── SQL ── */
 .sql-section{padding-top:48px;border-top:1px solid var(--border-dim);margin-top:48px;}
@@ -267,17 +277,25 @@ footer .f2{font-size:13px;color:var(--text-2);font-style:italic;margin-top:6px;}
 
     <div class="tbl-wrap" style="margin-top:14px;">
       <table>
-        <thead><tr><th>Leaderboard</th><th>Download</th></tr></thead>
+        <thead><tr><th>Leaderboard</th><th>View</th><th>Download</th></tr></thead>
         <tbody>
-          <tr><td>Top by Distributed (USD)</td><td><a href="outputs/offchain/catalyst/analytics/leaderboards/top_by_distributed_usd.csv">CSV</a></td></tr>
-          <tr><td>Top by Distributed (ADA)</td><td><a href="outputs/offchain/catalyst/analytics/leaderboards/top_by_distributed_ada.csv">CSV</a></td></tr>
-          <tr><td>Top by Total Projects</td><td><a href="outputs/offchain/catalyst/analytics/leaderboards/top_by_total_projects.csv">CSV</a></td></tr>
-          <tr><td>Top by Funded Projects</td><td><a href="outputs/offchain/catalyst/analytics/leaderboards/top_by_funded_projects.csv">CSV</a></td></tr>
-          <tr><td>Top by Completed Projects</td><td><a href="outputs/offchain/catalyst/analytics/leaderboards/top_by_completed_projects.csv">CSV</a></td></tr>
-          <tr><td>Top by Requested (USD)</td><td><a href="outputs/offchain/catalyst/analytics/leaderboards/top_by_requested_usd.csv">CSV</a></td></tr>
+          <tr><td>Top by Distributed (USD)</td><td><button class="btn btn-mini" data-view="lb_usd">View</button></td><td><a href="outputs/offchain/catalyst/analytics/leaderboards/top_by_distributed_usd.csv">CSV</a></td></tr>
+          <tr><td>Top by Distributed (ADA)</td><td><button class="btn btn-mini" data-view="lb_ada">View</button></td><td><a href="outputs/offchain/catalyst/analytics/leaderboards/top_by_distributed_ada.csv">CSV</a></td></tr>
+          <tr><td>Top by Total Projects</td><td><button class="btn btn-mini" data-view="lb_total">View</button></td><td><a href="outputs/offchain/catalyst/analytics/leaderboards/top_by_total_projects.csv">CSV</a></td></tr>
+          <tr><td>Top by Funded Projects</td><td><button class="btn btn-mini" data-view="lb_funded">View</button></td><td><a href="outputs/offchain/catalyst/analytics/leaderboards/top_by_funded_projects.csv">CSV</a></td></tr>
+          <tr><td>Top by Completed Projects</td><td><button class="btn btn-mini" data-view="lb_completed">View</button></td><td><a href="outputs/offchain/catalyst/analytics/leaderboards/top_by_completed_projects.csv">CSV</a></td></tr>
+          <tr><td>Top by Requested (USD)</td><td><button class="btn btn-mini" data-view="lb_requested">View</button></td><td><a href="outputs/offchain/catalyst/analytics/leaderboards/top_by_requested_usd.csv">CSV</a></td></tr>
         </tbody>
       </table>
     </div>
+
+    <details class="viewer" id="viewer">
+      <summary>Inline viewer (no download needed)</summary>
+      <div class="chart-note" style="margin-top:8px;">Showing a small slice inline for readability. Use CSV download for full receipts.</div>
+      <div class="tbl-wrap" style="margin-top:10px;">
+        <table id="viewer-table"></table>
+      </div>
+    </details>
 
     <p class="chart-note" style="margin-top:12px;">This section is <strong>AI-curated</strong> (choice of views + thresholds), but the derivation is deterministic and fully auditable from the raw dataset. Signals are not accusations.</p>
   </div>
@@ -548,6 +566,55 @@ try {
   if (el) el.textContent = (n===null? '—' : String(n));
 } catch (e) { /* ignore */ }
 
+// Inline viewer wiring
+const VIEW_MAP = {
+  lb_usd: 'outputs/offchain/catalyst/analytics/leaderboards/top_by_distributed_usd.csv',
+  lb_ada: 'outputs/offchain/catalyst/analytics/leaderboards/top_by_distributed_ada.csv',
+  lb_total: 'outputs/offchain/catalyst/analytics/leaderboards/top_by_total_projects.csv',
+  lb_funded: 'outputs/offchain/catalyst/analytics/leaderboards/top_by_funded_projects.csv',
+  lb_completed: 'outputs/offchain/catalyst/analytics/leaderboards/top_by_completed_projects.csv',
+  lb_requested: 'outputs/offchain/catalyst/analytics/leaderboards/top_by_requested_usd.csv'
+};
+
+function renderTable(el, rows, maxRows=30){
+  if(!el) return;
+  if(!rows || rows.length===0){ el.innerHTML=''; return; }
+  const headers = Object.keys(rows[0]);
+  const thead = `<thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead>`;
+  const bodyRows = rows.slice(0,maxRows).map(r=>{
+    return `<tr>${headers.map(h=>`<td>${(r[h]??'')}</td>`).join('')}</tr>`;
+  }).join('');
+  el.innerHTML = thead + `<tbody>${bodyRows}</tbody>`;
+}
+
+function parseCSVRows(t){
+  const lines=t.trim().split(/\r?\n/);
+  const h=lines[0].split(',');
+  const rows=[];
+  for(let i=1;i<lines.length;i++){
+    const c=lines[i].split(',');
+    const o={};
+    h.forEach((k,idx)=>o[k]=c[idx]);
+    rows.push(o);
+  }
+  return rows;
+}
+
+async function openViewer(key){
+  const path = VIEW_MAP[key];
+  if(!path) return;
+  const viewer = document.getElementById('viewer');
+  const table = document.getElementById('viewer-table');
+  if(viewer) viewer.open = true;
+  const text = await fetchText(path);
+  const rows = parseCSVRows(text);
+  renderTable(table, rows, 30);
+  if(viewer) viewer.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+document.querySelectorAll('button[data-view]').forEach(btn=>{
+  btn.addEventListener('click', ()=> openViewer(btn.getAttribute('data-view')));
+});
 
 </script>
 
