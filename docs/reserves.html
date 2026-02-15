@@ -29,7 +29,13 @@
           <div class="note">No mock data. Source: <code>outputs/epoch_treasury_fees.csv</code>.</div>
         </div>
       </div>
-      <canvas id="resChart" class="chart"></canvas>
+      <div class="chartBox"><canvas id="resChart"></canvas></div>
+
+      <details style="margin-top:12px">
+        <summary>Largest reserves drops — with line-item hints</summary>
+        <div class="note" style="margin-top:8px">These are the biggest negative epoch-to-epoch reserves moves. Hints use explicit line items (pot transfers + net deposits). Rewards-by-epoch is not yet included.</div>
+        <div class="tableWrap" style="margin-top:10px"><table id="dropsTable"></table></div>
+      </details>
     </div>
 
     <div class="card">
@@ -47,7 +53,7 @@
           <li>Epochs/year ≈ 73.</li>
         </ul>
       </details>
-      <canvas id="resProj" class="chart"></canvas>
+      <div class="chartBox"><canvas id="resProj"></canvas></div>
     </div>
   </div>
 
@@ -65,6 +71,32 @@
       data:{ labels: epoch, datasets:[{label:'Reserves (ADA)', data: rsv.map(v=>v/1e6), borderColor:'#a78bfa', backgroundColor:'rgba(167,139,250,.08)', fill:true, pointRadius:0, tension:0.25, borderWidth:2.5}]},
       options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, interaction:{mode:'index',intersect:false}, scales:{x:{grid:{display:false},ticks:{maxTicksLimit:10,color:'#94a3b8'}}, y:{grid:{color:'rgba(26,35,50,.6)'},ticks:{color:'#94a3b8'}}}}
     });
+
+    // Largest drops table (uses published reserves_biggest_drops.csv)
+    try {
+      const dText = await fetchText('outputs/onchain/reserves_biggest_drops.csv');
+      const dRows = parseCSV(dText).rows;
+      const enriched = dRows.map(r => {
+        const d = Number(r.reserves_delta_ada || 0);
+        const dep = Number(r.deposit_net_ada || 0);
+        const xR = Number(r.pot_transfer_reserves_ada || 0);
+        const xT = Number(r.pot_transfer_treasury_ada || 0);
+        let hint = '';
+        if (Math.abs(xT) > 1) hint += `pot_transfer_treasury=${xT.toFixed(0)} `;
+        if (Math.abs(xR) > 1) hint += `pot_transfer_reserves=${xR.toFixed(0)} `;
+        if (Math.abs(dep) > 1) hint += `deposit_net=${dep.toFixed(0)} `;
+        if (!hint) hint = 'residual/unattributed (rewards-by-epoch not included yet)';
+        return {
+          epoch_no: r.epoch_no,
+          reserves_delta_ada: d.toFixed(0),
+          deposit_net_ada: dep.toFixed(0),
+          pot_transfer_reserves_ada: xR.toFixed(0),
+          pot_transfer_treasury_ada: xT.toFixed(0),
+          hint,
+        };
+      });
+      renderTable(document.getElementById('dropsTable'), enriched, ['epoch_no','reserves_delta_ada','deposit_net_ada','pot_transfer_reserves_ada','pot_transfer_treasury_ada','hint'], 25);
+    } catch (e) {}
 
     // Projection
     const years = Array.from({length:31},(_,i)=>2026+i);
