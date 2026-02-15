@@ -241,12 +241,45 @@ footer .f2{font-size:13px;color:var(--text-2);font-style:italic;margin-top:6px;}
 
   <div class="card">
     <canvas id="catalystBarChart" height="100"></canvas>
+
     <div class="dl-row">
       <a href="outputs/offchain/catalyst/catalyst_proposers_full.json.gz">Full json.gz</a>
       <a href="outputs/offchain/catalyst/manifest.sha256">sha256</a>
       <a href="outputs/offchain/catalyst/top_recipients.csv">Top recipients CSV</a>
+      <a href="outputs/offchain/catalyst/analytics/meta.json">AI-curated analytics meta</a>
+      <a href="outputs/offchain/catalyst/analytics/proposer_signals.csv">Signals CSV</a>
     </div>
-    <p class="chart-note">Keep it simple. Publish receipts. Don't imply guilt from flags.</p>
+
+    <div class="stats c3" style="margin-top:14px;margin-bottom:0;">
+      <div class="stat" style="text-align:center;">
+        <div class="stat-lbl">Concentration (Top 10)</div>
+        <div class="stat-val" id="catalyst-conc-top10" style="font-size:18px;">—</div>
+      </div>
+      <div class="stat" style="text-align:center;">
+        <div class="stat-lbl">Concentration (Top 50)</div>
+        <div class="stat-val" id="catalyst-conc-top50" style="font-size:18px;">—</div>
+      </div>
+      <div class="stat" style="text-align:center;">
+        <div class="stat-lbl">Signals rows</div>
+        <div class="stat-val" id="catalyst-signals-count" style="font-size:18px;">—</div>
+      </div>
+    </div>
+
+    <div class="tbl-wrap" style="margin-top:14px;">
+      <table>
+        <thead><tr><th>Leaderboard</th><th>Download</th></tr></thead>
+        <tbody>
+          <tr><td>Top by Distributed (USD)</td><td><a href="outputs/offchain/catalyst/analytics/leaderboards/top_by_distributed_usd.csv">CSV</a></td></tr>
+          <tr><td>Top by Distributed (ADA)</td><td><a href="outputs/offchain/catalyst/analytics/leaderboards/top_by_distributed_ada.csv">CSV</a></td></tr>
+          <tr><td>Top by Total Projects</td><td><a href="outputs/offchain/catalyst/analytics/leaderboards/top_by_total_projects.csv">CSV</a></td></tr>
+          <tr><td>Top by Funded Projects</td><td><a href="outputs/offchain/catalyst/analytics/leaderboards/top_by_funded_projects.csv">CSV</a></td></tr>
+          <tr><td>Top by Completed Projects</td><td><a href="outputs/offchain/catalyst/analytics/leaderboards/top_by_completed_projects.csv">CSV</a></td></tr>
+          <tr><td>Top by Requested (USD)</td><td><a href="outputs/offchain/catalyst/analytics/leaderboards/top_by_requested_usd.csv">CSV</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="chart-note" style="margin-top:12px;">This section is <strong>AI-curated</strong> (choice of views + thresholds), but the derivation is deterministic and fully auditable from the raw dataset. Signals are not accusations.</p>
   </div>
 </div>
 
@@ -496,6 +529,25 @@ try {
 } catch (e) {
   // If off-chain outputs not present, leave chart empty.
 }
+
+// ── Catalyst analytics (AI-curated, deterministic) ──
+try {
+  const conc = JSON.parse(await fetchText('outputs/offchain/catalyst/analytics/concentration.json'));
+  const top10 = (conc.shares && conc.shares.top10) ? (conc.shares.top10*100).toFixed(1)+'%' : '—';
+  const top50 = (conc.shares && conc.shares.top50) ? (conc.shares.top50*100).toFixed(1)+'%' : '—';
+  const el10 = document.getElementById('catalyst-conc-top10');
+  const el50 = document.getElementById('catalyst-conc-top50');
+  if (el10) el10.textContent = top10;
+  if (el50) el50.textContent = top50;
+} catch (e) { /* ignore */ }
+
+try {
+  const meta = JSON.parse(await fetchText('outputs/offchain/catalyst/analytics/meta.json'));
+  const n = meta.counts && meta.counts.signals_rows ? meta.counts.signals_rows : null;
+  const el = document.getElementById('catalyst-signals-count');
+  if (el) el.textContent = (n===null? '—' : String(n));
+} catch (e) { /* ignore */ }
+
 
 </script>
 
