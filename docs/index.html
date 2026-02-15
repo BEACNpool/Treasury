@@ -223,98 +223,9 @@ footer .f2{font-size:13px;color:var(--text-2);font-style:italic;margin-top:6px;}
 
 <div class="divider"></div>
 
-<!-- ═══════════════════════════════════════════════════════════════════════════
-     2025 BUDGET ALLOCATION
-     ═══════════════════════════════════════════════════════════════════════════ -->
-<div class="section">
-  <div class="s-head">
-    <div class="s-label">Budget</div>
-    <div class="s-title"><span class="pip" style="background:var(--withdraw)"></span> 2025 Budget Allocation</div>
-    <p class="s-desc">How the ₳264M in approved 2025 treasury withdrawals breaks down by category. 39 proposals submitted, 37 enacted through Conway-era governance.</p>
-  </div>
+<!-- Budget/Withdrawals sections removed: not yet wired to published on-chain outputs. -->
 
-  <div class="g2">
-    <div class="card" style="margin-bottom:0;">
-      <div style="display:flex;gap:20px;align-items:flex-start;">
-        <div style="flex-shrink:0;width:180px;height:180px;">
-          <canvas id="budgetPie"></canvas>
-        </div>
-        <ul class="bud-list" style="flex:1;">
-          <li class="bud-item"><span class="bud-name"><span class="bud-dot" style="background:#ff6384"></span>IOG Core Development</span><span class="bud-val">₳96.8M</span></li>
-          <li class="bud-item"><span class="bud-name"><span class="bud-dot" style="background:#ffce56"></span>Critical Integrations</span><span class="bud-val">₳70.0M</span></li>
-          <li class="bud-item"><span class="bud-name"><span class="bud-dot" style="background:#36a2eb"></span>Catalyst 2025</span><span class="bud-val">₳64.3M</span></li>
-          <li class="bud-item"><span class="bud-name"><span class="bud-dot" style="background:#4bc0c0"></span>Governance Tooling</span><span class="bud-val">₳12.5M</span></li>
-          <li class="bud-item"><span class="bud-name"><span class="bud-dot" style="background:#9966ff"></span>Developer Tools & SDKs</span><span class="bud-val">₳8.2M</span></li>
-          <li class="bud-item"><span class="bud-name"><span class="bud-dot" style="background:#ff9f40"></span>ZK / Privacy Research</span><span class="bud-val">₳6.1M</span></li>
-          <li class="bud-item"><span class="bud-name"><span class="bud-dot" style="background:#c9cbcf"></span>Community & Outreach</span><span class="bud-val">₳6.1M</span></li>
-        </ul>
-      </div>
-      <span class="source-tag">intersect contracts · gov actions</span>
-    </div>
-
-    <!-- NCL Burn-down -->
-    <div class="card" style="margin-bottom:0;">
-      <div class="card-title">Net Change Limit — 2025 Ceiling</div>
-      <div style="font-size:12px;color:var(--text-3);margin-bottom:16px;">Epochs 532–612 (extended) · Cap: <strong style="color:var(--ncl)">₳350,000,000</strong></div>
-      <div class="pbar-shell">
-        <div class="pbar-fill" style="width:75.4%;background:linear-gradient(90deg,var(--withdraw),#ef4444);"></div>
-      </div>
-      <div class="pbar-labels">
-        <span>₳0</span>
-        <span>₳264M withdrawn</span>
-        <span>₳350M ceiling</span>
-      </div>
-      <div class="stats c3" style="margin-top:18px;margin-bottom:0;">
-        <div class="stat w" style="text-align:center;">
-          <div class="stat-lbl">Withdrawn</div>
-          <div class="stat-val" style="color:var(--withdraw);font-size:18px;">₳264M</div>
-        </div>
-        <div class="stat f" style="text-align:center;">
-          <div class="stat-lbl">Headroom</div>
-          <div class="stat-val" style="color:var(--fees);font-size:18px;">₳86M</div>
-        </div>
-        <div class="stat n" style="text-align:center;">
-          <div class="stat-lbl">Epochs Left</div>
-          <div class="stat-val" style="color:var(--ncl);font-size:18px;">~12</div>
-        </div>
-      </div>
-      <span class="source-tag">treasury_withdrawal · NCL governance action</span>
-    </div>
-  </div>
-</div>
-
-<div class="divider"></div>
-
-<!-- ═══════════════════════════════════════════════════════════════════════════
-     TREASURY WITHDRAWALS TABLE
-     ═══════════════════════════════════════════════════════════════════════════ -->
-<div class="section">
-  <div class="s-head">
-    <div class="s-label">On-Chain</div>
-    <div class="s-title"><span class="pip" style="background:var(--withdraw)"></span> Treasury Withdrawals</div>
-    <p class="s-desc">Every Conway-era treasury withdrawal governance action — epoch, amount, proposal, and status. Sourced directly from db-sync.</p>
-  </div>
-
-  <div class="tbl-wrap">
-    <table>
-      <thead><tr><th>Epoch</th><th>Proposal</th><th>Amount (₳)</th><th>Status</th></tr></thead>
-      <tbody>
-        <tr><td class="num">576</td><td>IOG Core Development 2025</td><td class="num" style="color:var(--withdraw)">96,817,080</td><td><span class="badge badge-ok">enacted</span></td></tr>
-        <tr><td class="num">576</td><td>Critical Integrations Budget</td><td class="num" style="color:var(--withdraw)">70,000,000</td><td><span class="badge badge-ok">enacted</span></td></tr>
-        <tr><td class="num">576</td><td>Catalyst 2025</td><td class="num" style="color:var(--withdraw)">64,300,000</td><td><span class="badge badge-ok">enacted</span></td></tr>
-        <tr><td class="num">577</td><td>Beyond Min. Viable Governance</td><td class="num" style="color:var(--withdraw)">8,400,000</td><td><span class="badge badge-ok">enacted</span></td></tr>
-        <tr><td class="num">577</td><td>zkFold ZK Rollup</td><td class="num" style="color:var(--withdraw)">5,200,000</td><td><span class="badge badge-ok">enacted</span></td></tr>
-        <tr><td class="num">578</td><td>Blockfrost Platform</td><td class="num" style="color:var(--withdraw)">4,100,000</td><td><span class="badge badge-ok">enacted</span></td></tr>
-        <tr><td class="num">578</td><td>Complete Web3 Dev Stack</td><td class="num" style="color:var(--withdraw)">3,800,000</td><td><span class="badge badge-pen">ratified</span></td></tr>
-        <tr><td class="num">579</td><td>UTxO RPC & Pallas Tooling</td><td class="num" style="color:var(--withdraw)">3,200,000</td><td><span class="badge badge-ok">enacted</span></td></tr>
-        <tr><td class="num">579</td><td>MLabs Elliptic Curve</td><td class="num" style="color:var(--withdraw)">2,800,000</td><td><span class="badge badge-ok">enacted</span></td></tr>
-        <tr><td class="num">580</td><td>AdaStat Explorer</td><td class="num" style="color:var(--withdraw)">1,900,000</td><td><span class="badge badge-ok">enacted</span></td></tr>
-      </tbody>
-    </table>
-  </div>
-  <p class="chart-note">Top 10 by amount shown. Full dataset in CSV + DuckDB via the GitHub repo.</p>
-  <span class="source-tag">treasury_withdrawal · gov_action_proposal · block</span>
-</div>
+<!-- Treasury withdrawals section removed: not yet wired to published on-chain outputs. -->
 
 <div class="divider"></div>
 
@@ -341,37 +252,7 @@ footer .f2{font-size:13px;color:var(--text-2);font-style:italic;margin-top:6px;}
 
 <div class="divider"></div>
 
-<!-- ═══════════════════════════════════════════════════════════════════════════
-     PROJECTIONS
-     ═══════════════════════════════════════════════════════════════════════════ -->
-<div class="section">
-  <div class="s-head">
-    <div class="s-label">Looking Forward</div>
-    <div class="s-title"><span class="pip" style="background:var(--combined)"></span> Sustainability Projections</div>
-    <p class="s-desc">Model the future under different spending scenarios. Treasury trajectory depends on reserves (decaying) and fees (growing). Reserves depletion is deterministic — only a governance change to ρ alters it.</p>
-  </div>
-
-  <div class="card" style="margin-bottom:24px;">
-    <div class="card-title">Treasury Balance Projection</div>
-    <div style="font-size:12px;color:var(--text-3);margin-bottom:14px;">Current ρ=0.003, τ=0.2, fee growth ~10%/yr</div>
-    <div class="scn-btns">
-      <button class="scn-btn on" onclick="setProj('cons',this)">Conservative (250M/yr)</button>
-      <button class="scn-btn" onclick="setProj('mod',this)">Moderate (350M/yr)</button>
-      <button class="scn-btn" onclick="setProj('agg',this)">Aggressive (500M/yr)</button>
-      <button class="scn-btn" onclick="setProj('rep',this)">Replenishment Only</button>
-    </div>
-    <canvas id="projTreasuryChart" height="130"></canvas>
-    <span class="source-tag">modeled from Q6 base data</span>
-  </div>
-
-  <div class="card">
-    <div class="card-title">Reserves Depletion Projection</div>
-    <div style="font-size:12px;color:var(--text-3);margin-bottom:14px;">Reserves decay is independent of spending — follows ρ parameter only.</div>
-    <canvas id="projReservesChart" height="130"></canvas>
-    <p class="chart-note">Dashed line marks economic insignificance threshold (~₳450M / 1% of max supply). Below this, expansion income becomes negligible and fees must carry the treasury alone.</p>
-    <span class="source-tag">modeled · ρ=0.003</span>
-  </div>
-</div>
+<!-- Projections removed: model outputs not yet published. -->
 
 <div class="divider"></div>
 
@@ -593,85 +474,29 @@ new Chart(document.getElementById('treasuryReservesChart'),{
 });
 
 // ════════════════════════════════════════════════════════════════
-// BUDGET PIE
+// CATALYST BAR (off-chain, wired to published outputs)
 // ════════════════════════════════════════════════════════════════
-new Chart(document.getElementById('budgetPie'),{
-  type:'doughnut',
-  data:{
-    labels:['IOG Core','Critical Int.','Catalyst','Gov Tools','Dev Tools','ZK','Community'],
-    datasets:[{data:[96.8,70,64.3,12.5,8.2,6.1,6.1],
-      backgroundColor:['#ff6384','#ffce56','#36a2eb','#4bc0c0','#9966ff','#ff9f40','#c9cbcf'],
-      borderColor:'#111824',borderWidth:2}]
-  },
-  options:{responsive:true,plugins:{legend:{display:false}},cutout:'58%'}
-});
-
-// ════════════════════════════════════════════════════════════════
-// CATALYST BAR
-// ════════════════════════════════════════════════════════════════
-new Chart(document.getElementById('catalystBarChart'),{
-  type:'bar',
-  data:{
-    labels:['F6','F7','F8','F9','F10','F11','F12','F13'],
-    datasets:[{label:'Distributed (₳M)',data:[4.5,8,16,12,15.5,24,50,64.3],backgroundColor:'rgba(129,140,248,.6)',borderRadius:4}]
-  },
-  options:{responsive:true,plugins:{legend:{display:false}},
-    scales:{x:{grid:nG},y:{grid:cG,title:{display:true,text:'₳M',color:'#4f6479'}}}}
-});
-
-// ════════════════════════════════════════════════════════════════
-// PROJECTIONS
-// ════════════════════════════════════════════════════════════════
-const pYrs=['2025','2026','2027','2028','2029','2030','2031','2032','2033','2034','2035'];
-const scn={cons:250,mod:350,agg:500,rep:0};
-
-function mkProj(sp){
-  let t=1590,r=8970;const out=[t];
-  for(let y=1;y<pYrs.length;y++){
-    const ex=r*.003*.2*73,f=30+y*3;
-    t+=ex+f-sp;r-=r*.003*73;
-    out.push(Math.max(Math.round(t),0));
-  }return out;
-}
-function mkResProj(){
-  let r=8970;const out=[r];
-  for(let y=1;y<pYrs.length;y++){r*=Math.pow(1-.003,73);out.push(Math.round(r));}
-  return out;
-}
-
-let pTChart;
-function renderProjT(key){
-  const d=mkProj(scn[key]),base=mkProj(0);
-  const labels={cons:'Conservative (250M/yr)',mod:'Moderate (350M/yr)',agg:'Aggressive (500M/yr)',rep:'No spending'};
-  if(pTChart)pTChart.destroy();
-  pTChart=new Chart(document.getElementById('projTreasuryChart'),{
-    type:'line',
-    data:{labels:pYrs,datasets:[
-      {label:labels[key],data:d,borderColor:'#22d3ee',backgroundColor:'rgba(34,211,238,.06)',fill:true,tension:.3,pointRadius:4,pointBackgroundColor:'#22d3ee',borderWidth:2.5},
-      {label:'No spending baseline',data:base,borderColor:'#4f6479',borderDash:[6,4],tension:.3,pointRadius:0,borderWidth:1.5}
-    ]},
-    options:{responsive:true,plugins:{legend:{position:'top',labels:{usePointStyle:true,padding:14}}},
-      scales:{y:{grid:cG,title:{display:true,text:'Treasury (₳M)',color:'#4f6479'}},x:{grid:nG}}}
+try {
+  const fundRows = parseCSV(await fetchText('outputs/offchain/catalyst/funds.csv'));
+  const labels = fundRows.map(r => 'F' + r.fund_id);
+  const usd = fundRows.map(r => {
+    const v = toNum(r.distributed_usd);
+    return v===null?0:(v/1e6); // show as $M
   });
-}
-function setProj(key,el){
-  document.querySelectorAll('.scn-btn').forEach(b=>b.classList.remove('on'));
-  el.classList.add('on');
-  renderProjT(key);
-}
-renderProjT('cons');
 
-// Reserves projection
-const rProj=mkResProj();
-new Chart(document.getElementById('projReservesChart'),{
-  type:'line',
-  data:{labels:pYrs,datasets:[
-    {label:'Reserves (₳M)',data:rProj,borderColor:'#a78bfa',backgroundColor:'rgba(167,139,250,.05)',fill:true,tension:.3,pointRadius:4,pointBackgroundColor:'#a78bfa',borderWidth:2.5},
-    {label:'Insignificance (~₳450M)',data:pYrs.map(()=>450),borderColor:'rgba(248,113,113,.4)',borderDash:[4,4],pointRadius:0,borderWidth:1}
-  ]},
-  options:{responsive:true,plugins:{legend:{position:'top',labels:{usePointStyle:true,padding:14}}},
-    scales:{y:{grid:cG,title:{display:true,text:'Reserves (₳M)',color:'#4f6479'}},x:{grid:nG}}}
-});
+  new Chart(document.getElementById('catalystBarChart'),{
+    type:'bar',
+    data:{
+      labels:labels,
+      datasets:[{label:'Distributed (USD, $M)',data:usd,backgroundColor:'rgba(129,140,248,.6)',borderRadius:4}]
+    },
+    options:{responsive:true,plugins:{legend:{display:false}},
+      scales:{x:{grid:nG},y:{grid:cG,title:{display:true,text:'$M',color:'#4f6479'}}}}
+  });
+} catch (e) {
+  // If off-chain outputs not present, leave chart empty.
+}
+
 </script>
 
 </body>
