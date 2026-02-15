@@ -83,6 +83,14 @@
         <div class="note">
           If you’re voting: treat the runway chart as a <strong>stress test</strong>. If the stress test says “insolvent by X”, the action item is to either (a) reduce outflows, (b) increase inflows (usage/fees), or (c) change protocol parameters — and to demand receipts for whichever lever is being pulled.
         </div>
+
+        <div class="card" style="margin:0; border-style:solid; border-color:rgba(248,113,113,.35)">
+          <strong style="display:block; margin-bottom:6px">The question to keep in mind</strong>
+          <div class="note" style="font-size:13px; line-height:1.55">
+            What is more valuable: a blockchain with governance and a large reserve — or one with depleted reserves?
+            In a world where the marginal cost of code trends toward zero (AI-assisted development accelerating fast), do we need to fund <em>human-led</em> projects at these levels if they are unsustainable?
+          </div>
+        </div>
       </div>
     </div>
 
@@ -446,7 +454,9 @@
     outlookBits.push(`Using the last-10-epochs inflow proxy, annual inflow ≈ ${fmtAda(inflowAnnual)}.`);
     outlookBits.push(`If annual spend stays at ₳250M, the treasury ${y250 ? `hits ~0 by ${y250}` : 'does not hit 0 in this 10-year window'}.`);
     outlookBits.push(`At ₳350M/yr: ${y350 ? `~0 by ${y350}` : 'not 0 within 10 years'}. At ₳500M/yr: ${y500 ? `~0 by ${y500}` : 'not 0 within 10 years'}.`);
-    outlookBits.push(`This model is intentionally dumb: it does not assume future scaling success or parameter changes — see the projections chart below and the Treasury page for assumptions.`);
+    const balancedSpend = inflowAnnual;
+    outlookBits.push(`Balanced-budget spend (given this inflow proxy) is ≈ ${fmtAda(balancedSpend)} per year.`);
+    outlookBits.push(`Model assumption: current chain usage and current protocol parameters remain broadly the same (this does not assume scaling success, new revenue sources, or governance parameter changes). See the projections chart below and the Treasury page for assumptions.`);
 
     const aiEl = document.getElementById('ai-outlook');
     if (aiEl) aiEl.textContent = outlookBits.join(' ');
