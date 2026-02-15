@@ -41,6 +41,51 @@
       </div>
     </div>
 
+    <!-- ── BEACN Treasury AI analysis ── -->
+    <div class="h3">BEACN Treasury AI analysis <span class="tag tag-model">AI analysis</span></div>
+    <div class="card">
+      <div style="display:grid; gap:10px">
+        <div>
+          <strong>Summary (what this dashboard currently implies)</strong>
+          <div class="note" style="margin-top:6px">
+            This section is intentionally opinionated. Every claim links to the supporting data on this site.
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="flow-card in" style="border-color: rgba(34,211,238,.25)">
+            <div class="flow-label">Outlook (model-based)</div>
+            <div class="note" id="ai-outlook">Loading…</div>
+          </div>
+          <div class="flow-card out" style="border-color: rgba(248,113,113,.25)">
+            <div class="flow-label">What to verify (receipts)</div>
+            <div class="note">
+              <ul style="margin:8px 0 0 18px; padding:0">
+                <li><a href="treasury.html">Treasury projections</a> (runway scenarios + assumptions)</li>
+                <li><a href="reserves.html">Reserves depletion</a> (trend + biggest drops viewer)</li>
+                <li><a href="fees.html">Lifetime fee income</a> (cumulative <code>epoch.fees</code>)</li>
+                <li><a href="pots.html">Total pots</a> (largest moves + line-item hints)</li>
+                <li><a href="catalyst.html">Catalyst</a> (off-chain context + receipts)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <details>
+          <summary>Nuance / upside cases (harder to quantify)</summary>
+          <div class="note" style="margin-top:8px">
+            Some spending is intended to increase long-run network throughput and adoption (e.g., core infrastructure / scaling work associated with large ecosystem players like IOG).
+            If that succeeds, fee income and overall economic activity could rise — which improves treasury inflows and slows “insolvency” timelines.
+            This dashboard does <em>not</em> try to guess that upside: it shows what the receipts say today and makes the assumptions explicit.
+          </div>
+        </details>
+
+        <div class="note">
+          If you’re voting: treat the runway chart as a <strong>stress test</strong>. If the stress test says “insolvent by X”, the action item is to either (a) reduce outflows, (b) increase inflows (usage/fees), or (c) change protocol parameters — and to demand receipts for whichever lever is being pulled.
+        </div>
+      </div>
+    </div>
+
     <!-- ── Top-line KPIs ── -->
     <div class="h3">Snapshot</div>
     <div class="kpis" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
@@ -382,6 +427,29 @@
                   y: { grid: { color: 'rgba(30,41,59,.5)' }, ticks: { color: '#64748b', font: { size: 10 } } } }
       }
     });
+
+    // ── AI analysis text (ties claims → where to verify) ──
+    function depletionYearForSpend(spendAdaPerYear){
+      let cur = startBal;
+      for (let i = 1; i < years.length; i++){
+        cur = Math.max(0, cur + inflowAnnual - spendAdaPerYear);
+        if (cur <= 0) return years[i];
+      }
+      return null;
+    }
+
+    const y250 = depletionYearForSpend(250e6);
+    const y350 = depletionYearForSpend(350e6);
+    const y500 = depletionYearForSpend(500e6);
+
+    const outlookBits = [];
+    outlookBits.push(`Using the last-10-epochs inflow proxy, annual inflow ≈ ${fmtAda(inflowAnnual)}.`);
+    outlookBits.push(`If annual spend stays at ₳250M, the treasury ${y250 ? `hits ~0 by ${y250}` : 'does not hit 0 in this 10-year window'}.`);
+    outlookBits.push(`At ₳350M/yr: ${y350 ? `~0 by ${y350}` : 'not 0 within 10 years'}. At ₳500M/yr: ${y500 ? `~0 by ${y500}` : 'not 0 within 10 years'}.`);
+    outlookBits.push(`This model is intentionally dumb: it does not assume future scaling success or parameter changes — see the projections chart below and the Treasury page for assumptions.`);
+
+    const aiEl = document.getElementById('ai-outlook');
+    if (aiEl) aiEl.textContent = outlookBits.join(' ');
   </script>
 </body>
 </html>
