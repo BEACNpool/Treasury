@@ -32,8 +32,19 @@
       <div class="chartBox"><canvas id="treasuryChart"></canvas></div>
 
       <details style="margin-top:12px">
-        <summary>Largest treasury drops — with line-item hints</summary>
+        <summary>Viewer: treasury moves (sortable) — with line-item hints</summary>
         <div class="note" style="margin-top:8px">Hints use explicit line items we have today (enacted withdrawals + pot transfers + net deposits). Rewards-by-epoch is not yet included.</div>
+
+        <div class="row" style="margin-top:10px">
+          <div class="links">
+            <button class="btn" id="tsort_epoch">Sort: epoch</button>
+            <button class="btn" id="tsort_size">Sort: size</button>
+            <button class="btn" id="tsort_drop">Filter: drops</button>
+            <button class="btn" id="tsort_all">Filter: all</button>
+          </div>
+          <div class="note" id="tMode">mode: size · drops</div>
+        </div>
+
         <div class="tableWrap" style="margin-top:10px"><table id="tDrops"></table></div>
       </details>
     </div>
@@ -73,7 +84,7 @@
       options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, interaction:{mode:'index',intersect:false}, scales:{x:{grid:{display:false},ticks:{maxTicksLimit:10,color:'#94a3b8'}}, y:{grid:{color:'rgba(26,35,50,.6)'},ticks:{color:'#94a3b8'}}}}
     });
 
-    // Largest treasury drops table (hints: withdrawals + transfers + deposits)
+    // Treasury moves viewer (hints: withdrawals + transfers + deposits)
     try {
       const wText = await fetchText('outputs/onchain/withdrawals_by_epoch.csv');
       const wRows = parseCSV(wText).rows;
@@ -82,9 +93,10 @@
 
       const drvText = await fetchText('outputs/onchain/reserves_drivers.csv');
       const drv = parseCSV(drvText).rows;
-      const rows2 = drv.map(r=>{
+
+      const moves = drv.map(r=>{
         const e = String(r.epoch_no);
-        const td = Number(r.treasury_delta || 0);
+        const td = Number(r.treasury_delta || 0); // lovelace
         const dep = Number(r.deposit_net || 0);
         const xT = Number(r.pot_transfer_treasury || 0);
         const xR = Number(r.pot_transfer_reserves || 0);
@@ -97,10 +109,39 @@
         if(Math.abs(dep)>0) parts.push(`deposit_net=${(dep/1e6).toFixed(0)}ADA`);
         if(parts.length===0) parts=['residual/unattributed (rewards-by-epoch not included yet)'];
 
-        return { epoch_no: e, treasury_delta_ada: (td/1e6).toFixed(0), hint: parts.join(' · ') };
-      }).sort((a,b)=>Number(a.treasury_delta_ada)-Number(b.treasury_delta_ada)).slice(0,25);
+        return {
+          epoch_no: e,
+          treasury_delta_ada: (td/1e6),
+          delta: `${(td/1e6).toFixed(0)} ADA`,
+          hint: parts.join(' · ')
+        };
+      });
 
-      renderTable(document.getElementById('tDrops'), rows2, ['epoch_no','treasury_delta_ada','hint'], 25);
+      let sortMode = 'size';
+      let filterMode = 'drops';
+      const modeEl = document.getElementById('tMode');
+
+      function render(){
+        let rows = [...moves];
+        if(filterMode==='drops') rows = rows.filter(r=>r.treasury_delta_ada < 0);
+
+        rows.sort((a,b)=>{
+          if(sortMode==='epoch') return Number(a.epoch_no)-Number(b.epoch_no);
+          return Math.abs(b.treasury_delta_ada)-Math.abs(a.treasury_delta_ada);
+        });
+
+        // format for table
+        const out = rows.map(r=>({epoch_no:r.epoch_no, delta:r.delta, hint:r.hint}));
+        renderTable(document.getElementById('tDrops'), out, ['epoch_no','delta','hint'], 80);
+        if(modeEl) modeEl.textContent = `mode: ${sortMode} · ${filterMode}`;
+      }
+
+      document.getElementById('tsort_epoch')?.addEventListener('click', ()=>{sortMode='epoch'; render();});
+      document.getElementById('tsort_size')?.addEventListener('click', ()=>{sortMode='size'; render();});
+      document.getElementById('tsort_drop')?.addEventListener('click', ()=>{filterMode='drops'; render();});
+      document.getElementById('tsort_all')?.addEventListener('click', ()=>{filterMode='all'; render();});
+
+      render();
     } catch(e) {}
 
     // Projection
