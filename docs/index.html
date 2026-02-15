@@ -567,13 +567,15 @@ try {
 } catch (e) { /* ignore */ }
 
 // Inline viewer wiring
-const VIEW_MAP = {
-  lb_usd: 'outputs/offchain/catalyst/analytics/leaderboards/top_by_distributed_usd.csv',
-  lb_ada: 'outputs/offchain/catalyst/analytics/leaderboards/top_by_distributed_ada.csv',
-  lb_total: 'outputs/offchain/catalyst/analytics/leaderboards/top_by_total_projects.csv',
-  lb_funded: 'outputs/offchain/catalyst/analytics/leaderboards/top_by_funded_projects.csv',
-  lb_completed: 'outputs/offchain/catalyst/analytics/leaderboards/top_by_completed_projects.csv',
-  lb_requested: 'outputs/offchain/catalyst/analytics/leaderboards/top_by_requested_usd.csv'
+const INDEX_PATH = 'outputs/offchain/catalyst/analytics/proposers_index.csv';
+
+const VIEW_SORT = {
+  lb_usd: { key: 'total_distributed_usd', desc: true },
+  lb_ada: { key: 'distributed_ada_from_json', desc: true },
+  lb_total: { key: 'total_projects', desc: true },
+  lb_funded: { key: 'funded_projects', desc: true },
+  lb_completed: { key: 'completed_projects', desc: true },
+  lb_requested: { key: 'total_requested_usd', desc: true },
 };
 
 function renderTable(el, rows, maxRows=30){
@@ -600,15 +602,42 @@ function parseCSVRows(t){
   return rows;
 }
 
-async function openViewer(key){
-  const path = VIEW_MAP[key];
-  if(!path) return;
+let __INDEX_CACHE = null;
+
+function toNumOrStr(v){
+  const n = Number(v);
+  return Number.isFinite(n) ? n : (v ?? '');
+}
+
+async function loadIndex(){
+  if(__INDEX_CACHE) return __INDEX_CACHE;
+  const text = await fetchText(INDEX_PATH);
+  __INDEX_CACHE = parseCSVRows(text).map(r => {
+    // pre-coerce common numeric fields for sorting
+    const o = { ...r };
+    ['total_projects','funded_projects','completed_projects','total_distributed_usd','total_requested_usd','total_remaining_usd','distributed_ada_from_json']
+      .forEach(k => { if (k in o) o[k] = Number(o[k] || 0); });
+    return o;
+  });
+  return __INDEX_CACHE;
+}
+
+async function openViewer(viewKey){
+  const cfg = VIEW_SORT[viewKey];
+  if(!cfg) return;
+
   const viewer = document.getElementById('viewer');
   const table = document.getElementById('viewer-table');
   if(viewer) viewer.open = true;
-  const text = await fetchText(path);
-  const rows = parseCSVRows(text);
-  renderTable(table, rows, 30);
+
+  const rows = await loadIndex();
+  const sorted = [...rows].sort((a,b) => {
+    const av = a[cfg.key] ?? 0;
+    const bv = b[cfg.key] ?? 0;
+    return cfg.desc ? (bv - av) : (av - bv);
+  });
+
+  renderTable(table, sorted, 30);
   if(viewer) viewer.scrollIntoView({behavior:'smooth', block:'start'});
 }
 
