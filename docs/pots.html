@@ -38,7 +38,16 @@
 
     <details>
       <summary>Viewer: biggest moves (up/down) in total pots</summary>
-      <div class="note" style="margin-top:8px">Shows top 25 increases and top 25 decreases by epoch-to-epoch change.</div>
+      <div class="note" style="margin-top:8px">Shows large epoch-to-epoch changes in (treasury+reserves), with line-item hints when available (pot transfers + net deposits). Rewards-by-epoch is not yet included.</div>
+
+      <div class="row" style="margin-top:10px">
+        <div class="links">
+          <button class="btn" id="sort_epoch">Sort: epoch</button>
+          <button class="btn" id="sort_size">Sort: size</button>
+        </div>
+        <div class="note" id="movesMode">mode: size</div>
+      </div>
+
       <div class="tableWrap" style="margin-top:10px"><table id="movesTable"></table></div>
     </details>
 
@@ -96,21 +105,64 @@
       }
     });
 
+    // Hints from reserves_drivers (explicit cheap line items)
+    let hintByEpoch = {};
+    try {
+      const drvText = await fetchText('outputs/onchain/reserves_drivers.csv');
+      const drv = parseCSV(drvText).rows;
+      drv.forEach(r => {
+        const e = String(r.epoch_no);
+        hintByEpoch[e] = {
+          reserves_delta: Number(r.reserves_delta || 0),
+          treasury_delta: Number(r.treasury_delta || 0),
+          deposit_net: Number(r.deposit_net || 0),
+          pot_transfer_reserves: Number(r.pot_transfer_reserves || 0),
+          pot_transfer_treasury: Number(r.pot_transfer_treasury || 0),
+        };
+      });
+    } catch (e) {}
+
+    function mkHint(e){
+      const h = hintByEpoch[String(e)];
+      if(!h) return '—';
+      const parts=[];
+      if(Math.abs(h.pot_transfer_treasury) > 0) parts.push(`pot_xfer_treasury=${(h.pot_transfer_treasury/1e6).toFixed(0)}ADA`);
+      if(Math.abs(h.pot_transfer_reserves) > 0) parts.push(`pot_xfer_reserves=${(h.pot_transfer_reserves/1e6).toFixed(0)}ADA`);
+      if(Math.abs(h.deposit_net) > 0) parts.push(`deposit_net=${(h.deposit_net/1e6).toFixed(0)}ADA`);
+      if(parts.length===0) return 'residual/unattributed (rewards-by-epoch not included yet)';
+      return parts.join(' · ');
+    }
+
     // moves
     const moves = [];
     for(let i=1;i<rows.length;i++){
       const d = total[i]-total[i-1];
+      const e = rows[i].epoch_no;
       moves.push({
-        epoch: rows[i].epoch_no,
+        epoch: e,
         change_ada: d,
-        change_fmt: fmtAda(d),
-        total_fmt: fmtAda(total[i]),
+        change: fmtAda(d),
+        total: fmtAda(total[i]),
+        hint: mkHint(e),
       });
     }
-    const up = [...moves].sort((a,b)=>b.change_ada-a.change_ada).slice(0,25);
-    const dn = [...moves].sort((a,b)=>a.change_ada-b.change_ada).slice(0,25);
-    const merged = [{epoch:'TOP INCREASES', change_fmt:'', total_fmt:''}, ...up, {epoch:'TOP DECREASES', change_fmt:'', total_fmt:''}, ...dn];
-    renderTable(document.getElementById('movesTable'), merged, ['epoch','change_fmt','total_fmt'], 999);
+
+    let mode = 'size';
+    const modeEl = document.getElementById('movesMode');
+
+    function render(){
+      const sorted = [...moves].sort((a,b)=>{
+        if(mode==='epoch') return Number(a.epoch)-Number(b.epoch);
+        return Math.abs(b.change_ada)-Math.abs(a.change_ada);
+      });
+      renderTable(document.getElementById('movesTable'), sorted, ['epoch','change','total','hint'], 60);
+      if(modeEl) modeEl.textContent = `mode: ${mode}`;
+    }
+
+    document.getElementById('sort_epoch')?.addEventListener('click', ()=>{mode='epoch'; render();});
+    document.getElementById('sort_size')?.addEventListener('click', ()=>{mode='size'; render();});
+
+    render();
   </script>
 </body>
 </html>

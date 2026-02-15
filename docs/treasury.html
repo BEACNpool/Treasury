@@ -30,6 +30,12 @@
         </div>
       </div>
       <div class="chartBox"><canvas id="treasuryChart"></canvas></div>
+
+      <details style="margin-top:12px">
+        <summary>Largest treasury drops — with line-item hints</summary>
+        <div class="note" style="margin-top:8px">Hints use explicit line items we have today (pot transfers + net deposits). Full withdrawals-by-epoch will be added once published (Conway enacted withdrawals table).</div>
+        <div class="tableWrap" style="margin-top:10px"><table id="tDrops"></table></div>
+      </details>
     </div>
 
     <div class="card">
@@ -66,6 +72,26 @@
       data:{ labels: epoch, datasets:[{label:'Treasury (ADA)', data: t.map(v=>v/1e6), borderColor:'#22d3ee', backgroundColor:'rgba(34,211,238,.08)', fill:true, pointRadius:0, tension:0.25, borderWidth:2.5}]},
       options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, interaction:{mode:'index',intersect:false}, scales:{x:{grid:{display:false},ticks:{maxTicksLimit:10,color:'#94a3b8'}}, y:{grid:{color:'rgba(26,35,50,.6)'},ticks:{color:'#94a3b8'}}}}
     });
+
+    // Largest treasury drops table (cheap hints)
+    try {
+      const drvText = await fetchText('outputs/onchain/reserves_drivers.csv');
+      const drv = parseCSV(drvText).rows;
+      const rows2 = drv.map(r=>{
+        const e = Number(r.epoch_no);
+        const td = Number(r.treasury_delta || 0);
+        const dep = Number(r.deposit_net || 0);
+        const xT = Number(r.pot_transfer_treasury || 0);
+        const xR = Number(r.pot_transfer_reserves || 0);
+        let hint='';
+        if(Math.abs(xT)>0) hint += `pot_xfer_treasury=${(xT/1e6).toFixed(0)}ADA `;
+        if(Math.abs(xR)>0) hint += `pot_xfer_reserves=${(xR/1e6).toFixed(0)}ADA `;
+        if(Math.abs(dep)>0) hint += `deposit_net=${(dep/1e6).toFixed(0)}ADA `;
+        if(!hint) hint='residual/unattributed (rewards-by-epoch not included yet)';
+        return { epoch_no: e, treasury_delta_ada: (td/1e6).toFixed(0), hint };
+      }).sort((a,b)=>Number(a.treasury_delta_ada)-Number(b.treasury_delta_ada)).slice(0,25);
+      renderTable(document.getElementById('tDrops'), rows2, ['epoch_no','treasury_delta_ada','hint'], 25);
+    } catch(e) {}
 
     // Projection
     const lastN = 10;
