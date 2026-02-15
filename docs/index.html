@@ -493,26 +493,59 @@ footer .f2{font-size:13px;color:var(--text-2);font-style:italic;margin-top:6px;}
 <!-- ═══════════════════════════════════════════════════════════════════════════
      CHARTS
      ═══════════════════════════════════════════════════════════════════════════ -->
-<script>
+<script type="module">
 Chart.defaults.color='#4f6479';
 Chart.defaults.borderColor='#1a2332';
 Chart.defaults.font.family='Instrument Sans,system-ui';
 Chart.defaults.font.size=11;
 const cG={color:'rgba(26,35,50,.6)'}, nG={display:false};
 
-// ── Mock epoch data (replace with CSV reads from db-sync output) ──
-const eps=[];for(let i=210;i<=530;i+=5)eps.push(i);
+// ── Data (wired to published outputs where available) ──
+// Fees: lifetime cumulative from epoch table (genesis→tip)
+// Pots: reserves/treasury from epoch export (Shelley-era coverage)
+async function fetchText(url){
+  const r=await fetch(url,{cache:'no-store'});
+  if(!r.ok) throw new Error(`fetch ${url} -> ${r.status}`);
+  return await r.text();
+}
+function parseCSV(t){
+  const lines=t.trim().split(/\r?\n/);
+  const h=lines[0].split(',');
+  const rows=[];
+  for(let i=1;i<lines.length;i++){
+    const c=lines[i].split(',');
+    const o={};
+    h.forEach((k,idx)=>o[k]=c[idx]);
+    rows.push(o);
+  }
+  return rows;
+}
+function toNum(x){
+  const v=Number(x);
+  return Number.isFinite(v)?v:null;
+}
 
-function mkRes(e){let r=13200;return e.map(()=>{r*=.9966;return Math.round(r);});}
-function mkTrs(e){let t=100;return e.map((v,i)=>{
-  t+=(32+Math.random()*16);
-  if(v>500)t-=(Math.random()*65);
-  return Math.round(Math.max(t,1400));
-});}
-function mkCumFees(e){let f=0;return e.map((v)=>{f+=(0.15+Math.random()*0.12+(v>400?0.08:0));return Math.round(f*10)/10;});}
+let eps=[], R=[], T=[], CF=[];
 
-const R=mkRes(eps),T=mkTrs(eps),CF=mkCumFees(eps);
-const combined=eps.map((_,i)=>R[i]+T[i]);
+// Load fee income (epoch 0..tip)
+const feeRows=parseCSV(await fetchText('outputs/onchain/fee_income_epoch.csv'));
+const feeE=feeRows.map(r=>toNum(r.epoch_no));
+const feeCum=feeRows.map(r=>toNum(r.cumulative_fees_ada));
+
+// For chart scaling, use ₳M
+const feeLabels=feeE.map(e=>'E'+e);
+const feeCumM=feeCum.map(v=>v===null?null:(v/1e6));
+
+// Load pots (reserves/treasury)
+const potRows=parseCSV(await fetchText('outputs/epoch_treasury_fees.csv'));
+const potE=potRows.map(r=>toNum(r.epoch_no));
+const res=potRows.map(r=>toNum(r.reserves_start_ada));
+const trs=potRows.map(r=>toNum(r.treasury_end_ada));
+
+// Convert to ₳M for chart 2
+const potLabels=potE.map(e=>'E'+e);
+const resM=res.map(v=>v===null?null:(v/1e6));
+const trsM=trs.map(v=>v===null?null:(v/1e6));
 
 // ════════════════════════════════════════════════════════════════
 // CHART 1: Cumulative TX Fee Income (revenue)
@@ -520,9 +553,9 @@ const combined=eps.map((_,i)=>R[i]+T[i]);
 new Chart(document.getElementById('feeIncomeChart'),{
   type:'line',
   data:{
-    labels:eps.map(e=>'E'+e),
+    labels:feeLabels,
     datasets:[
-      {label:'Cumulative Fee Income (₳M)',data:CF,borderColor:'#34d399',backgroundColor:'rgba(52,211,153,.06)',fill:true,tension:.3,pointRadius:0,borderWidth:2.5,yAxisID:'y'}
+      {label:'Cumulative Fee Income (₳M)',data:feeCumM,borderColor:'#34d399',backgroundColor:'rgba(52,211,153,.06)',fill:true,tension:.3,pointRadius:0,borderWidth:2.5,yAxisID:'y'}
     ]
   },
   options:{
@@ -542,10 +575,10 @@ new Chart(document.getElementById('feeIncomeChart'),{
 new Chart(document.getElementById('treasuryReservesChart'),{
   type:'line',
   data:{
-    labels:eps.map(e=>'E'+e),
+    labels:potLabels,
     datasets:[
-      {label:'Reserves (₳M)',data:R,borderColor:'#a78bfa',backgroundColor:'rgba(167,139,250,.04)',fill:true,tension:.3,pointRadius:0,borderWidth:2,yAxisID:'y'},
-      {label:'Treasury (₳M)',data:T,borderColor:'#22d3ee',backgroundColor:'rgba(34,211,238,.04)',fill:true,tension:.3,pointRadius:0,borderWidth:2,yAxisID:'y'}
+      {label:'Reserves (₳M)',data:resM,borderColor:'#a78bfa',backgroundColor:'rgba(167,139,250,.04)',fill:true,tension:.3,pointRadius:0,borderWidth:2,yAxisID:'y'},
+      {label:'Treasury (₳M)',data:trsM,borderColor:'#22d3ee',backgroundColor:'rgba(34,211,238,.04)',fill:true,tension:.3,pointRadius:0,borderWidth:2,yAxisID:'y'}
     ]
   },
   options:{
