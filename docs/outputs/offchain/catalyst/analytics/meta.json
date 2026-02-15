@@ -1,0 +1,25 @@
+{
+  "generated_at_utc": "2026-02-15T03:12:14.004454+00:00",
+  "curation": {
+    "note": "AI-curated views; deterministic derivation (no LLM). Signals are not accusations.",
+    "dynamic_top_n": {
+      "min_n": 20,
+      "max_n": 100,
+      "cumulative_share_target": 0.35,
+      "non_money_leaderboards_n": 50
+    }
+  },
+  "inputs": {
+    "csv": "data/offchain/catalyst/catalyst_proposers.csv",
+    "csv_sha256": "1fbfc3fd2ee77039b20b8c6b851fd259952fad13224224c6afdd48e41101a62f",
+    "json": "data/raw/catalyst_proposers_full.json",
+    "json_sha256": "41a44c8e8be06eeaa298972c8804034f9754039da1dc2e5d94b836bc51940325"
+  },
+  "thresholds": {
+    "distributed_usd_top1pct_threshold": 1724556.0
+  },
+  "counts": {
+    "proposers": 5516,
+    "signals_rows": 54
+  }
+}

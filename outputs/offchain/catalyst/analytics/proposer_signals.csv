@@ -1,0 +1,55 @@
+username,name,signals,total_projects,funded_projects,completed_projects,total_distributed_usd,distributed_ada_from_json,catalyst_url
+adalink.io,AdaLink.io,completion_ratio_lt_0.5_funded_ge_5,13,5,2,200576.0,419000.0,https://projectcatalyst.io/proposers/adalink.io
+alexv,Alex Vavourakis,completion_ratio_lt_0.5_funded_ge_5,10,5,2,132226.0,403295.01,https://projectcatalyst.io/proposers/alexv
+anastasia.labs,Anastasia Labs,top_1pct_distributed_usd;completion_ratio_lt_0.5_funded_ge_5,14,13,6,1924515.0,3073880.28,https://projectcatalyst.io/proposers/anastasia.labs
+c.tudorcotruta,c.tudorcotruta,completion_ratio_lt_0.5_funded_ge_5,8,5,2,435094.0,801400.0,https://projectcatalyst.io/proposers/c.tudorcotruta
+catalystteam,Catalyst Team,top_1pct_distributed_usd,5,5,3,1982172.0,5866878.78,https://projectcatalyst.io/proposers/catalystteam
+chrisjoannou,Chris Joannou,top_1pct_distributed_usd,1,1,1,1724556.0,1644000.0,https://projectcatalyst.io/proposers/chrisjoannou
+cmkoch,christian,completion_ratio_lt_0.5_funded_ge_5,13,5,2,443644.0,865604.8,https://projectcatalyst.io/proposers/cmkoch
+cole.vt,cole.vt,high_volume_proposer_ge_50_projects,72,18,17,876690.0,1228000.0,https://projectcatalyst.io/proposers/cole.vt
+dcspark,dcSpark,top_1pct_distributed_usd;high_volume_proposer_ge_50_projects,71,60,50,3250253.67,2978725.0,https://projectcatalyst.io/proposers/dcspark
+dimitri777,Dimitri Fernando,high_volume_proposer_ge_50_projects,50,3,3,13523.8,0.0,https://projectcatalyst.io/proposers/dimitri777
+eli.j.selkin,Eli Selkin,high_volume_proposer_ge_50_projects,54,17,17,286142.42,0.0,https://projectcatalyst.io/proposers/eli.j.selkin
+pipaw,Ethan | Optim,top_1pct_distributed_usd;completion_ratio_lt_0.5_funded_ge_5,19,8,1,1794461.0,2332000.0,https://projectcatalyst.io/proposers/pipaw
+federicoweill,Federico Weill,top_1pct_distributed_usd,24,22,19,2345698.0,4322184.8,https://projectcatalyst.io/proposers/federicoweill
+felixweber,Felix Weber [SWARM],high_volume_proposer_ge_50_projects,83,27,26,1050830.0,287810.0,https://projectcatalyst.io/proposers/felixweber
+mmahut,Five Binaries,high_volume_proposer_ge_50_projects,53,37,37,535867.0,360000.0,https://projectcatalyst.io/proposers/mmahut
+fpittini,Florian Pittini,completion_ratio_lt_0.5_funded_ge_5,14,6,2,387544.0,823295.02,https://projectcatalyst.io/proposers/fpittini
+,Forgotten Member,high_volume_proposer_ge_50_projects,77,7,6,326860.0,0.0,https://projectcatalyst.io/proposers/
+heinz.gassner,heinz.gassner,high_volume_proposer_ge_50_projects,68,22,22,418610.0,200000.0,https://projectcatalyst.io/proposers/heinz.gassner
+iagon,Iagon Team,completion_ratio_lt_0.5_funded_ge_5,9,5,1,635244.0,669091.2,https://projectcatalyst.io/proposers/iagon
+jona.ca.eng,Jonathan Rodriguez,completion_ratio_lt_0.5_funded_ge_5,13,12,4,972706.0,1867852.5,https://projectcatalyst.io/proposers/jona.ca.eng
+konmaorg,Konma Org,high_volume_proposer_ge_50_projects,60,3,2,146085.0,150000.0,https://projectcatalyst.io/proposers/konmaorg
+kristian.portz,kristian.portz,top_1pct_distributed_usd,3,2,2,1993100.0,1900000.0,https://projectcatalyst.io/proposers/kristian.portz
+zygomeb,maksymilian brodowicz,completion_ratio_lt_0.5_funded_ge_5,11,7,1,1616131.0,2162000.0,https://projectcatalyst.io/proposers/zygomeb
+fluidtokens,Matteo Coppola,completion_ratio_lt_0.5_funded_ge_5,14,10,2,1579130.0,2609006.7,https://projectcatalyst.io/proposers/fluidtokens
+matthiasksieber,Matthias Sieber,high_volume_proposer_ge_50_projects,72,24,24,393142.42,0.0,https://projectcatalyst.io/proposers/matthiasksieber
+megan.dit,Megan Hess,high_volume_proposer_ge_50_projects,53,13,13,610518.0,693400.0,https://projectcatalyst.io/proposers/megan.dit
+meshsdk,Mesh JS SDK,top_1pct_distributed_usd,15,13,12,1810573.0,2442945.0,https://projectcatalyst.io/proposers/meshsdk
+micah,micah Kendall,completion_ratio_lt_0.5_funded_ge_5,8,5,2,128493.0,464373.99,https://projectcatalyst.io/proposers/micah
+michele.nuzzi,Michele Nuzzi,completion_ratio_lt_0.5_funded_ge_5,18,9,4,902400.0,1475000.0,https://projectcatalyst.io/proposers/michele.nuzzi
+lpmaho,MLabs,top_1pct_distributed_usd;high_volume_proposer_ge_50_projects,56,44,42,5000176.0,8934942.0,https://projectcatalyst.io/proposers/lpmaho
+nicoarqueros,nicoarqueros,top_1pct_distributed_usd;high_volume_proposer_ge_50_projects,65,57,47,3058805.67,2711701.0,https://projectcatalyst.io/proposers/nicoarqueros
+xeeban,Nori Nishigaya,high_volume_proposer_ge_50_projects,59,16,16,341669.5,100000.0,https://projectcatalyst.io/proposers/xeeban
+Nucast,Nucast,completion_ratio_lt_0.5_funded_ge_5,8,5,0,62947.0,92800.0,https://projectcatalyst.io/proposers/Nucast
+nvhieu,nvhieu,high_volume_proposer_ge_50_projects,55,15,15,452869.0,416950.0,https://projectcatalyst.io/proposers/nvhieu
+otaviolima,Otavio (Cardano Feed),high_volume_proposer_ge_50_projects,58,10,10,523264.0,691532.0,https://projectcatalyst.io/proposers/otaviolima
+padierfind,Patrick Tobler,top_1pct_distributed_usd,32,12,8,3324689.0,4850000.0,https://projectcatalyst.io/proposers/padierfind
+fhilip.k,Philip Khoo,high_volume_proposer_ge_50_projects,52,30,30,488991.11,0.0,https://projectcatalyst.io/proposers/fhilip.k
+quasar,quasar ✨,high_volume_proposer_ge_50_projects,97,7,7,51479.0,0.0,https://projectcatalyst.io/proposers/quasar
+raz,Raz,high_volume_proposer_ge_50_projects,110,32,29,1351101.0,1429000.0,https://projectcatalyst.io/proposers/raz
+Robert Hever,Robert Hever,completion_ratio_lt_0.5_funded_ge_5,5,5,0,137288.0,202400.0,https://projectcatalyst.io/proposers/Robert Hever
+santi,Santiago Carmuega,top_1pct_distributed_usd,30,24,21,2466018.0,4322184.8,https://projectcatalyst.io/proposers/santi
+Santiago Carmuega,Santiago Carmuega,completion_ratio_lt_0.5_funded_ge_5,6,6,0,101881.0,150200.0,https://projectcatalyst.io/proposers/Santiago Carmuega
+s.kuepers,Sebastian Küpers,top_1pct_distributed_usd,1,1,1,1888200.0,1800000.0,https://projectcatalyst.io/proposers/s.kuepers
+sebastiengllmt,Sebastien Guillemot,top_1pct_distributed_usd,35,31,21,2021622.0,2978725.0,https://projectcatalyst.io/proposers/sebastiengllmt
+gammer13,Shay Gamer,top_1pct_distributed_usd,15,6,3,2294924.0,3088714.28,https://projectcatalyst.io/proposers/gammer13
+snek,Snek Labs,completion_ratio_lt_0.5_funded_ge_5,7,6,1,452836.0,1033400.0,https://projectcatalyst.io/proposers/snek
+spectrumlabs,Spectrum Labs,completion_ratio_lt_0.5_funded_ge_5,7,7,2,742323.0,1434979.0,https://projectcatalyst.io/proposers/spectrumlabs
+sustainableada,Sustainable ADA,high_volume_proposer_ge_50_projects,57,8,6,810830.0,1213000.0,https://projectcatalyst.io/proposers/sustainableada
+victorcorcino,Victor Corcino,high_volume_proposer_ge_50_projects,108,46,46,676886.42,0.0,https://projectcatalyst.io/proposers/victorcorcino
+wada,Wada,high_volume_proposer_ge_50_projects,126,44,44,1143225.0,195000.0,https://projectcatalyst.io/proposers/wada
+xersimp,Xerberus,completion_ratio_lt_0.5_funded_ge_5,6,5,1,1040383.0,1635340.0,https://projectcatalyst.io/proposers/xersimp
+yaadlabs,Yaad Labs,top_1pct_distributed_usd,5,1,1,1724556.0,1644000.0,https://projectcatalyst.io/proposers/yaadlabs
+yogo,Yoram,high_volume_proposer_ge_50_projects,75,32,31,701274.0,160000.0,https://projectcatalyst.io/proposers/yogo
+yutazzz,yutazzz,top_1pct_distributed_usd,40,34,32,1770409.0,2472286.8,https://projectcatalyst.io/proposers/yutazzz
