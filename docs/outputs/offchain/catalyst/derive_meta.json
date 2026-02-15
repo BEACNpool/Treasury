@@ -1,0 +1,10 @@
+{
+  "generated_at_utc": "2026-02-15T02:52:54.316322+00:00",
+  "source_url": "https://projectcatalyst.io/search?type=proposers",
+  "scraped_at": "2026-02-14T02:53:08.490569",
+  "counts": {
+    "proposers": 5516,
+    "funds": 15
+  },
+  "heavy_recipient_threshold_usd_top_1pct": 4368564.0
+}
