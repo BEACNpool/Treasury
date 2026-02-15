@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Treasury — Catalyst (off-chain)</title>
+  <link rel="stylesheet" href="site.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="nav">
+    <div class="wrap">
+      <div class="brand">BEACN · treasury</div>
+      <div class="links">
+        <a href="./">Home</a>
+        <a href="fees.html">Fee income</a>
+        <a href="pots.html">Treasury+Reserves</a>
+        <a href="https://github.com/BEACNpool/Treasury" target="_blank" rel="noreferrer">GitHub</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="h1">Project Catalyst (off-chain)</div>
+    <p class="sub">Verbatim scrape + receipts, plus AI-curated (deterministic) analytics. <strong>Signals are not accusations.</strong></p>
+
+    <div class="card">
+      <div class="row">
+        <div>
+          <strong>Receipts</strong>
+          <div class="note">Raw dataset (json.gz) + sha256 + derived analytics pack.</div>
+        </div>
+        <div class="links">
+          <a class="btn" href="outputs/offchain/catalyst/catalyst_proposers_full.json.gz" target="_blank" rel="noreferrer">json.gz</a>
+          <a class="btn" href="outputs/offchain/catalyst/manifest.sha256" target="_blank" rel="noreferrer">sha256</a>
+          <a class="btn" href="outputs/offchain/catalyst/analytics/meta.json" target="_blank" rel="noreferrer">analytics meta</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card kpis">
+      <div class="kpi">
+        <div class="lbl">Proposers</div>
+        <div class="val" id="kpi_props">—</div>
+        <div class="note" id="kpi_scraped">—</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">Distributed (USD)</div>
+        <div class="val" id="kpi_dist">—</div>
+        <div class="note">from proposer totals (USD)</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">Concentration</div>
+        <div class="val" id="kpi_conc">—</div>
+        <div class="note">top10 / top50 share</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <div>
+          <strong>Fund distributions (USD)</strong>
+          <div class="note">Derived from the raw scrape. Values shown in $M.</div>
+        </div>
+        <a class="btn" href="outputs/offchain/catalyst/funds.csv" target="_blank" rel="noreferrer">Download funds.csv</a>
+      </div>
+      <canvas id="fundChart" class="chart"></canvas>
+    </div>
+
+    <div class="card">
+      <strong>Inline leaderboards</strong>
+      <div class="note">Loads one canonical index then sorts client-side. Shows top 30 rows. Download CSV for full receipts.</div>
+
+      <div class="tableWrap" style="margin-top:10px">
+        <table>
+          <thead><tr><th>View</th><th></th></tr></thead>
+          <tbody>
+            <tr><td>Top by distributed (USD)</td><td><button class="btn" data-view="lb_usd">View</button></td></tr>
+            <tr><td>Top by distributed (ADA)</td><td><button class="btn" data-view="lb_ada">View</button></td></tr>
+            <tr><td>Top by total projects</td><td><button class="btn" data-view="lb_total">View</button></td></tr>
+            <tr><td>Top by funded projects</td><td><button class="btn" data-view="lb_funded">View</button></td></tr>
+            <tr><td>Top by completed projects</td><td><button class="btn" data-view="lb_completed">View</button></td></tr>
+            <tr><td>Top by requested (USD)</td><td><button class="btn" data-view="lb_requested">View</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <details class="viewer" id="viewer" style="margin-top:12px">
+        <summary>Inline viewer (tap View to populate)</summary>
+        <div class="note" style="margin-top:8px">Showing first 30 rows of the sorted index.</div>
+        <div class="tableWrap" style="margin-top:10px"><table id="viewer-table"></table></div>
+      </details>
+
+      <div class="row" style="margin-top:12px">
+        <a class="btn" href="outputs/offchain/catalyst/analytics/proposers_index.csv" target="_blank" rel="noreferrer">Download proposers_index.csv</a>
+        <a class="btn" href="outputs/offchain/catalyst/analytics/proposer_signals.csv" target="_blank" rel="noreferrer">Download signals.csv</a>
+      </div>
+
+      <details style="margin-top:12px">
+        <summary>About “AI-curated”</summary>
+        <div class="note" style="margin-top:8px">
+          “AI-curated” means we choose useful views/thresholds, but the derivation is deterministic (no LLM). Signals are not accusations.
+          See <code>outputs/offchain/catalyst/analytics/meta.json</code> for thresholds.
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <script type="module">
+    import { fetchText, parseCSV, toNum, fmt, fmtAda, renderTable } from './site.js';
+
+    // KPIs
+    try {
+      const sum = JSON.parse(await fetchText('outputs/offchain/catalyst/summary.json'));
+      document.getElementById('kpi_props').textContent = fmt(sum.counts?.proposers_total);
+      document.getElementById('kpi_scraped').textContent = `scraped: ${sum.generated_at_utc || 'unknown'}`;
+      document.getElementById('kpi_dist').textContent = new Intl.NumberFormat('en-US',{maximumFractionDigits:0}).format(sum.totals_usd?.distributed_usd || 0);
+    } catch(e) {}
+
+    try {
+      const conc = JSON.parse(await fetchText('outputs/offchain/catalyst/analytics/concentration.json'));
+      const t10 = (conc.shares?.top10 ?? 0) * 100;
+      const t50 = (conc.shares?.top50 ?? 0) * 100;
+      document.getElementById('kpi_conc').textContent = `${t10.toFixed(1)}% / ${t50.toFixed(1)}%`;
+    } catch(e) {}
+
+    // Fund chart
+    try {
+      const frows = parseCSV(await fetchText('outputs/offchain/catalyst/funds.csv')).rows;
+      const labels = frows.map(r=>'F'+r.fund_id);
+      const usdM = frows.map(r => (toNum(r.distributed_usd) || 0) / 1e6);
+
+      new Chart(document.getElementById('fundChart'),{
+        type:'bar',
+        data:{ labels, datasets:[{label:'Distributed ($M)', data: usdM, backgroundColor:'rgba(129,140,248,.65)', borderRadius:5}]},
+        options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, interaction:{mode:'index',intersect:false},
+          scales:{ x:{grid:{display:false},ticks:{color:'#94a3b8',maxTicksLimit:10}}, y:{grid:{color:'rgba(26,35,50,.6)'},ticks:{color:'#94a3b8'}}}}
+      });
+    } catch(e) {}
+
+    // Inline viewer from single index
+    const INDEX_PATH = 'outputs/offchain/catalyst/analytics/proposers_index.csv';
+    const VIEW_SORT = {
+      lb_usd: { key: 'total_distributed_usd', desc: true },
+      lb_ada: { key: 'distributed_ada_from_json', desc: true },
+      lb_total: { key: 'total_projects', desc: true },
+      lb_funded: { key: 'funded_projects', desc: true },
+      lb_completed: { key: 'completed_projects', desc: true },
+      lb_requested: { key: 'total_requested_usd', desc: true },
+    };
+
+    let __INDEX_CACHE=null;
+    async function loadIndex(){
+      if(__INDEX_CACHE) return __INDEX_CACHE;
+      const rows = parseCSV(await fetchText(INDEX_PATH)).rows;
+      __INDEX_CACHE = rows.map(r=>{
+        const o={...r};
+        ['total_projects','funded_projects','completed_projects','total_distributed_usd','total_requested_usd','total_remaining_usd','distributed_ada_from_json'].forEach(k=>{ if(k in o) o[k]=Number(o[k]||0); });
+        return o;
+      });
+      return __INDEX_CACHE;
+    }
+
+    async function openViewer(viewKey){
+      const cfg = VIEW_SORT[viewKey];
+      if(!cfg) return;
+      const viewer = document.getElementById('viewer');
+      const table = document.getElementById('viewer-table');
+      if(viewer) viewer.open = true;
+      const rows = await loadIndex();
+      const sorted = [...rows].sort((a,b)=> cfg.desc ? ((b[cfg.key]||0)-(a[cfg.key]||0)) : ((a[cfg.key]||0)-(b[cfg.key]||0)) );
+      renderTable(table, sorted, ['name','username','total_projects','funded_projects','completed_projects','total_distributed_usd','distributed_ada_from_json','catalyst_url'], 30);
+      if(viewer) viewer.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+
+    document.querySelectorAll('button[data-view]').forEach(btn=> btn.addEventListener('click', ()=> openViewer(btn.getAttribute('data-view'))));
+  </script>
+</body>
+</html>
