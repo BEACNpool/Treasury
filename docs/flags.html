@@ -83,6 +83,15 @@
       </table>
     </div>
 
+    <div class="box">
+      <h2 style="margin:0 0 .5rem 0;">Flag score (visual priority)</h2>
+      <div class="muted">Computed as <code>sum(weights)</code> per entity_id. This is not a guilt score; it’s a triage ordering.</div>
+      <table>
+        <thead><tr><th>Entity</th><th>Score</th><th>Top contributing flags</th></tr></thead>
+        <tbody id="scoreboard"></tbody>
+      </table>
+    </div>
+
   </div>
 
 <script>
@@ -93,6 +102,7 @@ const FLAG_WEIGHTS = {
   'F-CAT-003': { weight: 7, severity: 'orange', note: 'Cancelled but paid (requires receipts for delivered work)' },
   'F-CAT-004': { weight: 1, severity: 'green',  note: 'Shared non-default avatar (heuristic; low signal)' },
   'F-CAT-005': { weight: 3, severity: 'yellow', note: 'Duplicate/near-duplicate paid names across proposers (heuristic)' },
+  'F-AI-001':  { weight: 1, severity: 'green',  note: 'AI-compressible category (visual-only, heuristic)' },
 };
 
 function sevBadge(sev){
@@ -101,7 +111,7 @@ function sevBadge(sev){
 }
 
 async function main(){
-  const flagsPath = '../outputs/offchain/flags/catalyst_flags_v1.json';
+  const flagsPath = '../outputs/offchain/flags/catalyst_flags_v2.json';
   const data = await (await fetch(flagsPath)).json();
   const flags = data.flags || [];
 
@@ -149,6 +159,27 @@ async function main(){
     const tr=document.createElement('tr');
     tr.innerHTML = `<td>${p.projectName||''}</td><td class="num">${p.fundId||''}</td><td>${pr.username||''}</td><td class="num">₳${row.amt.toLocaleString(undefined,{maximumFractionDigits:2})}</td><td><a href="catalyst.html" target="_blank">receipts</a></td>`;
     canBody.appendChild(tr);
+  }
+
+  // flag score leaderboard (entity_id)
+  const score = {};
+  const contrib = {};
+  for (const f of flags){
+    const meta = FLAG_WEIGHTS[f.flag_id] || {weight:1};
+    const w = meta.weight || 1;
+    score[f.entity_id] = (score[f.entity_id]||0) + w;
+    contrib[f.entity_id] = contrib[f.entity_id] || {};
+    contrib[f.entity_id][f.flag_id] = (contrib[f.entity_id][f.flag_id]||0) + w;
+  }
+  const scored = Object.entries(score).map(([entity, sc])=>({entity, sc}));
+  scored.sort((a,b)=>b.sc-a.sc);
+  const sb = document.getElementById('scoreboard');
+  for (const row of scored.slice(0,30)){
+    const c = contrib[row.entity] || {};
+    const top = Object.entries(c).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k,v])=>`${k}(${v})`).join(', ');
+    const tr=document.createElement('tr');
+    tr.innerHTML = `<td><code>${row.entity}</code></td><td class="num">${row.sc}</td><td class="muted">${top}</td>`;
+    sb.appendChild(tr);
   }
 }
 
