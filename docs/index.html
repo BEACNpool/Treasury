@@ -701,6 +701,97 @@ mark.red {
 .bar-fill.gold { background: var(--gold-dim); }
 .bar-fill.green { background: var(--green-muted); }
 .bar-fill.ink { background: var(--ink); }
+
+/* ─── Key findings callout ─── */
+.kf-callout{
+  background: linear-gradient(180deg, rgba(200,168,78,0.10) 0%, rgba(200,168,78,0.05) 100%);
+  border: 2px solid rgba(200,168,78,0.35);
+  box-shadow: 0 18px 60px rgba(0,0,0,0.18);
+  border-radius: 16px;
+  padding: 1.25rem 1.25rem 1rem;
+  margin: 1.25rem 0 1.5rem;
+}
+.kf-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap: 1rem;
+}
+.kf-title{
+  font-family:'JetBrains Mono', monospace;
+  text-transform:uppercase;
+  letter-spacing:0.14em;
+  font-size:0.8rem;
+  color: var(--gold-dim);
+}
+.kf-sub{
+  color: var(--ash);
+  font-size: 0.95rem;
+  margin-top: 0.35rem;
+}
+.kf-links{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--ash);
+  white-space:nowrap;
+}
+.kf-links a{ color: var(--gold-dim); }
+.kf-grid{
+  display:grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+.kf-card{
+  grid-column: span 6;
+  background: rgba(10,10,10,0.04);
+  border: 1px solid rgba(10,10,10,0.10);
+  border-radius: 14px;
+  padding: 0.9rem 0.9rem 0.85rem;
+}
+.kf-card.wide{ grid-column: span 12; }
+.kf-metric{
+  font-family:'Playfair Display', serif;
+  font-weight: 900;
+  font-size: clamp(1.6rem, 3.2vw, 2.4rem);
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+}
+.kf-label{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ash);
+  margin-top: 0.35rem;
+}
+.kf-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap: 0.5rem 0.75rem;
+  align-items:baseline;
+}
+.kf-chip{
+  display:inline-flex;
+  align-items:center;
+  gap: 0.45rem;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  font-family:'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  border: 1px solid rgba(10,10,10,0.12);
+  background: rgba(255,255,255,0.45);
+}
+.kf-dot{ width:9px; height:9px; border-radius:999px; display:inline-block; }
+.kf-dot.orange{ background: var(--gold-dim); }
+.kf-dot.yellow{ background: #c9b56b; }
+.kf-dot.green{ background: var(--green-muted); }
+.kf-dot.red{ background: var(--blood-bright); }
+
+@media (max-width: 760px){
+  .kf-card{ grid-column: span 12; }
+  .kf-links{ white-space:normal; }
+}
 </style>
 </head>
 <body>
@@ -789,21 +880,67 @@ mark.red {
     <a href="catalyst.html" target="_blank">Browse receipts</a>
   </p>
 
-  <div class="annotation" style="margin: 1rem 0 1.25rem;">
-    <strong>Key findings (auto-generated from receipts)</strong><br>
-    <span style="color:var(--ash);">These are triage numbers, not verdicts. Click through for receipts.</span>
-    <ul style="margin:0.75rem 0 0 1.25rem;">
-      <li><strong id="kf-paid-proposals">…</strong> paid Catalyst proposals in the export (distributedToDate present)</li>
-      <li><strong id="kf-total-ada">…</strong> distributed (ADA-coded in export) · <strong id="kf-total-usd">…</strong> distributed (USD-coded in export)</li>
-      <li><strong id="kf-ai-buckets-ada">…</strong> in AI-compressible buckets (v0 heuristic classifier; ADA-coded)</li>
-      <li><strong id="kf-flagged-1">…</strong> paid proposals with ≥1 flag (review queue)</li>
-      <li><strong id="kf-flagged-3">…</strong> paid proposals with ≥3 flags · <strong id="kf-flagged-5">…</strong> with ≥5 flags</li>
-      <li><strong id="kf-orange">…</strong> max severity ORANGE · <strong id="kf-yellow">…</strong> YELLOW · <strong id="kf-green">…</strong> GREEN (paid proposals)</li>
-    </ul>
-    <div style="margin-top:0.75rem; font-family:'JetBrains Mono', monospace; font-size:0.75rem; color:var(--ash);">
-      Source: <a href="ai-audit.html" target="_blank">AI audit</a> · <a href="flags.html" target="_blank">Flags</a>
+  <section class="kf-callout" aria-label="Key findings">
+    <div class="kf-head">
+      <div>
+        <div class="kf-title">Key findings · auto-generated from receipts</div>
+        <div class="kf-sub">Triage numbers, not verdicts. If a number shocks you, click through and audit the receipts.</div>
+      </div>
+      <div class="kf-links">
+        <a href="ai-audit.html" target="_blank">AI audit</a> ·
+        <a href="flags.html" target="_blank">Flags</a> ·
+        <a href="catalyst.html" target="_blank">Receipts</a>
+      </div>
     </div>
-  </div>
+
+    <div class="kf-grid">
+      <div class="kf-card">
+        <div class="kf-metric" id="kf-paid-proposals">…</div>
+        <div class="kf-label">Paid proposals (deduped)</div>
+      </div>
+
+      <div class="kf-card">
+        <div class="kf-metric" id="kf-ai-buckets-ada">…</div>
+        <div class="kf-label">AI-compressible buckets (ADA-coded)</div>
+      </div>
+
+      <div class="kf-card wide">
+        <div class="kf-row">
+          <span class="kf-metric" id="kf-total-ada">…</span>
+          <span class="kf-metric" style="font-size:1.35rem; font-weight:700; opacity:0.75;">+</span>
+          <span class="kf-metric" id="kf-total-usd">…</span>
+        </div>
+        <div class="kf-label">Distributed to date (as recorded in export)</div>
+      </div>
+
+      <div class="kf-card">
+        <div class="kf-metric" id="kf-flagged-1">…</div>
+        <div class="kf-label">Paid proposals with ≥1 flag</div>
+      </div>
+
+      <div class="kf-card">
+        <div class="kf-row" style="gap:0.6rem 1rem;">
+          <div>
+            <div class="kf-metric" id="kf-flagged-3">…</div>
+            <div class="kf-label">≥3 flags</div>
+          </div>
+          <div>
+            <div class="kf-metric" id="kf-flagged-5">…</div>
+            <div class="kf-label">≥5 flags</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="kf-card wide">
+        <div class="kf-row">
+          <span class="kf-chip"><span class="kf-dot orange"></span><strong id="kf-orange">…</strong> ORANGE</span>
+          <span class="kf-chip"><span class="kf-dot yellow"></span><strong id="kf-yellow">…</strong> YELLOW</span>
+          <span class="kf-chip"><span class="kf-dot green"></span><strong id="kf-green">…</strong> GREEN</span>
+        </div>
+        <div class="kf-label">Max severity across paid proposals (triage)</div>
+      </div>
+    </div>
+  </section>
 
   <p class="annotation" style="margin-bottom: 1.5rem;">
     This project started as “publish receipts.” The next step is to ask a harder question:
