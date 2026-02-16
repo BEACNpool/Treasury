@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BEACN · Fund15 Prep (Proposals + Flags)</title>
+  <link rel="stylesheet" href="site.css" />
+  <link rel="stylesheet" href="audit-ui.css" />
+</head>
+<body>
+  <div class="nav">
+    <div class="wrap">
+      <div class="brand">BEACN · TREASURY</div>
+      <div class="links">
+        <a href="./">Dashboard</a>
+        <a href="catalyst.html">Catalyst</a>
+        <a href="flags.html">Flags</a>
+        <a href="ai-audit.html">AI Audit</a>
+        <span class="nav-divider">│</span>
+        <a href="fund15.html" class="active">Fund15 Prep</a>
+        <span class="nav-divider">│</span>
+        <a href="https://github.com/BEACNpool/Treasury" target="_blank" rel="noreferrer">GitHub</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="h1">Fund15 Prep (Proposals + v0 Flags)</div>
+    <p class="sub">
+      This page is a <strong>pre-vote triage</strong> view built from the public Fund15 proposal list.
+      Flags here are <strong>heuristics</strong> to help you prioritize review — not accusations.
+    </p>
+
+    <div class="disclaimer-banner">
+      ⚠ These flags are NOT receipts and NOT a claim of wrongdoing. They are a filter to find proposals that deserve extra scrutiny.
+    </div>
+
+    <div class="audit-hero">
+      <h2 id="kpi_title">Fund15 snapshot</h2>
+      <p id="kpi_sub">Loading…</p>
+      <div class="cta-links">
+        <a href="outputs/offchain/fund15/fund15_voting_ballot_clean.csv" target="_blank" rel="noreferrer">⬇ fund15_voting_ballot_clean.csv</a>
+        <a href="outputs/offchain/fund15/fund15_summary.json" target="_blank" rel="noreferrer">flag summary (json)</a>
+        <a href="https://projectcatalyst.io/funds/15" target="_blank" rel="noreferrer">source: projectcatalyst.io</a>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-value" id="p_count">—</div>
+        <div class="stat-label">Proposals in ballot list</div>
+      </div>
+      <div class="stat-card highlight">
+        <div class="stat-value" id="ai_like">—</div>
+        <div class="stat-label">F-AI-001-like (AI-compressible)</div>
+      </div>
+      <div class="stat-card highlight">
+        <div class="stat-value" id="content_like">—</div>
+        <div class="stat-label">F-CAT-002-like (content-like)</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="h2">Category totals (requested)</div>
+      <div class="note">Sums are from the proposal list requested amounts. This is not “paid”.</div>
+      <div class="tableWrap" style="margin-top:10px">
+        <table>
+          <thead><tr><th>Category</th><th style="text-align:right">Proposals</th><th style="text-align:right">Requested (sum)</th></tr></thead>
+          <tbody id="cat_rows"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="h2">How to use this for voting</div>
+      <ul class="note">
+        <li>Open the CSV and sort by <code>flag_f_ai_001</code> / <code>flag_f_cat_002</code> to triage.</li>
+        <li>Click the proposal <code>url</code> and verify the actual scope + milestones.</li>
+        <li>Cross-check proposer history in the historical receipts + flags pipeline.</li>
+      </ul>
+      <div class="note" style="margin-top:10px">
+        Historical receipts: <a href="catalyst.html">catalyst.html</a> · Historical flags: <a href="flags.html">flags.html</a> · AI repricing lens: <a href="ai-audit.html">ai-audit.html</a>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+async function main(){
+  const s = await (await fetch('outputs/offchain/fund15/fund15_summary.json')).json();
+  document.getElementById('p_count').textContent = (s.proposals_count||0).toLocaleString();
+  document.getElementById('ai_like').textContent = (s.flag_counts?.['F-AI-001_like']||0).toLocaleString();
+  document.getElementById('content_like').textContent = (s.flag_counts?.['F-CAT-002_like']||0).toLocaleString();
+
+  const updated = s.source_updated || 'public export';
+  document.getElementById('kpi_sub').textContent = `Ballot list: ${s.proposals_count} proposals · Heuristic flags: AI-like ${s.flag_counts?.['F-AI-001_like']||0}, content-like ${s.flag_counts?.['F-CAT-002_like']||0}`;
+
+  const tbody=document.getElementById('cat_rows');
+  const cats=s.categories||{};
+  for (const [name, meta] of Object.entries(cats)){
+    const tr=document.createElement('tr');
+    const sum = meta.requested_amount_sum;
+    const sumFmt = (name||'').includes('Midnight') ? `$USDM ${Number(sum).toLocaleString(undefined,{maximumFractionDigits:2})}` : `₳${Number(sum).toLocaleString(undefined,{maximumFractionDigits:2})}`;
+    tr.innerHTML = `<td>${name}</td><td style="text-align:right">${(meta.count||0).toLocaleString()}</td><td style="text-align:right">${sumFmt}</td>`;
+    tbody.appendChild(tr);
+  }
+}
+main();
+</script>
+</body>
+</html>

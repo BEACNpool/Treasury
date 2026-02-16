@@ -1,0 +1,26 @@
+{
+  "fund_id": 15,
+  "proposals_count": 506,
+  "flag_counts": {
+    "F-AI-001_like": 44,
+    "F-CAT-002_like": 78
+  },
+  "categories": {
+    "Midnight: Compact DApps": {
+      "count": 75,
+      "requested_amount_sum": 702190.0
+    },
+    "Cardano Use Cases: Prototype & Launch": {
+      "count": 284,
+      "requested_amount_sum": 41326536.0
+    },
+    "Cardano Open: Ecosystem": {
+      "count": 121,
+      "requested_amount_sum": 6319353.0
+    },
+    "Cardano Partners: Tier-1 Enterprise Integrations": {
+      "count": 26,
+      "requested_amount_sum": 17121948.0
+    }
+  }
+}
