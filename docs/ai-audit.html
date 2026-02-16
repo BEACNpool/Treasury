@@ -52,38 +52,27 @@
       <div style="margin-top:.4rem;"><span class="pill">Method</span> Simple keyword classification (v0). Misclassifications are expected — bring receipts and we’ll fix.</div>
     </div>
 
-    <div class="stat-row">
-      <div class="stat-card">
-        <div class="stat-value">₳150.98M</div>
-        <div class="stat-label">Total distributed (ADA-coded)</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value">2,217</div>
-        <div class="stat-label">Paid proposals</div>
-      </div>
-      <div class="stat-card alert">
-        <div class="stat-value">₳54.99M</div>
-        <div class="stat-label">AI-compressible buckets (ADA-coded)</div>
-      </div>
-      <div class="stat-card highlight">
-        <div class="stat-value">₳95.99M</div>
-        <div class="stat-label">“Other” (titles too vague, ADA-coded)</div>
-      </div>
-    </div>
-
     <div class="box">
-      <h2 style="margin:0 0 .5rem 0;">Headline totals</h2>
+      <h2 style="margin:0 0 .5rem 0;">How to read this page (v0)</h2>
       <ul class="muted" style="margin:.25rem 0 0 1.2rem;">
-        <li><strong>2,217</strong> paid proposals (distributedToDate present)</li>
-        <li><strong>₳150,979,182.13</strong> distributed (ADA-coded in export)</li>
-        <li><strong>$36,338,017.12</strong> distributed (USD-coded in export)</li>
+        <li><strong>Scope:</strong> paid proposals only (where <code>distributedToDate</code> is present in the export).</li>
+        <li><strong>Method:</strong> v0 keyword classification from proposal titles (expect mistakes).</li>
+        <li><strong>Receipts:</strong> always click through and verify against the raw Catalyst export.</li>
       </ul>
-      <div class="muted" style="margin-top:.6rem;font-size:.85rem;">Note: ADA↔USD conversion is not applied here; we report the currencies as recorded in the export.</div>
+      <div class="muted" style="margin-top:.6rem;font-size:.85rem;">
+        Downloads: <a href="outputs/offchain/ai_audit/ai_audit_summary.csv" target="_blank" rel="noreferrer">ai_audit_summary.csv</a>
+        &nbsp;·&nbsp;
+        <a href="outputs/offchain/ai_audit/ai_audit_examples_top25.json" target="_blank" rel="noreferrer">examples_top25.json</a>
+      </div>
     </div>
 
     <div class="box">
       <h2 style="margin:0 0 .5rem 0;">Category totals (ADA-coded)</h2>
-      <div class="muted" style="margin:.25rem 0 0 0;">These are v0 buckets. The “other” bucket is large because many project titles are not descriptive.</div>
+      <div class="muted" style="margin:.25rem 0 0 0;">
+        These are v0 buckets. For readability, the catch-all <code>other</code> category is hidden on this page.
+        You can still download the full CSV (includes <code>other</code>):
+        <a href="outputs/offchain/ai_audit/ai_audit_summary.csv" target="_blank" rel="noreferrer">ai_audit_summary.csv</a>
+      </div>
       <table id="summary">
         <thead>
           <tr>
@@ -133,8 +122,10 @@ async function main(){
   const summaryPath = 'outputs/offchain/ai_audit/ai_audit_summary.csv';
   const rows = await loadCSV(summaryPath);
 
-  // filter ADA-coded
-  const ada = rows.filter(r => r.currency === '$ADA');
+  // filter ADA-coded (hide 'other' on-page to reduce confusion; still present in CSV download)
+  const ada = rows
+    .filter(r => r.currency === '$ADA')
+    .filter(r => (r.category || '').toLowerCase() !== 'other');
   ada.sort((a,b)=> parseFloat(b.distributed_to_date_total) - parseFloat(a.distributed_to_date_total));
 
   const tbody = document.querySelector('#summary tbody');

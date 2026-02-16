@@ -132,6 +132,17 @@
             <strong>Clears-if (bring receipts):</strong> deliverables are substantial/technical, or cost breakdown + receipts
             show the work was not “AI-cheap” in practice.
           </div>
+
+          <div style="margin-top:0.75rem;">
+            <span class="pill">Examples (from CSV)</span>
+            <div class="muted" style="margin-top:0.35rem;">A few random rows that trigger this heuristic (for illustration only):</div>
+            <div class="tableWrap" style="margin-top:0.5rem; max-height:220px;">
+              <table>
+                <thead><tr><th>Project</th><th>Fund</th><th>Paid</th><th>Link</th></tr></thead>
+                <tbody id="ex_fai001"></tbody>
+              </table>
+            </div>
+          </div>
         </div>
 
         <div>
@@ -149,6 +160,17 @@
           <div style="margin-top:0.35rem;">
             <strong>Clears-if (bring receipts):</strong> public outputs + dates + links + metrics (views, signups, users onboarded,
             tx volume impact) OR a detailed deliverables list tied to milestones.
+          </div>
+        </div>
+
+        <div style="margin-top:1rem;">
+          <span class="pill">Examples (from CSV)</span>
+          <div class="muted" style="margin-top:0.35rem;">A few random rows that trigger this heuristic (for illustration only):</div>
+          <div class="tableWrap" style="margin-top:0.5rem; max-height:220px;">
+            <table>
+              <thead><tr><th>Project</th><th>Fund</th><th>Paid</th><th>Link</th></tr></thead>
+              <tbody id="ex_fcat002"></tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -209,6 +231,54 @@ function sevBadge(sev){
   return `<span class="sev ${cls}">${sev}</span>`;
 }
 
+function parseCSV(text){
+  const lines = text.trim().split(/\r?\n/);
+  const headers = lines[0].split(',');
+  const rows = [];
+  for (const line of lines.slice(1)){
+    const cols = [];
+    let cur='', inQ=false;
+    for (let i=0;i<line.length;i++){
+      const ch=line[i];
+      if (ch==='"'){ inQ=!inQ; continue; }
+      if (ch===',' && !inQ){ cols.push(cur); cur=''; }
+      else cur+=ch;
+    }
+    cols.push(cur);
+    const obj={};
+    headers.forEach((h,i)=>obj[h]=cols[i]);
+    rows.push(obj);
+  }
+  return rows;
+}
+
+function fillExampleTable(tbodyId, rows){
+  const tb = document.getElementById(tbodyId);
+  if (!tb) return;
+  tb.innerHTML = '';
+  for (const r of rows){
+    const code = r.distributedToDate_code || '';
+    const amt = Number(r.distributedToDate_amount || 0);
+    const paid = `${code} ${amt.toLocaleString(undefined,{maximumFractionDigits:2})}`.trim();
+    const fund = r.fundId || '';
+    const name = r.projectName || '';
+    const url = r.ideascaleUrl || '';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td title="${name}">${name}</td>
+      <td class="num">${fund}</td>
+      <td class="num">${paid}</td>
+      <td>${url ? `<a href="${url}" target="_blank" rel="noreferrer">receipt</a>` : ''}</td>
+    `;
+    tb.appendChild(tr);
+  }
+  if (!rows.length){
+    const tr=document.createElement('tr');
+    tr.innerHTML = `<td colspan="4" class="muted">(no examples found)</td>`;
+    tb.appendChild(tr);
+  }
+}
+
 async function main(){
   const flagsPath = 'outputs/offchain/flags/catalyst_flags_v2.json';
   const data = await (await fetch(flagsPath)).json();
@@ -221,6 +291,20 @@ async function main(){
   if (elFlagCount) elFlagCount.textContent = flags.length.toLocaleString();
   if (elCancelledPaid) elCancelledPaid.textContent = flags.filter(f=>f.flag_id==='F-CAT-003').length.toLocaleString();
   if (elConc) elConc.textContent = flags.filter(f=>f.flag_id==='F-CAT-001').length.toLocaleString();
+
+  // Heuristic examples (pull a few from the per-project CSV)
+  try{
+    const csvText = await (await fetch('outputs/offchain/flags/approved_projects_with_flags.csv')).text();
+    const rows = parseCSV(csvText);
+    const pick = (flagId) => rows
+      .filter(r => (r.flag_ids||'').includes(flagId))
+      .sort((a,b)=> Number(b.distributedToDate_amount||0) - Number(a.distributedToDate_amount||0))
+      .slice(0, 5);
+    fillExampleTable('ex_fai001', pick('F-AI-001'));
+    fillExampleTable('ex_fcat002', pick('F-CAT-002'));
+  } catch(e){
+    // ignore (examples are optional)
+  }
 
   // counts by type
   const counts = {};
