@@ -760,8 +760,8 @@ mark.red {
       <span class="stat-label">Annual NCL Spending</span>
     </div>
     <div class="stat-item fade-in">
-      <span class="stat-number green">~₳5M</span>
-      <span class="stat-label">Annual Fee Revenue</span>
+      <span class="stat-number green" id="stat-fees"></span>
+      <span class="stat-label">Annual Fee Revenue (on-chain, latest year)</span>
     </div>
   </div>
 </div>
@@ -1282,7 +1282,28 @@ const observer = new IntersectionObserver((entries) => {
 
 document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-// (stat banner values are intentionally hard-coded here)
+// ── Stat banner: pull real annual fee revenue (on-chain) ──
+(async () => {
+  const el = document.getElementById('stat-fees');
+  if (!el) return;
+  try {
+    const csv = await fetch('https://beacnpool.github.io/Treasury/outputs/year_treasury_fees.csv', { cache: 'no-store' }).then(r => r.text());
+    const lines = csv.trim().split(/\r?\n/);
+    const headers = lines[0].split(',');
+    const iFees = headers.indexOf('fees_ada');
+    const iYear = headers.indexOf('year');
+    const last = lines[lines.length - 1].split(',');
+    const fees = Number(last[iFees]);
+    const year = last[iYear];
+    if (Number.isFinite(fees)) {
+      el.textContent = `₳${Math.round(fees).toLocaleString()} (${year})`;
+    } else {
+      el.textContent = '';
+    }
+  } catch (e) {
+    el.textContent = '';
+  }
+})();
 </script>
 
 </body>
