@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Treasury — Catalyst (off-chain)</title>
   <link rel="stylesheet" href="site.css" />
+  <link rel="stylesheet" href="audit-ui.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 </head>
 <body>
@@ -17,7 +18,11 @@
         <a href="pots.html">Pots</a>
         <a href="treasury.html">Treasury</a>
         <a href="reserves.html">Reserves</a>
+        <span class="nav-divider">│</span>
         <a href="catalyst.html" class="active">Catalyst</a>
+        <a href="flags.html">Flags</a>
+        <a href="ai-audit.html">AI Audit</a>
+        <span class="nav-divider">│</span>
         <a href="https://github.com/BEACNpool/Treasury" target="_blank" rel="noreferrer">GitHub</a>
       </div>
     </div>
@@ -26,6 +31,24 @@
   <div class="wrap">
     <div class="h1">Project Catalyst (off-chain)</div>
     <p class="sub">Verbatim scrape + receipts, plus AI-curated (deterministic) analytics. <strong>Signals are not accusations.</strong></p>
+
+    <div class="audit-pipeline">
+      <span class="step active">① Receipts</span>
+      <span class="arrow">→</span>
+      <a class="step" href="flags.html">② Flags</a>
+      <span class="arrow">→</span>
+      <a class="step" href="ai-audit.html">③ AI Audit</a>
+    </div>
+
+    <div class="audit-callout">
+      This is the raw receipt data — verbatim scrape of every proposer, fund, and distribution.
+      For automated triage signals, see <a href="flags.html">Flags</a>.
+      For AI-driven deliverable categorization, see <a href="ai-audit.html">AI Audit</a>.
+    </div>
+
+    <div class="disclaimer-banner">
+      ⚠ Signals are not accusations. Used for context, not ledger truth.
+    </div>
 
     <div class="card">
       <div class="row">

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>BEACN · Flags (Catalyst)</title>
   <link rel="stylesheet" href="site.css" />
+  <link rel="stylesheet" href="audit-ui.css" />
   <style>
     .wrap{max-width:1200px;margin:0 auto;padding:2rem 1.25rem;}
     .kicker{color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:.85rem;letter-spacing:.08em;text-transform:uppercase;}
@@ -29,10 +30,43 @@
   <div class="wrap">
     <div class="kicker">BEACN · receipts-first</div>
     <h1 style="margin:.35rem 0 0.75rem 0;">Flags (Catalyst)</h1>
+
+    <div class="audit-pipeline">
+      <a class="step" href="catalyst.html">① Receipts</a>
+      <span class="arrow">→</span>
+      <span class="step active">② Flags</span>
+      <span class="arrow">→</span>
+      <a class="step" href="ai-audit.html">③ AI Audit</a>
+    </div>
+
+    <div class="audit-callout">
+      Flags are rule-based triage signals derived from <a href="catalyst.html">Catalyst receipts</a>.
+      For deliverable repricing analysis, see <a href="ai-audit.html">AI Audit</a>.
+    </div>
+
+    <div class="disclaimer-banner">
+      ⚠ Flags are not accusations. Weight is assigned by criteria rubric, not human judgment of guilt.
+      Anything implying fraud would require court findings or direct primary receipts.
+    </div>
     <p class="muted" style="max-width:980px;">
       Flags are <strong>rule-based triage signals</strong>. They are not accusations.
       This page summarizes signals emitted from the exported Catalyst receipts dataset.
     </p>
+
+    <div class="stat-row">
+      <div class="stat-card alert">
+        <div class="stat-value" id="flag-count">—</div>
+        <div class="stat-label">Total flags emitted</div>
+      </div>
+      <div class="stat-card alert">
+        <div class="stat-value" id="cancelled-paid-count">—</div>
+        <div class="stat-label">Cancelled but paid</div>
+      </div>
+      <div class="stat-card highlight">
+        <div class="stat-value" id="concentration-count">—</div>
+        <div class="stat-label">Concentration flags</div>
+      </div>
+    </div>
 
     <div class="box">
       <h2 style="margin:0 0 .5rem 0;">Weighting (AI-driven, criteria-based)</h2>
@@ -120,6 +154,14 @@ async function main(){
   const flagsPath = 'outputs/offchain/flags/catalyst_flags_v2.json';
   const data = await (await fetch(flagsPath)).json();
   const flags = data.flags || [];
+
+  // Top stat cards
+  const elFlagCount = document.getElementById('flag-count');
+  const elCancelledPaid = document.getElementById('cancelled-paid-count');
+  const elConc = document.getElementById('concentration-count');
+  if (elFlagCount) elFlagCount.textContent = flags.length.toLocaleString();
+  if (elCancelledPaid) elCancelledPaid.textContent = flags.filter(f=>f.flag_id==='F-CAT-003').length.toLocaleString();
+  if (elConc) elConc.textContent = flags.filter(f=>f.flag_id==='F-CAT-001').length.toLocaleString();
 
   // counts by type
   const counts = {};

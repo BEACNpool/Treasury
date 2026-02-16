@@ -1,0 +1,79 @@
+/* Shared audit UI helpers for BEACN Treasury (dark pages using site.css) */
+
+/* ── Nav divider ── */
+.nav-divider{color:rgba(255,255,255,0.15);margin:0 0.25rem;user-select:none}
+
+/* ── Audit pipeline breadcrumb ── */
+.audit-pipeline{
+  display:flex;
+  align-items:center;
+  gap:0.5rem;
+  padding:0.75rem 1rem;
+  margin:1.25rem 0;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:10px;
+  font-size:0.85rem;
+  color:rgba(255,255,255,0.55);
+}
+.audit-pipeline .step{
+  padding:0.35rem 0.75rem;
+  border-radius:8px;
+  text-decoration:none;
+  transition:background 0.2s, border-color 0.2s;
+}
+.audit-pipeline a.step{color:rgba(255,255,255,0.65)}
+.audit-pipeline a.step:hover{background:rgba(255,255,255,0.07);text-decoration:none}
+.audit-pipeline .step.active{
+  background:rgba(34,211,238,0.12);
+  color:var(--trs);
+  font-weight:600;
+  border:1px solid rgba(34,211,238,0.25);
+}
+.audit-pipeline .arrow{color:rgba(255,255,255,0.25)}
+
+/* ── Cross-link callout ── */
+.audit-callout{
+  padding:0.75rem 1rem;
+  margin:1rem 0;
+  border-left:3px solid var(--accent);
+  background:rgba(56,189,248,0.06);
+  border-radius:0 10px 10px 0;
+  font-size:0.92rem;
+  color:rgba(226,232,240,0.85);
+}
+.audit-callout a{color:var(--accent);text-decoration:underline}
+
+/* ── Disclaimer banner ── */
+.disclaimer-banner{
+  padding:0.6rem 1rem;
+  margin:1rem 0;
+  background:rgba(251,191,36,0.06);
+  border:1px solid rgba(251,191,36,0.18);
+  border-radius:10px;
+  font-size:0.82rem;
+  color:rgba(251,191,36,0.95);
+}
+
+/* ── Stat cards row ── */
+.stat-row{display:flex;gap:1rem;margin:1.25rem 0;flex-wrap:wrap}
+.stat-card{flex:1;min-width:180px;padding:1rem;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px}
+.stat-card .stat-value{font-size:1.6rem;font-weight:800;color:#fff;letter-spacing:-0.02em}
+.stat-card .stat-label{font-family:var(--mono);font-size:0.72rem;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.08em;margin-top:0.35rem}
+.stat-card.alert .stat-value{color:var(--spend)}
+.stat-card.highlight .stat-value{color:var(--accent)}
+
+/* ── Hero CTA ── */
+.audit-hero{
+  text-align:center;
+  padding:1.75rem 1rem;
+  margin:1.75rem 0;
+  background:linear-gradient(135deg, rgba(56,189,248,0.08), rgba(248,113,113,0.06));
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:16px;
+}
+.audit-hero h2{font-size:1.4rem;color:#fff;margin:0 0 0.35rem 0}
+.audit-hero p{color:rgba(255,255,255,0.65);margin:0 0 1rem 0;font-size:0.95rem}
+.audit-hero .cta-links{display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap}
+.audit-hero .cta-links a{padding:0.55rem 1.15rem;border:1px solid rgba(56,189,248,0.35);border-radius:10px;color:var(--accent);text-decoration:none;font-family:var(--mono);font-size:0.82rem;transition:background 0.2s}
+.audit-hero .cta-links a:hover{background:rgba(56,189,248,0.10)}

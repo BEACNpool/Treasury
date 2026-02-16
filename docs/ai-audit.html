@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>BEACN · AI Price-Collapse Audit (Catalyst)</title>
   <link rel="stylesheet" href="site.css" />
+  <link rel="stylesheet" href="audit-ui.css" />
   <style>
     .wrap{max-width:1100px;margin:0 auto;padding:2rem 1.25rem;}
     .kicker{color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:.85rem;letter-spacing:.08em;text-transform:uppercase;}
@@ -23,6 +24,23 @@
   <div class="wrap">
     <div class="kicker">BEACN · receipts-first</div>
     <h1 style="margin:.35rem 0 0.75rem 0;">AI Price-Collapse Audit (Catalyst)</h1>
+
+    <div class="audit-pipeline">
+      <a class="step" href="catalyst.html">① Receipts</a>
+      <span class="arrow">→</span>
+      <a class="step" href="flags.html">② Flags</a>
+      <span class="arrow">→</span>
+      <span class="step active">③ AI Audit</span>
+    </div>
+
+    <div class="audit-callout">
+      Categories are derived from <a href="catalyst.html">Catalyst receipts</a>.
+      For rule-based triage signals (concentration, cancelled-but-paid), see <a href="flags.html">Flags</a>.
+    </div>
+
+    <div class="disclaimer-banner">
+      ⚠ This is a budgeting lens — not a claim of wrongdoing, and not a claim that funds were "lost." Misclassifications are expected — bring receipts and we’ll fix.
+    </div>
     <p class="muted" style="max-width:900px;">
       This page groups <strong>paid</strong> Catalyst proposals by <strong>deliverable type</strong> to highlight where the marginal cost of work has likely collapsed in 2026 due to modern AI-assisted tooling.
       It is a <strong>budgeting lens</strong> — not a claim of wrongdoing, and not a claim that funds were “lost”.
@@ -32,6 +50,25 @@
       <div><span class="pill">Scope</span> Paid proposals (distributedToDate) from exported Catalyst receipts</div>
       <div style="margin-top:.4rem;"><span class="pill">Receipts</span> <a href="catalyst.html" target="_blank">Catalyst receipts</a></div>
       <div style="margin-top:.4rem;"><span class="pill">Method</span> Simple keyword classification (v0). Misclassifications are expected — bring receipts and we’ll fix.</div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-value">₳150.98M</div>
+        <div class="stat-label">Total distributed (ADA-coded)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">2,217</div>
+        <div class="stat-label">Paid proposals</div>
+      </div>
+      <div class="stat-card alert">
+        <div class="stat-value">₳54.99M</div>
+        <div class="stat-label">AI-compressible buckets (ADA-coded)</div>
+      </div>
+      <div class="stat-card highlight">
+        <div class="stat-value">₳95.99M</div>
+        <div class="stat-label">“Other” (titles too vague, ADA-coded)</div>
+      </div>
     </div>
 
     <div class="box">
