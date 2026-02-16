@@ -748,27 +748,21 @@ mark.red {
 <div class="stat-banner">
   <div class="stat-grid">
     <div class="stat-item fade-in">
-      <span class="stat-number gold" id="stat-catalyst-usd"></span>
-      <span class="stat-label">Distributed via Catalyst (off-chain receipts)</span>
+      <span class="stat-number gold">$150M+</span>
+      <span class="stat-label">Distributed via Catalyst</span>
     </div>
     <div class="stat-item fade-in">
-      <span class="stat-number red" id="stat-proj-funded"></span>
-      <span class="stat-label">Projects funded (Catalyst scrape)</span>
+      <span class="stat-number red">2,100+</span>
+      <span class="stat-label">Projects Funded</span>
     </div>
     <div class="stat-item fade-in">
-      <span class="stat-number" id="stat-ncl" style="color:#999"></span>
-      <span class="stat-label">Annual NCL spending (manual / TBD)</span>
+      <span class="stat-number red">~₳350M</span>
+      <span class="stat-label">Annual NCL Spending</span>
     </div>
     <div class="stat-item fade-in">
-      <span class="stat-number green" id="stat-fees"></span>
-      <span class="stat-label">Annual fee revenue (on-chain)</span>
+      <span class="stat-number green">~₳5M</span>
+      <span class="stat-label">Annual Fee Revenue</span>
     </div>
-  </div>
-  <div style="max-width:1000px; margin:2rem auto 0; padding:0 2rem; color:#999; font-family:'JetBrains Mono',monospace; font-size:0.75rem;">
-    Data sources:
-    <a href="https://beacnpool.github.io/Treasury/catalyst.html" target="_blank" style="color:var(--gold)">Catalyst receipts</a> ·
-    <a href="https://beacnpool.github.io/Treasury/fees.html" target="_blank" style="color:var(--gold)">Fee income</a> ·
-    <a href="https://beacnpool.github.io/Treasury/" target="_blank" style="color:var(--gold)">Dashboard</a>
   </div>
 </div>
 
@@ -1288,38 +1282,7 @@ const observer = new IntersectionObserver((entries) => {
 
 document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-// ─── Live stats (receipts-first) ───
-(async () => {
-  const $ = (id) => document.getElementById(id);
-
-  // Catalyst totals (off-chain receipts)
-  try {
-    const sum = await fetch('https://beacnpool.github.io/Treasury/outputs/offchain/catalyst/summary.json', { cache: 'no-store' }).then(r=>r.json());
-    const dist = sum?.totals_usd?.distributed_usd ?? null;
-    const funded = sum?.counts?.projects_funded_total ?? null;
-    if ($('stat-catalyst-usd') && dist !== null) $('stat-catalyst-usd').textContent = `$${Math.round(dist).toLocaleString()}`;
-    if ($('stat-proj-funded') && funded !== null) $('stat-proj-funded').textContent = `${Math.round(funded).toLocaleString()}`;
-  } catch (e) {
-    if ($('stat-catalyst-usd')) $('stat-catalyst-usd').textContent = '';
-    if ($('stat-proj-funded')) $('stat-proj-funded').textContent = '';
-  }
-
-  // Annual fee revenue (on-chain)
-  try {
-    const csv = await fetch('https://beacnpool.github.io/Treasury/outputs/year_treasury_fees.csv', { cache: 'no-store' }).then(r=>r.text());
-    const lines = csv.trim().split(/\r?\n/);
-    const headers = lines[0].split(',');
-    const iFees = headers.indexOf('fees_ada');
-    const iYear = headers.indexOf('year');
-    const last = lines[lines.length-1].split(',');
-    const fees = Number(last[iFees]);
-    const year = last[iYear];
-    if ($('stat-fees') && Number.isFinite(fees)) $('stat-fees').textContent = `₳${Math.round(fees).toLocaleString()}`;
-    // keep label implicit; year is available if you want to show it later
-  } catch (e) {
-    if ($('stat-fees')) $('stat-fees').textContent = '';
-  }
-})();
+// (stat banner values are intentionally hard-coded here)
 </script>
 
 </body>
