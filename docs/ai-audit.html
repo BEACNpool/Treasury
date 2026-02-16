@@ -53,6 +53,25 @@
     </div>
 
     <div class="box">
+      <h2 style="margin:0 0 .5rem 0;">Preparing for Fund15 voting (using receipts + flags + AI audit)</h2>
+      <p class="muted" style="margin:.25rem 0 0 0;max-width:980px;">
+        Fund15 proposals aren’t in this dataset yet (this page is built from <strong>historical paid proposals</strong>),
+        but you can use these tools as a <strong>voting checklist</strong>:
+      </p>
+      <ul class="muted" style="margin:.6rem 0 0 1.2rem;">
+        <li><strong>Receipts:</strong> verify proposer history + prior delivery: <a href="catalyst.html" target="_blank" rel="noreferrer">catalyst.html</a></li>
+        <li><strong>Flags:</strong> triage patterns (concentration, cancelled-but-paid, duplicate names): <a href="flags.html" target="_blank" rel="noreferrer">flags.html</a></li>
+        <li><strong>AI audit:</strong> “reprice this” lens for AI-compressible deliverables (v0, title-based).</li>
+      </ul>
+      <div class="muted" style="margin-top:.75rem;font-size:.85rem;">
+        Quick stats from historical paid proposals (deduped):
+        <a href="outputs/offchain/flags/flag_summary.json" target="_blank" rel="noreferrer">flag_summary.json</a>
+        &nbsp;·&nbsp;
+        <a href="outputs/offchain/flags/approved_projects_with_flags.csv" target="_blank" rel="noreferrer">approved_projects_with_flags.csv</a>
+      </div>
+    </div>
+
+    <div class="box">
       <h2 style="margin:0 0 .5rem 0;">How to read this page (v0)</h2>
       <ul class="muted" style="margin:.25rem 0 0 1.2rem;">
         <li><strong>Scope:</strong> paid proposals only (where <code>distributedToDate</code> is present in the export).</li>
