@@ -84,14 +84,19 @@
       </p>
     </div>
 
-    <div class="box">
-      <div><span class="pill">Dataset</span> <code>outputs/offchain/flags/catalyst_flags_v2.json</code></div>
-      <div style="margin-top:.35rem;"><span class="pill">Receipts</span> <a href="catalyst.html" target="_blank">Catalyst receipts</a></div>
-      <div style="margin-top:.35rem;">
-        <span class="pill">Downloads</span>
-        <a href="outputs/offchain/flags/approved_projects_with_flags.csv" target="_blank">approved_projects_with_flags.csv</a>
-        &nbsp;·&nbsp;
-        <a href="outputs/offchain/flags/proposers_with_flags.csv" target="_blank">proposers_with_flags.csv</a>
+    <div class="audit-hero">
+      <h2>Download the flagged-proposals dataset</h2>
+      <p>
+        These CSVs list each proposal (deduped) and the flags it received (count + weight + flag IDs).
+        Sort in Excel/Sheets by <strong>flag_weight_total</strong> to prioritize review.
+      </p>
+      <div class="cta-links">
+        <a href="outputs/offchain/flags/approved_projects_with_flags.csv" target="_blank">⬇ approved_projects_with_flags.csv</a>
+        <a href="outputs/offchain/flags/proposers_with_flags.csv" target="_blank">⬇ proposers_with_flags.csv</a>
+        <a href="outputs/offchain/flags/catalyst_flags_v2.json" target="_blank">Raw flags (JSON)</a>
+      </div>
+      <div class="muted" style="margin-top:0.75rem; font-family:var(--mono); font-size:0.8rem;">
+        Receipts: <a href="catalyst.html" target="_blank">Catalyst receipts</a>
       </div>
     </div>
 
