@@ -101,6 +101,60 @@
     </div>
 
     <div class="box">
+      <h2 style="margin:0 0 .5rem 0;">Heuristic flags (visual-only) — what they mean</h2>
+      <p class="muted" style="margin:.25rem 0 0 0;max-width:980px;">
+        Two of the flags in this dataset are intentionally low weight and green because they are <strong>heuristics</strong> —
+        they exist to help reviewers <em>filter</em> and <em>prioritize</em>, not to assert anything about intent or delivery.
+      </p>
+
+      <div style="margin-top:0.75rem;" class="muted">
+        <div style="margin-bottom:0.75rem;">
+          <span class="pill">F-AI-001</span>
+          <strong>AI-compressible deliverable category</strong> (heuristic)
+          <div style="margin-top:0.35rem;">
+            <strong>What triggers it:</strong> the proposal title matches a v0 keyword classifier for categories where,
+            in 2026, the marginal cost of producing the deliverable is often dramatically lower due to AI-assisted tooling.
+          </div>
+          <div style="margin-top:0.35rem;">
+            <strong>Examples of categories:</strong> translations, short-form content, social media packs, basic dashboards,
+            simple scrapers/bots, templated websites, documentation/handbooks.
+          </div>
+          <div style="margin-top:0.35rem;">
+            <strong>Why it’s a flag:</strong> not “bad,” just “reprice this.” It’s a budgeting lens:
+            if something is cheap to reproduce today, we should demand tighter scopes, clearer milestones,
+            and receipts showing real impact.
+          </div>
+          <div style="margin-top:0.35rem;">
+            <strong>Common false positives:</strong> titles that sound like content/software but actually include deeper work
+            (research, legal work, complex infrastructure, ongoing ops).
+          </div>
+          <div style="margin-top:0.35rem;">
+            <strong>Clears-if (bring receipts):</strong> deliverables are substantial/technical, or cost breakdown + receipts
+            show the work was not “AI-cheap” in practice.
+          </div>
+        </div>
+
+        <div>
+          <span class="pill">F-CAT-002</span>
+          <strong>Keyword-based “content-like” pattern</strong> (heuristic)
+          <div style="margin-top:0.35rem;">
+            <strong>What triggers it:</strong> the title contains content-adjacent terms (example patterns: “podcast”, “video”,
+            “marketing”, “social”, “community”, “newsletter”, “blog”, “media”, “ambassador”, “education”).
+          </div>
+          <div style="margin-top:0.35rem;">
+            <strong>Why it’s a flag:</strong> content work can be valuable, but it’s also where receipts and ROI tend to be
+            the least concrete. This flag pushes reviewers to ask: <em>what exactly was delivered</em>, and <em>what measurable outcome</em>
+            was achieved?
+          </div>
+          <div style="margin-top:0.35rem;">
+            <strong>Clears-if (bring receipts):</strong> public outputs + dates + links + metrics (views, signups, users onboarded,
+            tx volume impact) OR a detailed deliverables list tied to milestones.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="box">
       <h2 style="margin:0 0 .5rem 0;">Counts by flag type</h2>
       <table>
         <thead>
@@ -143,11 +197,11 @@
 const FLAG_WEIGHTS = {
   // weights 1–10 (visual priority only)
   'F-CAT-001': { weight: 6, severity: 'yellow', note: 'High proposer concentration (needs review; can be benign for vendors)' },
-  'F-CAT-002': { weight: 2, severity: 'green',  note: 'Keyword-based content-like pattern (heuristic; visual only)' },
+  'F-CAT-002': { weight: 2, severity: 'green',  note: 'Keyword-based “content-like” title pattern (heuristic; prompts reviewers to demand concrete deliverables + ROI receipts)' },
   'F-CAT-003': { weight: 7, severity: 'orange', note: 'Cancelled but paid (requires receipts for delivered work)' },
   'F-CAT-004': { weight: 1, severity: 'green',  note: 'Shared non-default avatar (heuristic; low signal)' },
   'F-CAT-005': { weight: 3, severity: 'yellow', note: 'Duplicate/near-duplicate paid names across proposers (heuristic)' },
-  'F-AI-001':  { weight: 1, severity: 'green',  note: 'AI-compressible category (visual-only, heuristic)' },
+  'F-AI-001':  { weight: 1, severity: 'green',  note: 'AI-compressible deliverable category (heuristic; budgeting lens to “reprice this”, not a wrongdoing claim)' },
 };
 
 function sevBadge(sev){
