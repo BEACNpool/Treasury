@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BEACN Treasury — Cardano Treasury Analytics</title>
+  <meta name="description" content="Open-source, auditable Cardano treasury analytics. On-chain data from db-sync. Use this data when voting on governance actions, parameter changes, and Catalyst funding." />
+  <link rel="stylesheet" href="site.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- ── Nav ── -->
+  <div class="nav">
+    <div class="wrap">
+      <div class="brand">BEACN · TREASURY</div>
+      <div class="links">
+        <a href="./" class="active">Dashboard</a>
+        <a href="fees.html">Fees</a>
+        <a href="pots.html">Pots</a>
+        <a href="treasury.html">Treasury</a>
+        <a href="reserves.html">Reserves</a>
+        <a href="catalyst.html">Catalyst</a>
+        <a href="https://github.com/BEACNpool/Treasury" target="_blank" rel="noreferrer">GitHub</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <!-- ── Hero ── -->
+    <div class="hero">
+      <div class="hero-title">Cardano Treasury<br><span class="hi">Receipts First.</span></div>
+      <div class="hero-sub">
+        Open-source, auditable analytics for Cardano's treasury and reserves.
+        All numbers trace to db-sync SQL. Use this data when you vote.
+      </div>
+      <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+        <div class="badge"><span class="dot-live"></span> <span id="status-tip">loading…</span></div>
+        <div class="badge" id="status-gen"></div>
+      </div>
+    </div>
+
+    <!-- ── BEACN Treasury AI analysis ── -->
+    <div class="h3">BEACN Treasury AI analysis <span class="tag tag-model">AI analysis</span></div>
+    <div class="card">
+      <div style="display:grid; gap:10px">
+        <div>
+          <strong>Summary (what this dashboard currently implies)</strong>
+          <div class="note" style="margin-top:6px">
+            This section is intentionally opinionated. Every claim links to the supporting data on this site.
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="flow-card in" style="border-color: rgba(34,211,238,.25)">
+            <div class="flow-label">Outlook (model-based)</div>
+            <div class="note" id="ai-outlook">Loading…</div>
+          </div>
+          <div class="flow-card out" style="border-color: rgba(248,113,113,.25)">
+            <div class="flow-label">What to verify (receipts)</div>
+            <div class="note">
+              <ul style="margin:8px 0 0 18px; padding:0">
+                <li><a href="treasury.html">Treasury projections</a> (runway scenarios + assumptions)</li>
+                <li><a href="reserves.html">Reserves depletion</a> (trend + biggest drops viewer)</li>
+                <li><a href="fees.html">Lifetime fee income</a> (cumulative <code>epoch.fees</code>)</li>
+                <li><a href="pots.html">Total pots</a> (largest moves + line-item hints)</li>
+                <li><a href="catalyst.html">Catalyst</a> (off-chain context + receipts)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <details>
+          <summary>Nuance / upside cases (harder to quantify)</summary>
+          <div class="note" style="margin-top:8px">
+            Some spending is intended to increase long-run network throughput and adoption (e.g., core infrastructure / scaling work associated with large ecosystem players like IOG).
+            If that succeeds, fee income and overall economic activity could rise — which improves treasury inflows and slows “insolvency” timelines.
+            This dashboard does <em>not</em> try to guess that upside: it shows what the receipts say today and makes the assumptions explicit.
+          </div>
+        </details>
+
+        <div class="note">
+          If you’re voting: treat the runway chart as a <strong>stress test</strong>. If the stress test says “insolvent by X”, the action item is to either (a) reduce outflows, (b) increase inflows (usage/fees), or (c) change protocol parameters — and to demand receipts for whichever lever is being pulled.
+        </div>
+
+        <div class="card" style="margin:0; border-style:solid; border-color:rgba(248,113,113,.35)">
+          <strong style="display:block; margin-bottom:6px">The question to keep in mind</strong>
+          <div class="note" style="font-size:13px; line-height:1.55">
+            What is more valuable: a blockchain with governance and a large reserve — or one with depleted reserves?
+            In a world where the marginal cost of code trends toward zero (AI-assisted development accelerating fast), do we need to fund <em>human-led</em> projects at these levels if they are unsustainable?
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Top-line KPIs ── -->
+    <div class="h3">Snapshot</div>
+    <div class="kpis" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+      <div class="kpi kpi-trs">
+        <div class="lbl">Treasury balance</div>
+        <div class="val trs" id="kpi-treasury">—</div>
+        <div class="note" id="kpi-treasury-note">on-chain · db-sync</div>
+      </div>
+      <div class="kpi kpi-res">
+        <div class="lbl">Reserves balance</div>
+        <div class="val res" id="kpi-reserves">—</div>
+        <div class="note">monetary expansion source</div>
+      </div>
+      <div class="kpi kpi-fees">
+        <div class="lbl">Lifetime fee income</div>
+        <div class="val fees" id="kpi-fees">—</div>
+        <div class="note">cumulative tx fees since genesis</div>
+      </div>
+      <div class="kpi kpi-warn">
+        <div class="lbl">Reserves depletion rate</div>
+        <div class="val warn" id="kpi-depletion">—</div>
+        <div class="note">avg decay per epoch (last 10)</div>
+      </div>
+    </div>
+
+    <!-- ── Treasury + Reserves Chart ── -->
+    <div class="h3">Treasury + Reserves over time</div>
+    <div class="card">
+      <div class="row">
+        <div>
+          <strong>Total unallocated ADA</strong> <span class="tag tag-onchain">on-chain</span>
+          <div class="note">Treasury (growing) + Reserves (depleting) = total protocol-held ADA.</div>
+        </div>
+        <a class="btn" href="pots.html">Deep dive →</a>
+      </div>
+      <div class="chartBox"><canvas id="chart-pots"></canvas></div>
+    </div>
+
+    <!-- ── Money In / Money Out ── -->
+    <hr class="section-sep" />
+    <div class="h3">Money in · Money out</div>
+
+    <div class="grid-2">
+      <div class="flow-card in">
+        <div class="flow-label">↑ Inflows (per epoch, avg last 10)</div>
+        <div class="flow-item"><span>Monetary expansion (ρ × reserves)</span> <span class="flow-val" id="flow-expansion">—</span></div>
+        <div class="flow-item"><span>Transaction fees (τ share)</span> <span class="flow-val" id="flow-fees">—</span></div>
+        <div class="flow-item" style="border-top:1px solid var(--border); padding-top:8px; margin-top:4px; font-weight:600;"><span>Net inflow to treasury</span> <span class="flow-val" id="flow-net-in" style="color:var(--fees)">—</span></div>
+      </div>
+      <div class="flow-card out">
+        <div class="flow-label">↓ Outflows (recent enacted)</div>
+        <div class="flow-item"><span>Governance withdrawals</span> <span class="flow-val" id="flow-withdrawals">—</span></div>
+        <div class="flow-item"><span>Catalyst (off-chain total)</span> <span class="flow-val" id="flow-catalyst">—</span></div>
+        <div class="flow-item" style="border-top:1px solid var(--border); padding-top:8px; margin-top:4px;">
+          <span style="color:var(--muted); font-size:11px">Withdrawals are on-chain; Catalyst is off-chain context.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Sustainability projection ── -->
+    <hr class="section-sep" />
+    <div class="h3">Sustainability projection <span class="tag tag-model">AI model</span></div>
+    <div class="card">
+      <div class="row">
+        <div>
+          <strong>Treasury runway (simple scenarios)</strong>
+          <div class="note">Start from current balance. Inflow = avg of last 10 epochs × 73 epochs/year. 3 fixed annual spend levels. This is a model, not a ledger fact.</div>
+        </div>
+        <a class="btn" href="treasury.html">Full projections →</a>
+      </div>
+      <div class="chartBox"><canvas id="chart-proj"></canvas></div>
+      <details style="margin-top:10px">
+        <summary>Assumptions</summary>
+        <div class="note" style="margin-top:8px">
+          Annual inflow proxy = last 10 epochs average treasury delta × 73 epochs/year.
+          Spend scenarios: ₳250M, ₳350M, ₳500M per year (fixed).
+          ρ and τ can change via governance — this model does not predict those decisions.
+        </div>
+      </details>
+    </div>
+
+    <!-- ── Fee income mini chart ── -->
+    <div class="h3">Cumulative fee income</div>
+    <div class="card">
+      <div class="row">
+        <div>
+          <strong>Lifetime TX fees</strong> <span class="tag tag-onchain">on-chain</span>
+          <div class="note">Cumulative sum of <code>epoch.fees</code> from genesis → tip.</div>
+        </div>
+        <a class="btn" href="fees.html">Deep dive →</a>
+      </div>
+      <div class="chartBox" style="height:200px"><canvas id="chart-fees"></canvas></div>
+    </div>
+
+    <!-- ── Catalyst summary ── -->
+    <div class="h3">Catalyst spending (off-chain context) <span class="tag tag-offchain">off-chain</span></div>
+    <div class="card">
+      <div class="row">
+        <div>
+          <strong>Project Catalyst totals</strong>
+          <div class="note">Verbatim scrape from projectcatalyst.io. Used for context, not ledger truth.</div>
+        </div>
+        <a class="btn" href="catalyst.html">Full Catalyst data →</a>
+      </div>
+      <div class="kpis" style="margin-top:12px">
+        <div class="kpi kpi-catalyst">
+          <div class="lbl">Total distributed (USD)</div>
+          <div class="val" id="kpi-cat-dist" style="color:var(--catalyst);font-size:20px">—</div>
+        </div>
+        <div class="kpi kpi-catalyst">
+          <div class="lbl">Proposers funded</div>
+          <div class="val" id="kpi-cat-funded" style="color:var(--catalyst);font-size:20px">—</div>
+        </div>
+        <div class="kpi kpi-catalyst">
+          <div class="lbl">Top 10 concentration</div>
+          <div class="val" id="kpi-cat-conc" style="color:var(--catalyst);font-size:20px">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Governance toolkit CTA ── -->
+    <hr class="section-sep" />
+    <div class="gov-cta">
+      <div class="gov-title">⚡ Governance toolkit</div>
+      <div class="note">
+        Use BEACN's open infrastructure when voting on parameter changes, governance actions, or Catalyst funding.
+        All data is backed by db-sync SQL queries you can reproduce yourself.
+      </div>
+      <div class="gov-actions">
+        <a class="btn btn-primary" href="treasury.html">Treasury + projections</a>
+        <a class="btn btn-primary" href="reserves.html">Reserves depletion</a>
+        <a class="btn btn-primary" href="catalyst.html">Catalyst spending</a>
+        <a class="btn" href="https://github.com/BEACNpool/Treasury/tree/main/scripts" target="_blank" rel="noreferrer">Reproduce queries</a>
+        <a class="btn" href="https://github.com/BEACNpool/Treasury/blob/main/docs/methodology.md" target="_blank" rel="noreferrer">Methodology</a>
+      </div>
+    </div>
+
+    <!-- ── BEACN infrastructure ── -->
+    <div class="card" style="margin-top:12px">
+      <div class="row">
+        <div>
+          <strong>BEACN infrastructure</strong>
+          <div class="note">
+            Community-hosted db-sync, Cardano nodes, and parsed datasets.
+            <strong>0% margin stake pool.</strong> Independently operated.
+          </div>
+        </div>
+        <div class="links">
+          <a class="btn" href="https://github.com/BEACNpool/Treasury" target="_blank" rel="noreferrer">GitHub repo</a>
+        </div>
+      </div>
+      <div class="note" style="margin-top:10px">
+        <strong>Available to the community:</strong>
+        db-sync SQL query templates · Pre-computed CSV exports · DuckDB local index ·
+        Methodology docs · sha256 receipts on every dataset.
+        Evidence-first: every computed number traces to a source query + timestamp.
+      </div>
+    </div>
+
+    <!-- ── Deep dive links ── -->
+    <div class="h3">Deep dives</div>
+    <div class="grid-2" style="margin-bottom:20px">
+      <a href="fees.html" class="card" style="text-decoration:none; color:inherit;">
+        <strong style="color:var(--fees)">Cumulative TX Fee Income</strong>
+        <div class="note">How much ADA has come back via transaction fees (lifetime).</div>
+      </a>
+      <a href="pots.html" class="card" style="text-decoration:none; color:inherit;">
+        <strong style="color:var(--accent)">Total Pots (Treasury + Reserves)</strong>
+        <div class="note">Combined unallocated ADA over time + biggest moves viewer.</div>
+      </a>
+      <a href="treasury.html" class="card" style="text-decoration:none; color:inherit;">
+        <strong style="color:var(--trs)">Treasury-only + Projections</strong>
+        <div class="note">Treasury history, moves viewer, and AI sustainability scenarios.</div>
+      </a>
+      <a href="reserves.html" class="card" style="text-decoration:none; color:inherit;">
+        <strong style="color:var(--res)">Reserves-only + Depletion</strong>
+        <div class="note">Reserves decay curve and projection at current ρ.</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── Footer ── -->
+  <div class="footer">
+    <div class="wrap">
+      BEACN · 0% margin Cardano stake pool · Open source ·
+      <a href="https://github.com/BEACNpool/Treasury">github.com/BEACNpool/Treasury</a>
+    </div>
+  </div>
+
+  <!-- ── Script ── -->
+  <script type="module">
+    import { fetchText, parseCSV, toNum, fmtAda, fmt } from './site.js';
+
+    // ── Status ──
+    try {
+      const meta = JSON.parse(await fetchText('outputs/status.json'));
+      document.getElementById('status-tip').textContent = `tip: ${meta.tip_time || 'unknown'}`;
+      document.getElementById('status-gen').textContent = `generated: ${meta.generated_at_utc || 'unknown'}`;
+    } catch(e) {
+      document.getElementById('status-tip').textContent = 'status unavailable';
+    }
+
+    // ── Load epoch data ──
+    const epochText = await fetchText('outputs/epoch_treasury_fees.csv');
+    const rows = parseCSV(epochText).rows;
+    const epoch = rows.map(r => toNum(r.epoch_no));
+    const treasury = rows.map(r => toNum(r.treasury_end_ada) || 0);
+    const reserves = rows.map(r => toNum(r.reserves_start_ada) || 0);
+    const total = treasury.map((v,i) => v + (reserves[i]||0));
+
+    const last = rows[rows.length - 1];
+    const lastTreasury = toNum(last.treasury_end_ada) || 0;
+    const lastReserves = toNum(last.reserves_start_ada) || 0;
+
+    // ── KPIs ──
+    document.getElementById('kpi-treasury').textContent = fmtAda(lastTreasury);
+    document.getElementById('kpi-treasury-note').textContent = `epoch ${last.epoch_no} · ${last.end_time?.split(' ')[0] || ''}`;
+    document.getElementById('kpi-reserves').textContent = fmtAda(lastReserves);
+
+    // Fee income KPI
+    try {
+      const feeText = await fetchText('outputs/onchain/fee_income_epoch.csv');
+      const feeRows = parseCSV(feeText).rows;
+      const lastFee = feeRows[feeRows.length - 1];
+      document.getElementById('kpi-fees').textContent = fmtAda(toNum(lastFee.cumulative_fees_ada));
+
+      // Mini fee chart
+      const feeEpoch = feeRows.map(r => toNum(r.epoch_no));
+      const feeCum = feeRows.map(r => (toNum(r.cumulative_fees_ada)||0)/1e6);
+      new Chart(document.getElementById('chart-fees'), {
+        type: 'line',
+        data: { labels: feeEpoch, datasets: [{
+          data: feeCum, borderColor: '#34d399', backgroundColor: 'rgba(52,211,153,.06)',
+          fill: true, pointRadius: 0, tension: 0.25, borderWidth: 2
+        }]},
+        options: { responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          interaction: { mode: 'index', intersect: false },
+          scales: { x: { grid: { display: false }, ticks: { maxTicksLimit: 8, color: '#64748b', font: { size: 10 } } },
+                    y: { grid: { color: 'rgba(30,41,59,.5)' }, ticks: { color: '#64748b', font: { size: 10 } } } }
+        }
+      });
+    } catch(e) {}
+
+    // Depletion rate
+    const recentN = 10;
+    const recentReserves = rows.slice(-recentN - 1);
+    if (recentReserves.length > 1) {
+      let totalDecay = 0;
+      for (let i = 1; i < recentReserves.length; i++) {
+        const prev = toNum(recentReserves[i-1].reserves_start_ada) || 1;
+        const curr = toNum(recentReserves[i].reserves_start_ada) || 0;
+        totalDecay += (prev - curr) / prev;
+      }
+      const avgDecay = totalDecay / (recentReserves.length - 1);
+      document.getElementById('kpi-depletion').textContent = `${(avgDecay * 100).toFixed(3)}%`;
+    }
+
+    // ── Money in / Money out ──
+    const last10 = rows.slice(-10);
+    const avgDelta = last10.reduce((s,r) => s + (toNum(r.treasury_delta_ada)||0), 0) / last10.length;
+    const avgExpansion = last10.reduce((s,r) => s + (toNum(r.monetary_expansion_est_ada)||0), 0) / last10.length;
+    const avgFeeInflow = last10.reduce((s,r) => s + (toNum(r.fees_epoch_ada)||0), 0) / last10.length;
+
+    document.getElementById('flow-expansion').textContent = fmtAda(avgExpansion);
+    document.getElementById('flow-fees').textContent = fmtAda(avgFeeInflow);
+    document.getElementById('flow-net-in').textContent = fmtAda(avgDelta);
+
+    // Withdrawals
+    try {
+      const wText = await fetchText('outputs/onchain/withdrawals_by_epoch.csv');
+      const wRows = parseCSV(wText).rows;
+      const totalW = wRows.reduce((s,r) => s + (toNum(r.withdrawals_ada)||0), 0);
+      document.getElementById('flow-withdrawals').textContent = fmtAda(totalW) + ' (total)';
+    } catch(e) { document.getElementById('flow-withdrawals').textContent = '—'; }
+
+    // Catalyst total
+    try {
+      const sum = JSON.parse(await fetchText('outputs/offchain/catalyst/summary.json'));
+      const distUsd = sum.totals_usd?.distributed_usd || 0;
+      document.getElementById('flow-catalyst').textContent = '$' + fmt(distUsd);
+      document.getElementById('kpi-cat-dist').textContent = '$' + fmt(distUsd);
+      document.getElementById('kpi-cat-funded').textContent = fmt(sum.counts?.proposers_with_funded_projects);
+    } catch(e) {}
+
+    try {
+      const conc = JSON.parse(await fetchText('outputs/offchain/catalyst/analytics/concentration.json'));
+      const t10 = (conc.shares?.top10 ?? 0) * 100;
+      document.getElementById('kpi-cat-conc').textContent = t10.toFixed(1) + '%';
+    } catch(e) {}
+
+    // ── Total pots chart ──
+    const chartOpts = {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      interaction: { mode: 'index', intersect: false },
+      scales: {
+        x: { grid: { display: false }, ticks: { maxTicksLimit: 10, color: '#64748b', font: { size: 10 } } },
+        y: { grid: { color: 'rgba(30,41,59,.5)' }, ticks: { color: '#64748b', font: { size: 10 } } }
+      }
+    };
+
+    new Chart(document.getElementById('chart-pots'), {
+      type: 'line',
+      data: { labels: epoch, datasets: [
+        { label: 'Treasury', data: treasury.map(v=>v/1e6), borderColor: '#22d3ee', backgroundColor: 'rgba(34,211,238,.05)', fill: true, pointRadius: 0, tension: 0.25, borderWidth: 2 },
+        { label: 'Reserves', data: reserves.map(v=>v/1e6), borderColor: '#a78bfa', backgroundColor: 'rgba(167,139,250,.04)', fill: true, pointRadius: 0, tension: 0.25, borderWidth: 2 },
+      ]},
+      options: { ...chartOpts, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', font: { family: "'JetBrains Mono'", size: 10 }, padding: 16, usePointStyle: true, pointStyle: 'line' } } } }
+    });
+
+    // ── Sustainability projection ──
+    const epochsPerYear = 73;
+    const inflowAnnual = avgDelta * epochsPerYear;
+    const years = Array.from({length: 11}, (_,i) => 2026 + i);
+    const scenarios = [
+      { name: '₳250M/yr spend', spend: 250e6, color: '#34d399' },
+      { name: '₳350M/yr spend', spend: 350e6, color: '#fbbf24' },
+      { name: '₳500M/yr spend', spend: 500e6, color: '#f87171' },
+    ];
+    const startBal = lastTreasury;
+    const ds = scenarios.map(s => {
+      let cur = startBal;
+      const out = [cur/1e6];
+      for (let i = 1; i < years.length; i++) {
+        cur = Math.max(0, cur + inflowAnnual - s.spend);
+        out.push(cur/1e6);
+      }
+      return { label: s.name, data: out, borderColor: s.color, backgroundColor: 'rgba(0,0,0,0)', borderWidth: 2, pointRadius: 0, tension: 0.2 };
+    });
+
+    new Chart(document.getElementById('chart-proj'), {
+      type: 'line',
+      data: { labels: years, datasets: ds },
+      options: { responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', font: { family: "'JetBrains Mono'", size: 10 }, padding: 16, usePointStyle: true, pointStyle: 'line' } } },
+        interaction: { mode: 'index', intersect: false },
+        scales: { x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 10 } } },
+                  y: { grid: { color: 'rgba(30,41,59,.5)' }, ticks: { color: '#64748b', font: { size: 10 } } } }
+      }
+    });
+
+    // ── AI analysis text (ties claims → where to verify) ──
+    function depletionYearForSpend(spendAdaPerYear){
+      let cur = startBal;
+      for (let i = 1; i < years.length; i++){
+        cur = Math.max(0, cur + inflowAnnual - spendAdaPerYear);
+        if (cur <= 0) return years[i];
+      }
+      return null;
+    }
+
+    const y250 = depletionYearForSpend(250e6);
+    const y350 = depletionYearForSpend(350e6);
+    const y500 = depletionYearForSpend(500e6);
+
+    const outlookBits = [];
+    outlookBits.push(`Using the last-10-epochs inflow proxy, annual inflow ≈ ${fmtAda(inflowAnnual)}.`);
+    outlookBits.push(`If annual spend stays at ₳250M, the treasury ${y250 ? `hits ~0 by ${y250}` : 'does not hit 0 in this 10-year window'}.`);
+    outlookBits.push(`At ₳350M/yr: ${y350 ? `~0 by ${y350}` : 'not 0 within 10 years'}. At ₳500M/yr: ${y500 ? `~0 by ${y500}` : 'not 0 within 10 years'}.`);
+    const balancedSpend = inflowAnnual;
+    outlookBits.push(`Balanced-budget spend (given this inflow proxy) is ≈ ${fmtAda(balancedSpend)} per year.`);
+    outlookBits.push(`Model assumption: current chain usage and current protocol parameters remain broadly the same (this does not assume scaling success, new revenue sources, or governance parameter changes). See the projections chart below and the Treasury page for assumptions.`);
+
+    const aiEl = document.getElementById('ai-outlook');
+    if (aiEl) aiEl.textContent = outlookBits.join(' ');
+  </script>
+</body>
+</html>

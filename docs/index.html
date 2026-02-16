@@ -1,465 +1,1326 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>BEACN Treasury — Cardano Treasury Analytics</title>
-  <meta name="description" content="Open-source, auditable Cardano treasury analytics. On-chain data from db-sync. Use this data when voting on governance actions, parameter changes, and Catalyst funding." />
-  <link rel="stylesheet" href="site.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BEACN Treasury — The Reckoning</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=JetBrains+Mono:wght@400;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0a0a0a;
+  --paper: #f5f0e8;
+  --cream: #faf6ee;
+  --gold: #c8a84e;
+  --gold-dim: #8a7235;
+  --blood: #8b1a1a;
+  --blood-bright: #c62828;
+  --green-muted: #2e6b3a;
+  --green-bright: #4caf50;
+  --slate: #3a3a3a;
+  --ash: #6b6b6b;
+  --rule: #d4cbb8;
+  --highlight: #fff3cd;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 18px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--gold);
+  color: var(--ink);
+}
+
+/* ─── HERO ─── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 4rem 2rem;
+  background: var(--ink);
+  color: var(--paper);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(ellipse at 20% 50%, rgba(200,168,78,0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 50%, rgba(139,26,26,0.04) 0%, transparent 50%);
+}
+
+.hero-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border: 1px solid var(--gold-dim);
+  padding: 0.4em 1.2em;
+  margin-bottom: 3rem;
+  position: relative;
+  z-index: 1;
+}
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: clamp(3rem, 8vw, 7rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  max-width: 900px;
+  position: relative;
+  z-index: 1;
+}
+
+.hero h1 em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.hero-subtitle {
+  font-family: 'Source Serif 4', serif;
+  font-size: 1.25rem;
+  font-weight: 300;
+  color: #999;
+  max-width: 600px;
+  margin-top: 2rem;
+  position: relative;
+  z-index: 1;
+  font-style: italic;
+}
+
+.hero-scroll {
+  position: absolute;
+  bottom: 3rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--ash);
+  z-index: 1;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+/* ─── CHAPTER STRUCTURE ─── */
+.chapter {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 6rem 2rem;
+}
+
+.chapter-wide {
+  max-width: 1000px;
+}
+
+.chapter-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.chapter h2 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  line-height: 1.15;
+  margin-bottom: 2rem;
+  letter-spacing: -0.01em;
+}
+
+.chapter h3 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+}
+
+.chapter p {
+  margin-bottom: 1.5rem;
+  color: var(--slate);
+}
+
+.chapter p.lead {
+  font-size: 1.3rem;
+  font-weight: 300;
+  color: var(--ink);
+  line-height: 1.65;
+}
+
+/* ─── DIVIDERS ─── */
+.divider {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.divider hr {
+  border: none;
+  height: 1px;
+  background: var(--rule);
+}
+
+.divider-ornament {
+  text-align: center;
+  padding: 2rem 0;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  color: var(--gold-dim);
+}
+
+/* ─── STAT CALLOUTS ─── */
+.stat-banner {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 5rem 2rem;
+  text-align: center;
+}
+
+.stat-banner .stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 3rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.stat-item .stat-number {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  line-height: 1;
+  display: block;
+}
+
+.stat-number.red { color: var(--blood-bright); }
+.stat-number.gold { color: var(--gold); }
+.stat-number.green { color: var(--green-bright); }
+
+.stat-item .stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--ash);
+  margin-top: 0.75rem;
+  display: block;
+}
+
+/* ─── RECEIPT CARDS ─── */
+.receipt-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin: 2.5rem 0;
+}
+
+.receipt {
+  background: var(--cream);
+  border: 1px solid var(--rule);
+  padding: 1.75rem 2rem;
+  position: relative;
+}
+
+.receipt::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+}
+
+.receipt.dead::before { background: var(--blood-bright); }
+.receipt.warning::before { background: var(--gold); }
+.receipt.active::before { background: var(--green-muted); }
+
+.receipt-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.receipt-name {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.receipt-status {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.25em 0.75em;
+  border-radius: 2px;
+}
+
+.receipt-status.dead { background: var(--blood-bright); color: white; }
+.receipt-status.warning { background: var(--gold); color: var(--ink); }
+.receipt-status.active { background: var(--green-muted); color: white; }
+
+.receipt-body {
+  font-size: 0.95rem;
+  color: var(--ash);
+  line-height: 1.6;
+}
+
+.receipt-amount {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.receipt-source {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--ash);
+  margin-top: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+/* ─── QUOTE / PULLQUOTE ─── */
+.pullquote {
+  border-left: 3px solid var(--gold);
+  padding: 1.5rem 2rem;
+  margin: 3rem 0;
+  background: rgba(200,168,78,0.04);
+}
+
+.pullquote p {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+.pullquote cite {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ash);
+  display: block;
+  margin-top: 1rem;
+  font-style: normal;
+}
+
+/* ─── COMPARISON TABLE ─── */
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2rem 0;
+  font-size: 0.95rem;
+}
+
+.comparison-table th {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-align: left;
+  padding: 1rem 0.75rem;
+  border-bottom: 2px solid var(--ink);
+  color: var(--ash);
+}
+
+.comparison-table td {
+  padding: 0.85rem 0.75rem;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+
+.comparison-table tr:last-child td {
+  border-bottom: 2px solid var(--ink);
+}
+
+.comparison-table .mono {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+}
+
+.comparison-table .red { color: var(--blood-bright); font-weight: 700; }
+.comparison-table .green { color: var(--green-muted); font-weight: 700; }
+
+/* ─── TIMELINE ─── */
+.timeline {
+  position: relative;
+  margin: 3rem 0;
+  padding-left: 2.5rem;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--green-muted), var(--gold), var(--blood-bright));
+}
+
+.timeline-entry {
+  position: relative;
+  margin-bottom: 2.5rem;
+}
+
+.timeline-entry::before {
+  content: '';
+  position: absolute;
+  left: -2.65rem;
+  top: 0.5rem;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  background: var(--paper);
+}
+
+.timeline-entry.bad::before { border-color: var(--blood-bright); background: var(--blood-bright); }
+.timeline-entry.good::before { border-color: var(--green-muted); background: var(--green-muted); }
+
+.timeline-date {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+}
+
+.timeline-text {
+  font-size: 0.95rem;
+  color: var(--slate);
+  margin-top: 0.25rem;
+}
+
+.timeline-text strong {
+  color: var(--ink);
+}
+
+/* ─── MATH BOX ─── */
+.math-box {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 2.5rem;
+  margin: 2.5rem 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  line-height: 2;
+  border-left: 4px solid var(--gold);
+}
+
+.math-box .equation {
+  font-size: 1.1rem;
+  margin: 1rem 0;
+}
+
+.math-box .result {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--blood-bright);
+  margin-top: 1rem;
+}
+
+.math-box .result.gold { color: var(--gold); }
+
+/* ─── PIZZA SECTION ─── */
+.pizza-section {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 5rem 2rem;
+  text-align: center;
+}
+
+.pizza-section .chapter {
+  padding: 0;
+}
+
+.pizza-comparison {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 2rem;
+  align-items: center;
+  margin: 3rem auto;
+  max-width: 800px;
+}
+
+.pizza-side {
+  text-align: center;
+}
+
+.pizza-side .amount {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  font-weight: 900;
+}
+
+.pizza-side .label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--ash);
+  margin-top: 0.5rem;
+}
+
+.pizza-vs {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-style: italic;
+  color: var(--ash);
+}
+
+/* ─── BALANCED BUDGET ─── */
+.balanced-section {
+  background: linear-gradient(180deg, var(--paper) 0%, #e8e4da 100%);
+  padding: 5rem 2rem;
+}
+
+.budget-card {
+  background: white;
+  border: 1px solid var(--rule);
+  padding: 2rem;
+  margin: 1.5rem 0;
+  position: relative;
+}
+
+.budget-card.good {
+  border-left: 4px solid var(--green-muted);
+}
+
+.budget-card.bad {
+  border-left: 4px solid var(--blood-bright);
+}
+
+.budget-card h4 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.budget-card p {
+  font-size: 0.95rem;
+  color: var(--ash);
+  margin: 0;
+}
+
+.budget-card .budget-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 0.75rem;
+}
+
+/* ─── CTA / FOOTER ─── */
+.cta-section {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 6rem 2rem;
+  text-align: center;
+}
+
+.cta-section h2 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: clamp(2rem, 4vw, 3rem);
+  max-width: 700px;
+  margin: 0 auto 2rem;
+}
+
+.cta-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.cta-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 1em 2em;
+  text-decoration: none;
+  border: 1px solid var(--gold-dim);
+  color: var(--gold);
+  transition: all 0.3s;
+}
+
+.cta-btn:hover {
+  background: var(--gold);
+  color: var(--ink);
+}
+
+.cta-btn.primary {
+  background: var(--gold);
+  color: var(--ink);
+}
+
+.cta-btn.primary:hover {
+  background: var(--paper);
+}
+
+footer {
+  background: var(--ink);
+  border-top: 1px solid #222;
+  padding: 2rem;
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: var(--ash);
+}
+
+footer a { color: var(--gold-dim); text-decoration: none; }
+footer a:hover { color: var(--gold); }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 600px) {
+  .pizza-comparison {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .stat-banner .stat-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .chapter { padding: 4rem 1.25rem; }
+}
+
+/* ─── ANIMATIONS ─── */
+.fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── ANNOTATION ─── */
+.annotation {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--ash);
+  background: rgba(200,168,78,0.08);
+  padding: 1rem 1.25rem;
+  margin: 2rem 0;
+  border-left: 2px solid var(--gold-dim);
+  line-height: 1.7;
+}
+
+.annotation a {
+  color: var(--gold-dim);
+}
+
+/* Highlights within text */
+mark {
+  background: var(--highlight);
+  padding: 0.1em 0.3em;
+}
+
+mark.red {
+  background: rgba(198,40,40,0.12);
+}
+
+/* Visual bar chart */
+.bar-chart {
+  margin: 2rem 0;
+}
+
+.bar-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  gap: 1rem;
+}
+
+.bar-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  width: 120px;
+  text-align: right;
+  color: var(--ash);
+  flex-shrink: 0;
+}
+
+.bar-track {
+  flex: 1;
+  height: 28px;
+  background: #e8e4da;
+  position: relative;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding-left: 0.75rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: white;
+  transition: width 1.5s ease;
+}
+
+.bar-fill.red { background: var(--blood-bright); }
+.bar-fill.gold { background: var(--gold-dim); }
+.bar-fill.green { background: var(--green-muted); }
+.bar-fill.ink { background: var(--ink); }
+</style>
 </head>
 <body>
 
-  <!-- ── Nav ── -->
-  <div class="nav">
-    <div class="wrap">
-      <div class="brand">BEACN · TREASURY</div>
-      <div class="links">
-        <a href="./" class="active">Dashboard</a>
-        <a href="fees.html">Fees</a>
-        <a href="pots.html">Pots</a>
-        <a href="treasury.html">Treasury</a>
-        <a href="reserves.html">Reserves</a>
-        <a href="catalyst.html">Catalyst</a>
-        <a href="https://github.com/BEACNpool/Treasury" target="_blank" rel="noreferrer">GitHub</a>
+<!-- ═══════════════════════════════════════════ HERO ═══════ -->
+<section class="hero">
+  <div class="hero-badge">BEACN · Treasury Investigation</div>
+  <h1>The <em>Reckoning</em></h1>
+  <p class="hero-subtitle">
+    An evidence-based audit of how Cardano spent its treasury, 
+    what it got in return, and why the math no longer works.
+  </p>
+  <div class="hero-scroll">↓ Scroll to begin</div>
+</section>
+
+<!-- ═══════════════════════════ CHAPTER I: THE PEAK ═══════ -->
+<section class="chapter fade-in">
+  <span class="chapter-number">Chapter I</span>
+  <h2>The Peak</h2>
+  
+  <p class="lead">
+    Cardano was born with a war chest. A reserve of <strong>~13.9 billion ADA</strong> was set aside at genesis &mdash; 
+    a monetary expansion pool designed to fund staking rewards and gradually fill the treasury through a 
+    carefully designed exponential decay. It was supposed to last decades.
+  </p>
+  
+  <p>
+    By design, 0.3% of the remaining reserves are released each epoch (every 5 days), split between staking rewards 
+    and the treasury. 20% of every transaction fee also flows to the treasury. The system was elegant: 
+    a self-sustaining blockchain with a built-in endowment that would grow the treasury while 
+    the network matured enough to sustain itself on transaction fees alone.
+  </p>
+
+  <p>
+    By Q1 2025, the treasury had accumulated approximately <strong>1.8 billion ADA</strong>. The reserves, while depleting by 
+    design, still held billions. The combined protocol-held ADA represented an enormous endowment &mdash; 
+    one of the largest treasuries in all of crypto.
+  </p>
+
+  <p>
+    Then the spending began.
+  </p>
+</section>
+
+<div class="stat-banner">
+  <div class="stat-grid">
+    <div class="stat-item fade-in">
+      <span class="stat-number gold" id="stat-catalyst-usd">loading…</span>
+      <span class="stat-label">Distributed via Catalyst (off-chain receipts)</span>
+    </div>
+    <div class="stat-item fade-in">
+      <span class="stat-number red" id="stat-proj-funded">loading…</span>
+      <span class="stat-label">Projects funded (Catalyst scrape)</span>
+    </div>
+    <div class="stat-item fade-in">
+      <span class="stat-number red" id="stat-ncl">—</span>
+      <span class="stat-label">Annual NCL spending (manual / TBD)</span>
+    </div>
+    <div class="stat-item fade-in">
+      <span class="stat-number green" id="stat-fees">loading…</span>
+      <span class="stat-label">Annual fee revenue (on-chain)</span>
+    </div>
+  </div>
+  <div style="max-width:1000px; margin:2rem auto 0; padding:0 2rem; color:#999; font-family:'JetBrains Mono',monospace; font-size:0.75rem;">
+    Data sources:
+    <a href="https://beacnpool.github.io/Treasury/catalyst.html" target="_blank" style="color:var(--gold)">Catalyst receipts</a> ·
+    <a href="https://beacnpool.github.io/Treasury/fees.html" target="_blank" style="color:var(--gold)">Fee income</a> ·
+    <a href="https://beacnpool.github.io/Treasury/" target="_blank" style="color:var(--gold)">Dashboard</a>
+  </div>
+</div>
+
+<!-- ═══════════════════════ CHAPTER II: THE SPENDING SPREE ═══════ -->
+<section class="chapter fade-in">
+  <span class="chapter-number">Chapter II</span>
+  <h2>The Spending Spree</h2>
+  
+  <p class="lead">
+    Since its inception in 2020, Project Catalyst has distributed over <strong>$150 million</strong> across more than 
+    <strong>2,100 funded proposals</strong> through 14 funding rounds and counting. It was marketed as "one of the world's 
+    largest decentralized grant programs." The question nobody asked loudly enough: <em>what did we get for it?</em>
+  </p>
+
+  <p>
+    The receipts tell a story the marketing never did. Many of the most prominent, most-funded 
+    projects built on Cardano are now dead. Not struggling. Not pivoting. <em>Dead.</em>
+  </p>
+
+  <h3>The Graveyard</h3>
+
+  <p class="annotation" style="margin-bottom: 1.5rem;">
+    <strong>Intent:</strong> Not a hit list. A memory. The goal is to protect the treasury by learning from past outcomes.
+    If you think an entry is unfair or missing context, bring receipts and we’ll update it.
+    <br><br>
+    <strong>Supporting data:</strong>
+    <a href="https://beacnpool.github.io/Treasury/catalyst.html" target="_blank">Catalyst receipts + derived indices</a> ·
+    <a href="https://beacnpool.github.io/Treasury/treasury.html" target="_blank">Treasury moves + enacted withdrawals</a>
+  </p>
+
+  <div class="receipt-grid">
+    <div class="receipt dead">
+      <div class="receipt-header">
+        <span class="receipt-name">NEWM</span>
+        <span class="receipt-status dead">Sunset — Oct 2024</span>
+      </div>
+      <div class="receipt-body">
+        Music rights platform that received <span class="receipt-amount">multiple rounds of Catalyst funding</span> across 
+        several funds. Promised to revolutionize music IP on Cardano. Announced sunset in October 2024 citing that 
+        "current market dynamics and the funding needed to scale have made it unsustainable." Artists were given 
+        until March 2026 to migrate their catalogs. Stream Tokens became stranded. Automated royalty 
+        distribution ceased. The code was open-sourced &mdash; a digital tombstone.
+      </div>
+      <div class="receipt-source">Source: newm.io/sunset · October 18, 2024</div>
+    </div>
+
+    <div class="receipt dead">
+      <div class="receipt-header">
+        <span class="receipt-name">Ardana (dUSD)</span>
+        <span class="receipt-status dead">Collapsed — Nov 2022</span>
+      </div>
+      <div class="receipt-body">
+        Pitched as "the MakerDAO and Curve Finance of Cardano." Raised <span class="receipt-amount">$10 million</span> from 
+        Three Arrows Capital, cFund, and Ascensive Assets. Development halted in November 2022 citing 
+        "funding and timeline uncertainty." Later investigation by Xerberus alleged that executives transferred 
+        approximately 80% of funds to a personal wallet and lost an estimated $4 million on risky crypto trades. 
+        Native token DANA crashed 99.85% from peak.
+      </div>
+      <div class="receipt-source">Source: CoinTelegraph, CryptoSlate, Xerberus investigation · Nov 2022 / Sep 2023</div>
+    </div>
+
+    <div class="receipt dead">
+      <div class="receipt-header">
+        <span class="receipt-name">Orbis Labs</span>
+        <span class="receipt-status dead">Collapsed — Nov 2022</span>
+      </div>
+      <div class="receipt-body">
+        Layer-2 scaling solution using zkSNARK roll-ups. Applied for <span class="receipt-amount">1 million ADA</span> in 
+        Catalyst Fund 8. Halted development the exact same day as Ardana, citing "constrained funding and 
+        uncertain conditions." Orbis founder Ryan Matovu was also CEO of Ardana. Community members noted 
+        three typos in the shutdown announcement. No working demo was ever produced despite requesting 
+        full upfront funding.
+      </div>
+      <div class="receipt-source">Source: CryptoSlate, Reddit, CoinDesk · November 24, 2022</div>
+    </div>
+
+    <div class="receipt warning">
+      <div class="receipt-header">
+        <span class="receipt-name">SundaeSwap</span>
+        <span class="receipt-status warning">Sued for Fraud</span>
+      </div>
+      <div class="receipt-body">
+        Cardano DEX that received <span class="receipt-amount">2.8 million ADA (~$700K at the time)</span> from Catalyst 
+        Fund 10 &mdash; to help pay its legal costs. The protocol was being sued for fraud, misleading statements, 
+        violating the California Business Code, and violation of Wyoming law stemming from its failed 
+        partnership with CardStarter. The community funded a project's legal defense against fraud charges 
+        with treasury money. Meanwhile, GeniusYield &mdash; a DeFi tool the community actually used &mdash; received nothing.
+      </div>
+      <div class="receipt-source">Source: Medium/@Crypto_Ramen, CoinTelegraph · Oct 2023</div>
+    </div>
+  </div>
+
+  <div class="annotation">
+    <strong>NOTE:</strong> These are just the most prominent cases. In February 2025, the Catalyst team announced 
+    a formal resolution pathway for "inactive legacy projects" — an acknowledgment that a significant number 
+    of funded proposals simply stopped delivering without completing their milestones.
+    <br><br>
+    <a href="https://forum.cardano.org/t/project-catalyst-inactive-legacy-projects-are-on-a-pathway-to-formal-resolution/142871" target="_blank">
+      → Cardano Forum: Inactive Legacy Projects Resolution (Feb 2025)
+    </a>
+  </div>
+
+  <h3>More headstones (community-submitted, receipts required)</h3>
+  <p>
+    The Catalyst dataset we publish is receipts-first: it tells you <em>who</em> got funded and <em>how much</em>.
+    What it does not automatically tell you is whether the outcome delivered durable value.
+    This section is where the community can add documented outcomes—especially when the deliverable was
+    primarily <em>software</em> (whose marginal cost is collapsing under AI).
+  </p>
+
+  <div class="receipt-grid">
+    <div class="receipt warning">
+      <div class="receipt-header">
+        <span class="receipt-name">Add a project</span>
+        <span class="receipt-status warning">Under review</span>
+      </div>
+      <div class="receipt-body">
+        Include: Catalyst proposer + project title, fund, amount, and 2–3 receipts showing the outcome (sunset post, repo archived, public milestone non-delivery, etc.).
+        If there was value delivered, include that too. This is about accuracy.
+      </div>
+      <div class="receipt-source">Receipts live on: beacnpool.github.io/Treasury/catalyst.html</div>
+    </div>
+
+    <div class="receipt warning">
+      <div class="receipt-header">
+        <span class="receipt-name">Pattern: “Paid once, disappeared”</span>
+        <span class="receipt-status warning">Watchlist</span>
+      </div>
+      <div class="receipt-body">
+        A recurring failure mode in grant programs is front-loaded funding with weak enforcement.
+        If a project stops publishing updates, stops shipping, or never produces a usable artifact, it becomes a treasury liability.
+      </div>
+      <div class="receipt-source">See: Catalyst signals dataset + leaderboards for triage entry points.</div>
+    </div>
+
+    <div class="receipt warning">
+      <div class="receipt-header">
+        <span class="receipt-name">AI cost-collapse</span>
+        <span class="receipt-status warning">Policy implication</span>
+      </div>
+      <div class="receipt-body">
+        If code is trending toward zero marginal cost, then “software-only” proposals must clear a higher bar:
+        measurable adoption, verifiable ROI, and long-term maintenance plans.
+      </div>
+      <div class="receipt-source">This is a budgeting lens, not an accusation.</div>
+    </div>
+  </div>
+
+  <p>
+    And it goes deeper than individual project failures. A July 2025 analysis exposed structural problems 
+    in Catalyst itself: a DRep controlling 6 million ADA voting power accused IOG and Hoskinson of 
+    "pointless expenditures worth millions" and "years of non-delivery," calling for automatic denial 
+    of all future IOG proposals. The bottom 95% of wallets control only about 22% of voting power. 
+    The Gini coefficient of ADA's wealth distribution would be approximately 80.68% &mdash; higher than any nation ever measured.
+  </p>
+
+  <div class="pullquote">
+    <p>"A single proposer captured 23% of an entire fund's budget through manipulation. 
+    Decentralized exchanges used millions in user-deposited funds to vote for their own proposals."</p>
+    <cite>Medium analysis of Catalyst Fund 9–14, October 2025</cite>
+  </div>
+</section>
+
+<div class="divider"><hr></div>
+
+<!-- ═══════════════════════ CHAPTER III: THE BITCOIN PIZZA ═══════ -->
+<section class="pizza-section">
+  <div class="chapter" style="max-width: 780px; margin: 0 auto;">
+    <span class="chapter-number" style="color: var(--gold);">Chapter III</span>
+    <h2 style="color: var(--paper);">The Bitcoin Pizza Problem</h2>
+    
+    <p style="color: #999; max-width: 650px; margin: 0 auto 2rem;">
+      On May 22, 2010, Laszlo Hanyecz paid 10,000 BTC for two pizzas. Those coins are now worth 
+      over <strong style="color: var(--paper);">$900 million</strong>. We remember this as a cautionary tale. 
+      But Cardano's treasury has been doing the same thing &mdash; at scale &mdash; every single funding round.
+    </p>
+
+    <div class="pizza-comparison">
+      <div class="pizza-side">
+        <div class="amount" style="color: var(--blood-bright);">₳290M+</div>
+        <div class="label">ADA Distributed via Catalyst</div>
+      </div>
+      <div class="pizza-vs">vs.</div>
+      <div class="pizza-side">
+        <div class="amount" style="color: var(--green-bright);">₳5M</div>
+        <div class="label">Annual Fee Revenue Generated</div>
+      </div>
+    </div>
+
+    <p style="color: #999; max-width: 650px; margin: 2rem auto 0;">
+      Every ADA spent from the treasury on a project that fails to drive network adoption is an ADA 
+      that will never come back. Worse: the Cardano Foundation's own research confirms that 
+      <mark style="background: rgba(198,40,40,0.25); color: #fff; padding: 0.1em 0.4em;">treasury withdrawals 
+      create measurable sell pressure on ADA's price</mark>. 
+      So each failed project doesn't just waste the grant &mdash; it actively damages the value of every 
+      remaining ADA in the treasury, in the reserves, and in your wallet.
+    </p>
+
+    <div class="math-box" style="max-width: 600px; margin: 3rem auto 0; text-align: left;">
+      <div>Treasury spending authorized (NCL): <strong>₳350M / year</strong></div>
+      <div>Fee revenue collected: <strong>₳5M / year</strong></div>
+      <div class="equation">──────────────────────────</div>
+      <div class="result">Spend-to-earn ratio: 70 : 1</div>
+      <div style="margin-top: 1rem; color: #999; font-size: 0.75rem;">
+        For every ₳1 the network earns, governance has authorized spending ₳70.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ CHAPTER IV: THE AI REVOLUTION ═══════ -->
+<section class="chapter fade-in">
+  <span class="chapter-number">Chapter IV</span>
+  <h2>The AI Revolution Makes This Inexcusable</h2>
+
+  <p class="lead">
+    Here is the truth that changes everything: <strong>the marginal cost of software is collapsing toward zero.</strong>
+  </p>
+
+  <p>
+    When Catalyst Fund 1 launched in 2020, hiring developers to build a Cardano dApp was expensive. 
+    Haskell and Plutus expertise was scarce. Tooling was immature. Paying premium rates for 
+    human-led development made sense — there was no alternative.
+  </p>
+
+  <p>
+    That world no longer exists.
+  </p>
+
+  <p>
+    AI-assisted development has advanced at exponential rates. Models that could barely autocomplete 
+    code in 2022 can now architect entire applications, write smart contracts, debug complex systems, 
+    and generate production-ready code in minutes. The cost of building software is falling so fast 
+    that by the time a Catalyst-funded project completes its milestones, the work could likely be 
+    reproduced for a fraction of the original grant.
+  </p>
+
+  <div class="pullquote">
+    <p>In a world where the marginal cost of code trends toward zero, 
+    do we need to fund human-led projects at 2021 rates when they are unsustainable?</p>
+    <cite>The question the treasury must answer</cite>
+  </div>
+
+  <p>
+    This isn't a theoretical concern. Consider what each Catalyst fund has allocated:
+  </p>
+
+  <table class="comparison-table">
+    <thead>
+      <tr>
+        <th>Fund</th>
+        <th>Date</th>
+        <th>Budget</th>
+        <th>Proposals Funded</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Fund 12</td>
+        <td class="mono">Apr 2024</td>
+        <td class="mono red">₳46.5M</td>
+        <td class="mono">258 / 1,210</td>
+      </tr>
+      <tr>
+        <td>Fund 13</td>
+        <td class="mono">Sep 2024</td>
+        <td class="mono red">₳46.5M</td>
+        <td class="mono">199 / 1,640</td>
+      </tr>
+      <tr>
+        <td>Fund 14</td>
+        <td class="mono">Jun 2025</td>
+        <td class="mono">₳18.6M</td>
+        <td class="mono">131 / 1,280</td>
+      </tr>
+      <tr>
+        <td>Fund 15</td>
+        <td class="mono">Nov 2025</td>
+        <td class="mono">₳18.5M</td>
+        <td class="mono">Voting…</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    The budget was halved between Fund 13 and Fund 14 &mdash; a step in the right direction. But even ₳18.5M 
+    per round, three rounds per year, is ₳55.5M annually through Catalyst alone. Add governance 
+    withdrawals for core infrastructure (the Pentad's ₳70M proposal for 2026, Intersect operational 
+    budgets, etc.) and we're still spending multiples of what the network earns.
+  </p>
+
+  <p>
+    Every one of these grants is priced as if AI doesn't exist. As if it still costs six figures and 
+    six months to build what an AI-augmented team can ship in weeks. We are paying 2021 prices 
+    in a 2026 world. That's not governance &mdash; it's negligence.
+  </p>
+</section>
+
+<div class="divider"><hr></div>
+
+<!-- ═══════════════════════ CHAPTER V: THE MATH ═══════ -->
+<section class="chapter chapter-wide fade-in">
+  <span class="chapter-number">Chapter V</span>
+  <h2>The Math That Cannot Be Ignored</h2>
+
+  <p class="lead">
+    Let's reduce this to the numbers that matter. No narrative. No politics. Just arithmetic.
+  </p>
+
+  <h3>What We Have</h3>
+
+  <div class="bar-chart">
+    <div class="bar-row">
+      <div class="bar-label">Treasury</div>
+      <div class="bar-track">
+        <div class="bar-fill gold" style="width: 40%;">~₳1.6 Billion</div>
+      </div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">Reserves</div>
+      <div class="bar-track">
+        <div class="bar-fill ink" style="width: 85%;">Depleting (by design)</div>
       </div>
     </div>
   </div>
 
-  <div class="wrap">
+  <h3>What Flows In (Per Year)</h3>
 
-    <!-- ── Hero ── -->
-    <div class="hero">
-      <div class="hero-title">Cardano Treasury<br><span class="hi">Receipts First.</span></div>
-      <div class="hero-sub">
-        Open-source, auditable analytics for Cardano's treasury and reserves.
-        All numbers trace to db-sync SQL. Use this data when you vote.
-      </div>
-      <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
-        <div class="badge"><span class="dot-live"></span> <span id="status-tip">loading…</span></div>
-        <div class="badge" id="status-gen"></div>
+  <div class="bar-chart">
+    <div class="bar-row">
+      <div class="bar-label">Monetary Exp.</div>
+      <div class="bar-track">
+        <div class="bar-fill green" style="width: 75%;">~₳295M (replenishment rate)</div>
       </div>
     </div>
-
-    <!-- ── BEACN Treasury AI analysis ── -->
-    <div class="h3">BEACN Treasury AI analysis <span class="tag tag-model">AI analysis</span></div>
-    <div class="card">
-      <div style="display:grid; gap:10px">
-        <div>
-          <strong>Summary (what this dashboard currently implies)</strong>
-          <div class="note" style="margin-top:6px">
-            This section is intentionally opinionated. Every claim links to the supporting data on this site.
-          </div>
-        </div>
-
-        <div class="grid-2">
-          <div class="flow-card in" style="border-color: rgba(34,211,238,.25)">
-            <div class="flow-label">Outlook (model-based)</div>
-            <div class="note" id="ai-outlook">Loading…</div>
-          </div>
-          <div class="flow-card out" style="border-color: rgba(248,113,113,.25)">
-            <div class="flow-label">What to verify (receipts)</div>
-            <div class="note">
-              <ul style="margin:8px 0 0 18px; padding:0">
-                <li><a href="treasury.html">Treasury projections</a> (runway scenarios + assumptions)</li>
-                <li><a href="reserves.html">Reserves depletion</a> (trend + biggest drops viewer)</li>
-                <li><a href="fees.html">Lifetime fee income</a> (cumulative <code>epoch.fees</code>)</li>
-                <li><a href="pots.html">Total pots</a> (largest moves + line-item hints)</li>
-                <li><a href="catalyst.html">Catalyst</a> (off-chain context + receipts)</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <details>
-          <summary>Nuance / upside cases (harder to quantify)</summary>
-          <div class="note" style="margin-top:8px">
-            Some spending is intended to increase long-run network throughput and adoption (e.g., core infrastructure / scaling work associated with large ecosystem players like IOG).
-            If that succeeds, fee income and overall economic activity could rise — which improves treasury inflows and slows “insolvency” timelines.
-            This dashboard does <em>not</em> try to guess that upside: it shows what the receipts say today and makes the assumptions explicit.
-          </div>
-        </details>
-
-        <div class="note">
-          If you’re voting: treat the runway chart as a <strong>stress test</strong>. If the stress test says “insolvent by X”, the action item is to either (a) reduce outflows, (b) increase inflows (usage/fees), or (c) change protocol parameters — and to demand receipts for whichever lever is being pulled.
-        </div>
-
-        <div class="card" style="margin:0; border-style:solid; border-color:rgba(248,113,113,.35)">
-          <strong style="display:block; margin-bottom:6px">The question to keep in mind</strong>
-          <div class="note" style="font-size:13px; line-height:1.55">
-            What is more valuable: a blockchain with governance and a large reserve — or one with depleted reserves?
-            In a world where the marginal cost of code trends toward zero (AI-assisted development accelerating fast), do we need to fund <em>human-led</em> projects at these levels if they are unsustainable?
-          </div>
-        </div>
+    <div class="bar-row">
+      <div class="bar-label">TX Fees</div>
+      <div class="bar-track">
+        <div class="bar-fill green" style="width: 2%;">~₳5M</div>
       </div>
-    </div>
-
-    <!-- ── Top-line KPIs ── -->
-    <div class="h3">Snapshot</div>
-    <div class="kpis" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
-      <div class="kpi kpi-trs">
-        <div class="lbl">Treasury balance</div>
-        <div class="val trs" id="kpi-treasury">—</div>
-        <div class="note" id="kpi-treasury-note">on-chain · db-sync</div>
-      </div>
-      <div class="kpi kpi-res">
-        <div class="lbl">Reserves balance</div>
-        <div class="val res" id="kpi-reserves">—</div>
-        <div class="note">monetary expansion source</div>
-      </div>
-      <div class="kpi kpi-fees">
-        <div class="lbl">Lifetime fee income</div>
-        <div class="val fees" id="kpi-fees">—</div>
-        <div class="note">cumulative tx fees since genesis</div>
-      </div>
-      <div class="kpi kpi-warn">
-        <div class="lbl">Reserves depletion rate</div>
-        <div class="val warn" id="kpi-depletion">—</div>
-        <div class="note">avg decay per epoch (last 10)</div>
-      </div>
-    </div>
-
-    <!-- ── Treasury + Reserves Chart ── -->
-    <div class="h3">Treasury + Reserves over time</div>
-    <div class="card">
-      <div class="row">
-        <div>
-          <strong>Total unallocated ADA</strong> <span class="tag tag-onchain">on-chain</span>
-          <div class="note">Treasury (growing) + Reserves (depleting) = total protocol-held ADA.</div>
-        </div>
-        <a class="btn" href="pots.html">Deep dive →</a>
-      </div>
-      <div class="chartBox"><canvas id="chart-pots"></canvas></div>
-    </div>
-
-    <!-- ── Money In / Money Out ── -->
-    <hr class="section-sep" />
-    <div class="h3">Money in · Money out</div>
-
-    <div class="grid-2">
-      <div class="flow-card in">
-        <div class="flow-label">↑ Inflows (per epoch, avg last 10)</div>
-        <div class="flow-item"><span>Monetary expansion (ρ × reserves)</span> <span class="flow-val" id="flow-expansion">—</span></div>
-        <div class="flow-item"><span>Transaction fees (τ share)</span> <span class="flow-val" id="flow-fees">—</span></div>
-        <div class="flow-item" style="border-top:1px solid var(--border); padding-top:8px; margin-top:4px; font-weight:600;"><span>Net inflow to treasury</span> <span class="flow-val" id="flow-net-in" style="color:var(--fees)">—</span></div>
-      </div>
-      <div class="flow-card out">
-        <div class="flow-label">↓ Outflows (recent enacted)</div>
-        <div class="flow-item"><span>Governance withdrawals</span> <span class="flow-val" id="flow-withdrawals">—</span></div>
-        <div class="flow-item"><span>Catalyst (off-chain total)</span> <span class="flow-val" id="flow-catalyst">—</span></div>
-        <div class="flow-item" style="border-top:1px solid var(--border); padding-top:8px; margin-top:4px;">
-          <span style="color:var(--muted); font-size:11px">Withdrawals are on-chain; Catalyst is off-chain context.</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── Sustainability projection ── -->
-    <hr class="section-sep" />
-    <div class="h3">Sustainability projection <span class="tag tag-model">AI model</span></div>
-    <div class="card">
-      <div class="row">
-        <div>
-          <strong>Treasury runway (simple scenarios)</strong>
-          <div class="note">Start from current balance. Inflow = avg of last 10 epochs × 73 epochs/year. 3 fixed annual spend levels. This is a model, not a ledger fact.</div>
-        </div>
-        <a class="btn" href="treasury.html">Full projections →</a>
-      </div>
-      <div class="chartBox"><canvas id="chart-proj"></canvas></div>
-      <details style="margin-top:10px">
-        <summary>Assumptions</summary>
-        <div class="note" style="margin-top:8px">
-          Annual inflow proxy = last 10 epochs average treasury delta × 73 epochs/year.
-          Spend scenarios: ₳250M, ₳350M, ₳500M per year (fixed).
-          ρ and τ can change via governance — this model does not predict those decisions.
-        </div>
-      </details>
-    </div>
-
-    <!-- ── Fee income mini chart ── -->
-    <div class="h3">Cumulative fee income</div>
-    <div class="card">
-      <div class="row">
-        <div>
-          <strong>Lifetime TX fees</strong> <span class="tag tag-onchain">on-chain</span>
-          <div class="note">Cumulative sum of <code>epoch.fees</code> from genesis → tip.</div>
-        </div>
-        <a class="btn" href="fees.html">Deep dive →</a>
-      </div>
-      <div class="chartBox" style="height:200px"><canvas id="chart-fees"></canvas></div>
-    </div>
-
-    <!-- ── Catalyst summary ── -->
-    <div class="h3">Catalyst spending (off-chain context) <span class="tag tag-offchain">off-chain</span></div>
-    <div class="card">
-      <div class="row">
-        <div>
-          <strong>Project Catalyst totals</strong>
-          <div class="note">Verbatim scrape from projectcatalyst.io. Used for context, not ledger truth.</div>
-        </div>
-        <a class="btn" href="catalyst.html">Full Catalyst data →</a>
-      </div>
-      <div class="kpis" style="margin-top:12px">
-        <div class="kpi kpi-catalyst">
-          <div class="lbl">Total distributed (USD)</div>
-          <div class="val" id="kpi-cat-dist" style="color:var(--catalyst);font-size:20px">—</div>
-        </div>
-        <div class="kpi kpi-catalyst">
-          <div class="lbl">Proposers funded</div>
-          <div class="val" id="kpi-cat-funded" style="color:var(--catalyst);font-size:20px">—</div>
-        </div>
-        <div class="kpi kpi-catalyst">
-          <div class="lbl">Top 10 concentration</div>
-          <div class="val" id="kpi-cat-conc" style="color:var(--catalyst);font-size:20px">—</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── Governance toolkit CTA ── -->
-    <hr class="section-sep" />
-    <div class="gov-cta">
-      <div class="gov-title">⚡ Governance toolkit</div>
-      <div class="note">
-        Use BEACN's open infrastructure when voting on parameter changes, governance actions, or Catalyst funding.
-        All data is backed by db-sync SQL queries you can reproduce yourself.
-      </div>
-      <div class="gov-actions">
-        <a class="btn btn-primary" href="treasury.html">Treasury + projections</a>
-        <a class="btn btn-primary" href="reserves.html">Reserves depletion</a>
-        <a class="btn btn-primary" href="catalyst.html">Catalyst spending</a>
-        <a class="btn" href="https://github.com/BEACNpool/Treasury/tree/main/scripts" target="_blank" rel="noreferrer">Reproduce queries</a>
-        <a class="btn" href="https://github.com/BEACNpool/Treasury/blob/main/docs/methodology.md" target="_blank" rel="noreferrer">Methodology</a>
-      </div>
-    </div>
-
-    <!-- ── BEACN infrastructure ── -->
-    <div class="card" style="margin-top:12px">
-      <div class="row">
-        <div>
-          <strong>BEACN infrastructure</strong>
-          <div class="note">
-            Community-hosted db-sync, Cardano nodes, and parsed datasets.
-            <strong>0% margin stake pool.</strong> Independently operated.
-          </div>
-        </div>
-        <div class="links">
-          <a class="btn" href="https://github.com/BEACNpool/Treasury" target="_blank" rel="noreferrer">GitHub repo</a>
-        </div>
-      </div>
-      <div class="note" style="margin-top:10px">
-        <strong>Available to the community:</strong>
-        db-sync SQL query templates · Pre-computed CSV exports · DuckDB local index ·
-        Methodology docs · sha256 receipts on every dataset.
-        Evidence-first: every computed number traces to a source query + timestamp.
-      </div>
-    </div>
-
-    <!-- ── Deep dive links ── -->
-    <div class="h3">Deep dives</div>
-    <div class="grid-2" style="margin-bottom:20px">
-      <a href="fees.html" class="card" style="text-decoration:none; color:inherit;">
-        <strong style="color:var(--fees)">Cumulative TX Fee Income</strong>
-        <div class="note">How much ADA has come back via transaction fees (lifetime).</div>
-      </a>
-      <a href="pots.html" class="card" style="text-decoration:none; color:inherit;">
-        <strong style="color:var(--accent)">Total Pots (Treasury + Reserves)</strong>
-        <div class="note">Combined unallocated ADA over time + biggest moves viewer.</div>
-      </a>
-      <a href="treasury.html" class="card" style="text-decoration:none; color:inherit;">
-        <strong style="color:var(--trs)">Treasury-only + Projections</strong>
-        <div class="note">Treasury history, moves viewer, and AI sustainability scenarios.</div>
-      </a>
-      <a href="reserves.html" class="card" style="text-decoration:none; color:inherit;">
-        <strong style="color:var(--res)">Reserves-only + Depletion</strong>
-        <div class="note">Reserves decay curve and projection at current ρ.</div>
-      </a>
     </div>
   </div>
 
-  <!-- ── Footer ── -->
-  <div class="footer">
-    <div class="wrap">
-      BEACN · 0% margin Cardano stake pool · Open source ·
-      <a href="https://github.com/BEACNpool/Treasury">github.com/BEACNpool/Treasury</a>
+  <h3>What Flows Out (Per Year)</h3>
+
+  <div class="bar-chart">
+    <div class="bar-row">
+      <div class="bar-label">NCL Cap</div>
+      <div class="bar-track">
+        <div class="bar-fill red" style="width: 88%;">₳350M authorized</div>
+      </div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">Staking Rewards</div>
+      <div class="bar-track">
+        <div class="bar-fill red" style="width: 70%;">From reserves (separate)</div>
+      </div>
     </div>
   </div>
 
-  <!-- ── Script ── -->
-  <script type="module">
-    import { fetchText, parseCSV, toNum, fmtAda, fmt } from './site.js';
+  <div class="annotation" style="margin-top: 2rem;">
+    <strong>THE CRITICAL PARAMETER:</strong> Staking rewards must be sustained. If the reserves deplete 
+    and fee income doesn't grow, there won't be enough to fill the reward pool. This isn't about 
+    funding projects — it's about keeping the lights on. Every ADA overspent from the treasury is 
+    an ADA that could have been reserved to ensure stakers keep getting paid. If staking rewards 
+    become uncompetitive, delegators leave, security weakens, and the network spirals.
+    <br><br>
+    <strong>The priority hierarchy is clear:</strong><br>
+    1. Fee income must sustain staking reward pools<br>
+    2. Spending must not exceed replenishment rate<br>
+    3. Only then can we discuss discretionary funding
+  </div>
 
-    // ── Status ──
-    try {
-      const meta = JSON.parse(await fetchText('outputs/status.json'));
-      document.getElementById('status-tip').textContent = `tip: ${meta.tip_time || 'unknown'}`;
-      document.getElementById('status-gen').textContent = `generated: ${meta.generated_at_utc || 'unknown'}`;
-    } catch(e) {
-      document.getElementById('status-tip').textContent = 'status unavailable';
+  <div class="math-box">
+    <div>Current treasury: <strong>₳1.6B</strong></div>
+    <div>Annual replenishment: <strong>~₳300M</strong> (and shrinking as reserves deplete)</div>
+    <div>Annual NCL spending: <strong>₳350M</strong></div>
+    <div class="equation">──────────────────────────────────</div>
+    <div>Net annual drawdown: <strong style="color: var(--blood-bright);">-₳50M</strong> (spending exceeds income)</div>
+    <div style="margin-top: 1rem;">
+      At current rates, treasury depletion pressure will accelerate as reserves 
+      shrink and the replenishment rate falls with them.
+    </div>
+    <div class="result" style="margin-top: 1.5rem;">
+      Simple division: ₳1.6B ÷ ₳350M/yr ≈ 4.5 years of runway
+    </div>
+    <div style="color: var(--ash); font-size: 0.75rem; margin-top: 0.5rem;">
+      This is not a forecast. It's a stress test. The real number depends on governance decisions made now.
+    </div>
+  </div>
+
+  <h3>The Fee Income Reality</h3>
+
+  <p>
+    Transaction fees are the only truly sustainable income source. Monetary expansion from reserves 
+    is a depleting asset &mdash; it shrinks every epoch by design. The entire long-term plan 
+    was always for fee revenue to eventually replace monetary expansion as the primary funding source.
+  </p>
+  
+  <p>
+    At roughly <strong>₳5 million per year</strong> in fee revenue against ₳350 million in authorized 
+    spending, Cardano is running a deficit of approximately <mark class="red">98.6%</mark>. 
+    No household, no business, no nation can sustain a 98.6% deficit. The only reason Cardano 
+    hasn't collapsed is that it's drawing down a finite inheritance &mdash; the reserves.
+  </p>
+
+  <p>
+    Spending credit against future reserves is no different than a government printing money. 
+    It creates inflation, dilutes value, and pushes the consequences onto the next generation 
+    of ADA holders. Part of growing up is learning to balance a budget.
+  </p>
+</section>
+
+<div class="divider-ornament">✦</div>
+
+<!-- ═══════════════════════ CHAPTER VI: THE PATH FORWARD ═══════ -->
+<section class="balanced-section">
+  <div class="chapter fade-in" style="padding-top: 2rem;">
+    <span class="chapter-number">Chapter VI</span>
+    <h2>The Path Forward:<br>A Balanced Budget</h2>
+
+    <p class="lead">
+      The good news: Cardano still has time. The treasury isn't empty. The reserves are still substantial. 
+      But every epoch of overspending narrows the window. Here is what fiscal responsibility looks like.
+    </p>
+
+    <div class="budget-card bad">
+      <h4>❌ Current State: Spending Like There's No Tomorrow</h4>
+      <p>NCL: ₳350M/year • Fee income: ₳5M/year • Deficit: ₳345M/year</p>
+      <div class="budget-number" style="color: var(--blood-bright);">~4.5 year runway</div>
+    </div>
+
+    <div class="budget-card good">
+      <h4>✅ Target: Spend ≤ Replenishment Rate</h4>
+      <p>Cap spending at ~₳300M (matching treasury income from monetary expansion). 
+        This is the sovereign wealth fund model the Budget Committee cited. 
+        It preserves principal and maintains optionality.</p>
+      <div class="budget-number" style="color: var(--green-muted);">Sustainable until reserves deplete (decades)</div>
+    </div>
+
+    <div class="budget-card good">
+      <h4>✅ Real Target: Spend ≤ Fee Income</h4>
+      <p>The ultimate goal. When Cardano can fund itself entirely from transaction 
+        fees without touching reserves or treasury principal, it becomes truly self-sustaining. 
+        This requires growing network usage dramatically — or cutting spending to match reality.</p>
+      <div class="budget-number" style="color: var(--green-muted);">₳5M/year (current) → grow through adoption</div>
+    </div>
+
+    <h3>The Principles</h3>
+
+    <p>
+      <strong>1. Staking rewards come first.</strong> Before a single ADA goes to a Catalyst proposal or governance 
+      withdrawal, the network must ensure that staking rewards remain competitive. This is the bedrock 
+      that secures the chain. If delegators leave because rewards crater, everything else is moot.
+    </p>
+
+    <p>
+      <strong>2. Stop paying 2021 prices.</strong> Every future proposal should be evaluated against what 
+      AI-augmented development costs today, not what it cost three years ago. If a team is requesting 
+      ₳500K for work that an AI-augmented developer can do in a weekend, the answer is no.
+    </p>
+
+    <p>
+      <strong>3. Demand ROI receipts.</strong> No more funding projects without measurable on-chain impact metrics. 
+      If a funded project can't show increased transaction volume, new users onboarded, or TVL growth, 
+      it failed — and the community deserves to know before the next round of funding.
+    </p>
+
+    <p>
+      <strong>4. Treat reserves as strength.</strong> Norway's sovereign wealth fund doesn't liquidate its 
+      holdings to fund experiments. A blockchain with a massive treasury signals confidence, stability, 
+      and long-term viability. A blockchain that hemorrhages its reserves signals desperation. 
+      Which ADA would you rather hold?
+    </p>
+
+    <p>
+      <strong>5. No more credit spending.</strong> Drawing down reserves to fund operating expenses is the 
+      blockchain equivalent of printing money. It inflates supply, creates sell pressure, and 
+      punishes long-term holders. Every ADA withdrawn is sold into the market. 
+      The Cardano Foundation's own research confirms this creates price suppression. 
+      It's time to be responsible.
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════════ CTA / FOOTER ═══════ -->
+<section class="cta-section">
+  <h2>Before you vote YES on anything, check the receipts.</h2>
+  <p style="color: var(--ash); max-width: 600px; margin: 0 auto;">
+    Every number on this page traces to db-sync SQL, on-chain data, or cited public sources.
+    BEACN operates a 0% margin stake pool and publishes all methodology open-source.
+  </p>
+  <div class="cta-actions">
+    <a href="https://beacnpool.github.io/Treasury/treasury.html" class="cta-btn primary">Treasury Projections</a>
+    <a href="https://beacnpool.github.io/Treasury/reserves.html" class="cta-btn">Reserves Depletion</a>
+    <a href="https://beacnpool.github.io/Treasury/fees.html" class="cta-btn">Fee Income Data</a>
+    <a href="https://beacnpool.github.io/Treasury/catalyst.html" class="cta-btn">Catalyst Receipts</a>
+    <a href="https://github.com/BEACNpool/Treasury" class="cta-btn">GitHub / Methodology</a>
+  </div>
+</section>
+
+<footer>
+  BEACN · 0% margin Cardano stake pool · Open source · Evidence first<br>
+  <a href="https://github.com/BEACNpool/Treasury">github.com/BEACNpool/Treasury</a>
+  &nbsp;·&nbsp; All data traces to db-sync SQL queries
+</footer>
+
+<script>
+// ─── Intersection Observer for fade-in animations ───
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
     }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
-    // ── Load epoch data ──
-    const epochText = await fetchText('outputs/epoch_treasury_fees.csv');
-    const rows = parseCSV(epochText).rows;
-    const epoch = rows.map(r => toNum(r.epoch_no));
-    const treasury = rows.map(r => toNum(r.treasury_end_ada) || 0);
-    const reserves = rows.map(r => toNum(r.reserves_start_ada) || 0);
-    const total = treasury.map((v,i) => v + (reserves[i]||0));
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-    const last = rows[rows.length - 1];
-    const lastTreasury = toNum(last.treasury_end_ada) || 0;
-    const lastReserves = toNum(last.reserves_start_ada) || 0;
+// ─── Live stats (receipts-first) ───
+(async () => {
+  const $ = (id) => document.getElementById(id);
 
-    // ── KPIs ──
-    document.getElementById('kpi-treasury').textContent = fmtAda(lastTreasury);
-    document.getElementById('kpi-treasury-note').textContent = `epoch ${last.epoch_no} · ${last.end_time?.split(' ')[0] || ''}`;
-    document.getElementById('kpi-reserves').textContent = fmtAda(lastReserves);
+  // Catalyst totals (off-chain receipts)
+  try {
+    const sum = await fetch('https://beacnpool.github.io/Treasury/outputs/offchain/catalyst/summary.json', { cache: 'no-store' }).then(r=>r.json());
+    const dist = sum?.totals_usd?.distributed_usd ?? null;
+    const funded = sum?.counts?.projects_funded_total ?? null;
+    if ($('stat-catalyst-usd') && dist !== null) $('stat-catalyst-usd').textContent = `$${Math.round(dist).toLocaleString()}`;
+    if ($('stat-proj-funded') && funded !== null) $('stat-proj-funded').textContent = `${Math.round(funded).toLocaleString()}`;
+  } catch (e) {
+    if ($('stat-catalyst-usd')) $('stat-catalyst-usd').textContent = '—';
+    if ($('stat-proj-funded')) $('stat-proj-funded').textContent = '—';
+  }
 
-    // Fee income KPI
-    try {
-      const feeText = await fetchText('outputs/onchain/fee_income_epoch.csv');
-      const feeRows = parseCSV(feeText).rows;
-      const lastFee = feeRows[feeRows.length - 1];
-      document.getElementById('kpi-fees').textContent = fmtAda(toNum(lastFee.cumulative_fees_ada));
+  // Annual fee revenue (on-chain)
+  try {
+    const csv = await fetch('https://beacnpool.github.io/Treasury/outputs/year_treasury_fees.csv', { cache: 'no-store' }).then(r=>r.text());
+    const lines = csv.trim().split(/\r?\n/);
+    const headers = lines[0].split(',');
+    const iFees = headers.indexOf('fees_ada');
+    const iYear = headers.indexOf('year');
+    const last = lines[lines.length-1].split(',');
+    const fees = Number(last[iFees]);
+    const year = last[iYear];
+    if ($('stat-fees') && Number.isFinite(fees)) $('stat-fees').textContent = `₳${Math.round(fees).toLocaleString()}`;
+    // keep label implicit; year is available if you want to show it later
+  } catch (e) {
+    if ($('stat-fees')) $('stat-fees').textContent = '—';
+  }
+})();
+</script>
 
-      // Mini fee chart
-      const feeEpoch = feeRows.map(r => toNum(r.epoch_no));
-      const feeCum = feeRows.map(r => (toNum(r.cumulative_fees_ada)||0)/1e6);
-      new Chart(document.getElementById('chart-fees'), {
-        type: 'line',
-        data: { labels: feeEpoch, datasets: [{
-          data: feeCum, borderColor: '#34d399', backgroundColor: 'rgba(52,211,153,.06)',
-          fill: true, pointRadius: 0, tension: 0.25, borderWidth: 2
-        }]},
-        options: { responsive: true, maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          interaction: { mode: 'index', intersect: false },
-          scales: { x: { grid: { display: false }, ticks: { maxTicksLimit: 8, color: '#64748b', font: { size: 10 } } },
-                    y: { grid: { color: 'rgba(30,41,59,.5)' }, ticks: { color: '#64748b', font: { size: 10 } } } }
-        }
-      });
-    } catch(e) {}
-
-    // Depletion rate
-    const recentN = 10;
-    const recentReserves = rows.slice(-recentN - 1);
-    if (recentReserves.length > 1) {
-      let totalDecay = 0;
-      for (let i = 1; i < recentReserves.length; i++) {
-        const prev = toNum(recentReserves[i-1].reserves_start_ada) || 1;
-        const curr = toNum(recentReserves[i].reserves_start_ada) || 0;
-        totalDecay += (prev - curr) / prev;
-      }
-      const avgDecay = totalDecay / (recentReserves.length - 1);
-      document.getElementById('kpi-depletion').textContent = `${(avgDecay * 100).toFixed(3)}%`;
-    }
-
-    // ── Money in / Money out ──
-    const last10 = rows.slice(-10);
-    const avgDelta = last10.reduce((s,r) => s + (toNum(r.treasury_delta_ada)||0), 0) / last10.length;
-    const avgExpansion = last10.reduce((s,r) => s + (toNum(r.monetary_expansion_est_ada)||0), 0) / last10.length;
-    const avgFeeInflow = last10.reduce((s,r) => s + (toNum(r.fees_epoch_ada)||0), 0) / last10.length;
-
-    document.getElementById('flow-expansion').textContent = fmtAda(avgExpansion);
-    document.getElementById('flow-fees').textContent = fmtAda(avgFeeInflow);
-    document.getElementById('flow-net-in').textContent = fmtAda(avgDelta);
-
-    // Withdrawals
-    try {
-      const wText = await fetchText('outputs/onchain/withdrawals_by_epoch.csv');
-      const wRows = parseCSV(wText).rows;
-      const totalW = wRows.reduce((s,r) => s + (toNum(r.withdrawals_ada)||0), 0);
-      document.getElementById('flow-withdrawals').textContent = fmtAda(totalW) + ' (total)';
-    } catch(e) { document.getElementById('flow-withdrawals').textContent = '—'; }
-
-    // Catalyst total
-    try {
-      const sum = JSON.parse(await fetchText('outputs/offchain/catalyst/summary.json'));
-      const distUsd = sum.totals_usd?.distributed_usd || 0;
-      document.getElementById('flow-catalyst').textContent = '$' + fmt(distUsd);
-      document.getElementById('kpi-cat-dist').textContent = '$' + fmt(distUsd);
-      document.getElementById('kpi-cat-funded').textContent = fmt(sum.counts?.proposers_with_funded_projects);
-    } catch(e) {}
-
-    try {
-      const conc = JSON.parse(await fetchText('outputs/offchain/catalyst/analytics/concentration.json'));
-      const t10 = (conc.shares?.top10 ?? 0) * 100;
-      document.getElementById('kpi-cat-conc').textContent = t10.toFixed(1) + '%';
-    } catch(e) {}
-
-    // ── Total pots chart ──
-    const chartOpts = {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      interaction: { mode: 'index', intersect: false },
-      scales: {
-        x: { grid: { display: false }, ticks: { maxTicksLimit: 10, color: '#64748b', font: { size: 10 } } },
-        y: { grid: { color: 'rgba(30,41,59,.5)' }, ticks: { color: '#64748b', font: { size: 10 } } }
-      }
-    };
-
-    new Chart(document.getElementById('chart-pots'), {
-      type: 'line',
-      data: { labels: epoch, datasets: [
-        { label: 'Treasury', data: treasury.map(v=>v/1e6), borderColor: '#22d3ee', backgroundColor: 'rgba(34,211,238,.05)', fill: true, pointRadius: 0, tension: 0.25, borderWidth: 2 },
-        { label: 'Reserves', data: reserves.map(v=>v/1e6), borderColor: '#a78bfa', backgroundColor: 'rgba(167,139,250,.04)', fill: true, pointRadius: 0, tension: 0.25, borderWidth: 2 },
-      ]},
-      options: { ...chartOpts, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', font: { family: "'JetBrains Mono'", size: 10 }, padding: 16, usePointStyle: true, pointStyle: 'line' } } } }
-    });
-
-    // ── Sustainability projection ──
-    const epochsPerYear = 73;
-    const inflowAnnual = avgDelta * epochsPerYear;
-    const years = Array.from({length: 11}, (_,i) => 2026 + i);
-    const scenarios = [
-      { name: '₳250M/yr spend', spend: 250e6, color: '#34d399' },
-      { name: '₳350M/yr spend', spend: 350e6, color: '#fbbf24' },
-      { name: '₳500M/yr spend', spend: 500e6, color: '#f87171' },
-    ];
-    const startBal = lastTreasury;
-    const ds = scenarios.map(s => {
-      let cur = startBal;
-      const out = [cur/1e6];
-      for (let i = 1; i < years.length; i++) {
-        cur = Math.max(0, cur + inflowAnnual - s.spend);
-        out.push(cur/1e6);
-      }
-      return { label: s.name, data: out, borderColor: s.color, backgroundColor: 'rgba(0,0,0,0)', borderWidth: 2, pointRadius: 0, tension: 0.2 };
-    });
-
-    new Chart(document.getElementById('chart-proj'), {
-      type: 'line',
-      data: { labels: years, datasets: ds },
-      options: { responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', font: { family: "'JetBrains Mono'", size: 10 }, padding: 16, usePointStyle: true, pointStyle: 'line' } } },
-        interaction: { mode: 'index', intersect: false },
-        scales: { x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 10 } } },
-                  y: { grid: { color: 'rgba(30,41,59,.5)' }, ticks: { color: '#64748b', font: { size: 10 } } } }
-      }
-    });
-
-    // ── AI analysis text (ties claims → where to verify) ──
-    function depletionYearForSpend(spendAdaPerYear){
-      let cur = startBal;
-      for (let i = 1; i < years.length; i++){
-        cur = Math.max(0, cur + inflowAnnual - spendAdaPerYear);
-        if (cur <= 0) return years[i];
-      }
-      return null;
-    }
-
-    const y250 = depletionYearForSpend(250e6);
-    const y350 = depletionYearForSpend(350e6);
-    const y500 = depletionYearForSpend(500e6);
-
-    const outlookBits = [];
-    outlookBits.push(`Using the last-10-epochs inflow proxy, annual inflow ≈ ${fmtAda(inflowAnnual)}.`);
-    outlookBits.push(`If annual spend stays at ₳250M, the treasury ${y250 ? `hits ~0 by ${y250}` : 'does not hit 0 in this 10-year window'}.`);
-    outlookBits.push(`At ₳350M/yr: ${y350 ? `~0 by ${y350}` : 'not 0 within 10 years'}. At ₳500M/yr: ${y500 ? `~0 by ${y500}` : 'not 0 within 10 years'}.`);
-    const balancedSpend = inflowAnnual;
-    outlookBits.push(`Balanced-budget spend (given this inflow proxy) is ≈ ${fmtAda(balancedSpend)} per year.`);
-    outlookBits.push(`Model assumption: current chain usage and current protocol parameters remain broadly the same (this does not assume scaling success, new revenue sources, or governance parameter changes). See the projections chart below and the Treasury page for assumptions.`);
-
-    const aiEl = document.getElementById('ai-outlook');
-    if (aiEl) aiEl.textContent = outlookBits.join(' ');
-  </script>
 </body>
 </html>
