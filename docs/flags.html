@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BEACN · Flags (Catalyst)</title>
+  <link rel="stylesheet" href="site.css" />
+  <style>
+    .wrap{max-width:1200px;margin:0 auto;padding:2rem 1.25rem;}
+    .kicker{color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:.85rem;letter-spacing:.08em;text-transform:uppercase;}
+    .muted{color:#999;}
+    .box{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+    table{width:100%;border-collapse:collapse;margin-top:.75rem;}
+    th,td{border-bottom:1px solid rgba(255,255,255,0.08);padding:.6rem .5rem;text-align:left;vertical-align:top;}
+    th{color:#ddd;font-family:'JetBrains Mono',monospace;font-size:.8rem;}
+    td{color:#bbb;}
+    .num{font-variant-numeric:tabular-nums;white-space:nowrap;}
+    .pill{display:inline-block;border:1px solid rgba(255,255,255,0.18);border-radius:999px;padding:.15rem .55rem;font-family:'JetBrains Mono',monospace;font-size:.75rem;color:#ddd;}
+    .sev{display:inline-block;border-radius:999px;padding:.15rem .55rem;font-family:'JetBrains Mono',monospace;font-size:.75rem;color:#111;}
+    .sev-red{background:#ff5a5a;}
+    .sev-orange{background:#ffb15a;}
+    .sev-yellow{background:#ffe27a;}
+    .sev-green{background:#7dffa1;}
+    a{color:var(--gold);}
+    code{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#ddd;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="kicker">BEACN · receipts-first</div>
+    <h1 style="margin:.35rem 0 0.75rem 0;">Flags (Catalyst)</h1>
+    <p class="muted" style="max-width:980px;">
+      Flags are <strong>rule-based triage signals</strong>. They are not accusations.
+      This page summarizes signals emitted from the exported Catalyst receipts dataset.
+    </p>
+
+    <div class="box">
+      <h2 style="margin:0 0 .5rem 0;">Weighting (AI-driven, criteria-based)</h2>
+      <p class="muted" style="margin:.25rem 0 0 0;max-width:980px;">
+        Each flag type has a <strong>weight (1–10)</strong> used for visual prioritization.
+        Weight is assigned by a simple criteria rubric (not human judgment of guilt):
+        <br><br>
+        <strong>+3</strong> if it’s a direct receipts field (offchain) rather than a heuristic guess<br>
+        <strong>+3</strong> if it indicates funds moved (distributedToDate &gt; 0) rather than just votes/intent<br>
+        <strong>+2</strong> if it implies a missing/unclear delivery record (needs follow-up receipts)<br>
+        <strong>+2</strong> if the signal is hard to explain benignly at scale<br>
+        <br><br>
+        Heuristic-only flags are intentionally lower weight.
+        Anything implying fraud would require court findings or direct primary receipts; we do not emit “fraud” flags from heuristics.
+      </p>
+    </div>
+
+    <div class="box">
+      <div><span class="pill">Dataset</span> <code>outputs/offchain/flags/catalyst_flags_v1.json</code></div>
+      <div style="margin-top:.35rem;"><span class="pill">Receipts</span> <a href="catalyst.html" target="_blank">Catalyst receipts</a></div>
+    </div>
+
+    <div class="box">
+      <h2 style="margin:0 0 .5rem 0;">Counts by flag type</h2>
+      <table>
+        <thead>
+          <tr><th>Flag</th><th>Weight</th><th>Severity</th><th>Count</th><th>Notes</th></tr>
+        </thead>
+        <tbody id="flagCounts"></tbody>
+      </table>
+    </div>
+
+    <div class="box">
+      <h2 style="margin:0 0 .5rem 0;">Top concentration (F-CAT-001)</h2>
+      <div class="muted">Largest proposer totals by ADA-coded <code>distributedToDate</code> (export).</div>
+      <table>
+        <thead><tr><th>Proposer</th><th>Paid proposals</th><th>Total (₳)</th><th>Receipt</th></tr></thead>
+        <tbody id="topConcentration"></tbody>
+      </table>
+    </div>
+
+    <div class="box">
+      <h2 style="margin:0 0 .5rem 0;">Largest “cancelled but paid” (F-CAT-003)</h2>
+      <div class="muted">These require follow-up receipts for what was delivered for the paid amount.</div>
+      <table>
+        <thead><tr><th>Project</th><th>Fund</th><th>Proposer</th><th>Paid (₳)</th><th>Receipt</th></tr></thead>
+        <tbody id="cancelledPaid"></tbody>
+      </table>
+    </div>
+
+  </div>
+
+<script>
+const FLAG_WEIGHTS = {
+  // weights 1–10 (visual priority only)
+  'F-CAT-001': { weight: 6, severity: 'yellow', note: 'High proposer concentration (needs review; can be benign for vendors)' },
+  'F-CAT-002': { weight: 2, severity: 'green',  note: 'Keyword-based content-like pattern (heuristic; visual only)' },
+  'F-CAT-003': { weight: 7, severity: 'orange', note: 'Cancelled but paid (requires receipts for delivered work)' },
+  'F-CAT-004': { weight: 1, severity: 'green',  note: 'Shared non-default avatar (heuristic; low signal)' },
+  'F-CAT-005': { weight: 3, severity: 'yellow', note: 'Duplicate/near-duplicate paid names across proposers (heuristic)' },
+};
+
+function sevBadge(sev){
+  const cls = sev==='red'?'sev-red': sev==='orange'?'sev-orange': sev==='yellow'?'sev-yellow':'sev-green';
+  return `<span class="sev ${cls}">${sev}</span>`;
+}
+
+async function main(){
+  const flagsPath = '../outputs/offchain/flags/catalyst_flags_v1.json';
+  const data = await (await fetch(flagsPath)).json();
+  const flags = data.flags || [];
+
+  // counts by type
+  const counts = {};
+  for (const f of flags){ counts[f.flag_id] = (counts[f.flag_id]||0)+1; }
+
+  const tbody = document.getElementById('flagCounts');
+  const ids = Object.keys(counts).sort();
+  for (const id of ids){
+    const meta = FLAG_WEIGHTS[id] || {weight:1,severity:'green',note:'(unweighted)'};
+    const tr=document.createElement('tr');
+    tr.innerHTML = `<td><code>${id}</code></td><td class="num">${meta.weight}</td><td>${sevBadge(meta.severity)}</td><td class="num">${counts[id]}</td><td class="muted">${meta.note}</td>`;
+    tbody.appendChild(tr);
+  }
+
+  // top concentration
+  const f1 = flags.filter(f=>f.flag_id==='F-CAT-001');
+  f1.sort((a,b)=> (b.evidence?.total_distributedToDate_ada||0) - (a.evidence?.total_distributedToDate_ada||0));
+  const topBody = document.getElementById('topConcentration');
+  for (const f of f1.slice(0,20)){
+    const pr = f.evidence?.proposer || {};
+    const total = f.evidence?.total_distributedToDate_ada || 0;
+    const paidCt = f.evidence?.paid_projects_count || 0;
+    const tr=document.createElement('tr');
+    tr.innerHTML = `<td>${pr.username || '(unknown)'}<div class="muted">${pr.name || ''}</div></td><td class="num">${paidCt}</td><td class="num">₳${Number(total).toLocaleString(undefined,{maximumFractionDigits:2})}</td><td><a href="catalyst.html" target="_blank">receipts</a></td>`;
+    topBody.appendChild(tr);
+  }
+
+  // cancelled but paid largest
+  const f3 = flags.filter(f=>f.flag_id==='F-CAT-003');
+  const f3Ada = [];
+  for (const f of f3){
+    const dist = f.evidence?.project?.distributedToDate;
+    if (dist?.code !== '$ADA') continue;
+    const amt = Number(dist.amount) / Math.pow(10, Number(dist.exp));
+    f3Ada.push({amt, f});
+  }
+  f3Ada.sort((a,b)=>b.amt-a.amt);
+  const canBody = document.getElementById('cancelledPaid');
+  for (const row of f3Ada.slice(0,30)){
+    const f=row.f;
+    const pr=f.evidence?.proposer||{};
+    const p=f.evidence?.project||{};
+    const tr=document.createElement('tr');
+    tr.innerHTML = `<td>${p.projectName||''}</td><td class="num">${p.fundId||''}</td><td>${pr.username||''}</td><td class="num">₳${row.amt.toLocaleString(undefined,{maximumFractionDigits:2})}</td><td><a href="catalyst.html" target="_blank">receipts</a></td>`;
+    canBody.appendChild(tr);
+  }
+}
+
+main().catch(err=>{
+  console.error(err);
+  document.body.innerHTML = '<div style="color:#fff;padding:2rem;font-family:monospace;">Failed to load flags dataset.</div>';
+});
+</script>
+</body>
+</html>
