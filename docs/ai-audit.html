@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BEACN · AI Price-Collapse Audit (Catalyst)</title>
+  <link rel="stylesheet" href="site.css" />
+  <style>
+    .wrap{max-width:1100px;margin:0 auto;padding:2rem 1.25rem;}
+    .kicker{color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:.85rem;letter-spacing:.08em;text-transform:uppercase;}
+    .muted{color:#999;}
+    .box{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.25rem;margin:1rem 0;}
+    table{width:100%;border-collapse:collapse;margin-top:.75rem;}
+    th,td{border-bottom:1px solid rgba(255,255,255,0.08);padding:.6rem .5rem;text-align:left;vertical-align:top;}
+    th{color:#ddd;font-family:'JetBrains Mono',monospace;font-size:.8rem;}
+    td{color:#bbb;}
+    .num{font-variant-numeric:tabular-nums;white-space:nowrap;}
+    .pill{display:inline-block;border:1px solid rgba(255,255,255,0.18);border-radius:999px;padding:.15rem .55rem;font-family:'JetBrains Mono',monospace;font-size:.75rem;color:#ddd;}
+    a{color:var(--gold);}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="kicker">BEACN · receipts-first</div>
+    <h1 style="margin:.35rem 0 0.75rem 0;">AI Price-Collapse Audit (Catalyst)</h1>
+    <p class="muted" style="max-width:900px;">
+      This page groups <strong>paid</strong> Catalyst proposals by <strong>deliverable type</strong> to highlight where the marginal cost of work has likely collapsed in 2026 due to modern AI-assisted tooling.
+      It is a <strong>budgeting lens</strong> — not a claim of wrongdoing, and not a claim that funds were “lost”.
+    </p>
+
+    <div class="box">
+      <div><span class="pill">Scope</span> Paid proposals (distributedToDate) from exported Catalyst receipts</div>
+      <div style="margin-top:.4rem;"><span class="pill">Receipts</span> <a href="catalyst.html" target="_blank">Catalyst receipts</a></div>
+      <div style="margin-top:.4rem;"><span class="pill">Method</span> Simple keyword classification (v0). Misclassifications are expected — bring receipts and we’ll fix.</div>
+    </div>
+
+    <div class="box">
+      <h2 style="margin:0 0 .5rem 0;">Headline totals</h2>
+      <ul class="muted" style="margin:.25rem 0 0 1.2rem;">
+        <li><strong>2,217</strong> paid proposals (distributedToDate present)</li>
+        <li><strong>₳150,979,182.13</strong> distributed (ADA-coded in export)</li>
+        <li><strong>$36,338,017.12</strong> distributed (USD-coded in export)</li>
+      </ul>
+      <div class="muted" style="margin-top:.6rem;font-size:.85rem;">Note: ADA↔USD conversion is not applied here; we report the currencies as recorded in the export.</div>
+    </div>
+
+    <div class="box">
+      <h2 style="margin:0 0 .5rem 0;">Category totals (ADA-coded)</h2>
+      <div class="muted" style="margin:.25rem 0 0 0;">These are v0 buckets. The “other” bucket is large because many project titles are not descriptive.</div>
+      <table id="summary">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Paid proposals</th>
+            <th>Total (₳)</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="box">
+      <h2 style="margin:0 0 .5rem 0;">Top examples (by distributedToDate, ADA-coded)</h2>
+      <p class="muted" style="margin:.25rem 0 0 0;">This is for triage and community review. Each item should be cross-checked in the receipts.</p>
+      <div id="examples" class="muted" style="margin-top:.75rem;"></div>
+    </div>
+
+    <div class="muted" style="margin-top:1rem;font-size:.85rem;">
+      If you want us to reclassify an entry: send proposer + project title + fund + amount + receipt link + the category you think it belongs in.
+    </div>
+  </div>
+
+<script>
+async function loadCSV(path){
+  const res = await fetch(path);
+  const text = await res.text();
+  const lines = text.trim().split(/\r?\n/);
+  const headers = lines[0].split(',');
+  return lines.slice(1).map(line => {
+    const cols = [];
+    let cur='', inQ=false;
+    for (let i=0;i<line.length;i++){
+      const ch=line[i];
+      if (ch==='"') { inQ=!inQ; continue; }
+      if (ch===',' && !inQ){ cols.push(cur); cur=''; }
+      else cur+=ch;
+    }
+    cols.push(cur);
+    const obj={};
+    headers.forEach((h,i)=>obj[h]=cols[i]);
+    return obj;
+  });
+}
+
+async function main(){
+  const summaryPath = '../outputs/offchain/ai_audit/ai_audit_summary.csv';
+  const rows = await loadCSV(summaryPath);
+
+  // filter ADA-coded
+  const ada = rows.filter(r => r.currency === '$ADA');
+  ada.sort((a,b)=> parseFloat(b.distributed_to_date_total) - parseFloat(a.distributed_to_date_total));
+
+  const tbody = document.querySelector('#summary tbody');
+  for (const r of ada){
+    const tr=document.createElement('tr');
+    tr.innerHTML = `<td>${r.category}</td><td class="num">${r.paid_projects_count}</td><td class="num">${Number(r.distributed_to_date_total).toLocaleString(undefined,{maximumFractionDigits:2})}</td>`;
+    tbody.appendChild(tr);
+  }
+
+  const exPath = '../outputs/offchain/ai_audit/ai_audit_examples_top25.json';
+  const ex = await (await fetch(exPath)).json();
+  const container = document.getElementById('examples');
+  const cats = Object.keys(ex).sort();
+  for (const cat of cats){
+    const items = ex[cat] || [];
+    if (!items.length) continue;
+    const div=document.createElement('div');
+    div.style.marginBottom='1rem';
+    div.innerHTML = `<div style="margin-bottom:.35rem;"><span class="pill">${cat}</span></div>`;
+    const ul=document.createElement('ul');
+    ul.style.margin='0 0 0 1.2rem';
+    for (const it of items.slice(0,10)){
+      const li=document.createElement('li');
+      li.innerHTML = `<span class="num">₳${Number(it.distributedToDate_ada).toLocaleString(undefined,{maximumFractionDigits:2})}</span> · Fund ${it.fundId} · ${it.projectName}`;
+      ul.appendChild(li);
+    }
+    div.appendChild(ul);
+    container.appendChild(div);
+  }
+}
+main().catch(err => {
+  console.error(err);
+  document.getElementById('examples').textContent = 'Failed to load audit outputs.';
+});
+</script>
+</body>
+</html>
