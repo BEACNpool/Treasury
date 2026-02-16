@@ -796,7 +796,9 @@ mark.red {
       <li><strong id="kf-paid-proposals">…</strong> paid Catalyst proposals in the export (distributedToDate present)</li>
       <li><strong id="kf-total-ada">…</strong> distributed (ADA-coded in export) · <strong id="kf-total-usd">…</strong> distributed (USD-coded in export)</li>
       <li><strong id="kf-ai-buckets-ada">…</strong> in AI-compressible buckets (v0 heuristic classifier; ADA-coded)</li>
-      <li><strong id="kf-cancelled-paid">…</strong> “cancelled but paid” signals (requires delivery receipts)</li>
+      <li><strong id="kf-flagged-1">…</strong> paid proposals with ≥1 flag (review queue)</li>
+      <li><strong id="kf-flagged-3">…</strong> paid proposals with ≥3 flags · <strong id="kf-flagged-5">…</strong> with ≥5 flags</li>
+      <li><strong id="kf-orange">…</strong> max severity ORANGE · <strong id="kf-yellow">…</strong> YELLOW · <strong id="kf-green">…</strong> GREEN (paid proposals)</li>
     </ul>
     <div style="margin-top:0.75rem; font-family:'JetBrains Mono', monospace; font-size:0.75rem; color:var(--ash);">
       Source: <a href="ai-audit.html" target="_blank">AI audit</a> · <a href="flags.html" target="_blank">Flags</a>
@@ -1248,8 +1250,13 @@ document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
   const elAda = document.getElementById('kf-total-ada');
   const elUsd = document.getElementById('kf-total-usd');
   const elAi = document.getElementById('kf-ai-buckets-ada');
-  const elCan = document.getElementById('kf-cancelled-paid');
-  if (!elPaid || !elAda || !elUsd || !elAi || !elCan) return;
+  const elF1 = document.getElementById('kf-flagged-1');
+  const elF3 = document.getElementById('kf-flagged-3');
+  const elF5 = document.getElementById('kf-flagged-5');
+  const elO = document.getElementById('kf-orange');
+  const elY = document.getElementById('kf-yellow');
+  const elG = document.getElementById('kf-green');
+  if (!elPaid || !elAda || !elUsd || !elAi || !elF1 || !elF3 || !elF5 || !elO || !elY || !elG) return;
 
   const fmtAda = (n) => `₳${Math.round(n).toLocaleString()}`;
   const fmtUsd = (n) => `$${Math.round(n).toLocaleString()}`;
@@ -1298,11 +1305,18 @@ document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
   }
 
   try {
-    // flags: cancelled but paid count
-    const fJson = await fetch('outputs/offchain/flags/catalyst_flags_v2.json', { cache: 'no-store' }).then(r => r.json());
-    const flags = (fJson && fJson.flags) ? fJson.flags : [];
-    const cancelledPaid = flags.filter(f => f.flag_id === 'F-CAT-003').length;
-    if (Number.isFinite(cancelledPaid)) elCan.textContent = cancelledPaid.toLocaleString();
+    const s = await fetch('outputs/offchain/flags/flag_summary.json', { cache: 'no-store' }).then(r => r.json());
+    const t1 = s.flag_thresholds?.['1']?.count;
+    const t3 = s.flag_thresholds?.['3']?.count;
+    const t5 = s.flag_thresholds?.['5']?.count;
+    if (Number.isFinite(t1)) elF1.textContent = t1.toLocaleString();
+    if (Number.isFinite(t3)) elF3.textContent = t3.toLocaleString();
+    if (Number.isFinite(t5)) elF5.textContent = t5.toLocaleString();
+
+    const sev = s.severity_distribution || {};
+    if (Number.isFinite(sev.orange)) elO.textContent = sev.orange.toLocaleString();
+    if (Number.isFinite(sev.yellow)) elY.textContent = sev.yellow.toLocaleString();
+    if (Number.isFinite(sev.green)) elG.textContent = sev.green.toLocaleString();
   } catch (e) {
     // ignore
   }

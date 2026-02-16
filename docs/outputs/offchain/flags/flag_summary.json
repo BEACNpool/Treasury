@@ -1,0 +1,51 @@
+{
+  "unique_paid_projects": 2217,
+  "unique_projects_in_table": 2298,
+  "distributed_to_date": {
+    "ADA": 150979182.13,
+    "USD": 36338017.12
+  },
+  "flag_thresholds": {
+    "1": {
+      "count": 804,
+      "distributed_to_date": {
+        "ADA": 90957308.65,
+        "USD": 16032832.49
+      }
+    },
+    "2": {
+      "count": 189,
+      "distributed_to_date": {
+        "ADA": 8119273.8,
+        "USD": 4309579.38
+      }
+    },
+    "3": {
+      "count": 70,
+      "distributed_to_date": {
+        "ADA": 1572024.0,
+        "USD": 2231882.15
+      }
+    },
+    "4": {
+      "count": 28,
+      "distributed_to_date": {
+        "ADA": 177000.0,
+        "USD": 1085000.76
+      }
+    },
+    "5": {
+      "count": 11,
+      "distributed_to_date": {
+        "ADA": 66600.0,
+        "USD": 281946.67
+      }
+    }
+  },
+  "severity_distribution": {
+    "red": 0,
+    "orange": 187,
+    "yellow": 617,
+    "green": 1413
+  }
+}
