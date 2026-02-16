@@ -126,6 +126,72 @@
       </div>
     </div>
 
+    <div class="card">
+      <div class="h2">AI-themed proposals (the irony)</div>
+      <div class="note" style="font-size:13px">
+        Counted by title keywords (<code>AI</code>, <code>ML</code>, <code>LLM</code>, <code>bot</code>, <code>agent(s)</code>) in ADA-funded categories.
+        <strong>Not</strong> a value judgment — just a spotlight: the treasury is being asked to fund AI tools that could plausibly build many other proposals on the same ballot.
+      </div>
+      <div class="kpiGrid">
+        <div class="kpiBox">
+          <div class="lbl">AI-themed proposals</div>
+          <div class="val" id="k_ai_title_count">—</div>
+          <div class="note">title mentions AI/ML/bot/agent</div>
+        </div>
+        <div class="kpiBox">
+          <div class="lbl">Total requested (AI-themed)</div>
+          <div class="val" id="k_ai_title_sum">—</div>
+          <div class="note">sum of requested (ADA categories)</div>
+        </div>
+      </div>
+
+      <div class="h3">Top AI-themed asks (receipts)</div>
+      <div class="tableWrap" style="margin-top:10px">
+        <table>
+          <thead><tr><th>Proposal</th><th>Category</th><th>Requested</th><th>Receipt</th></tr></thead>
+          <tbody id="ai_title_top"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="h2">Partners Tier‑1 problem (budget concentration)</div>
+      <div class="note" style="font-size:13px">
+        This category is only a small slice of the ballot, but it consumes an outsized share of requested ADA.
+        These proposals may have real relationship value — but they also include substantial software/integration work whose costs are deflating rapidly.
+      </div>
+      <div class="kpiGrid">
+        <div class="kpiBox">
+          <div class="lbl">Partners proposals</div>
+          <div class="val" id="k_partners_count">—</div>
+          <div class="note">Cardano Partners: Tier‑1 Enterprise Integrations</div>
+        </div>
+        <div class="kpiBox">
+          <div class="lbl">Partners requested (total)</div>
+          <div class="val" id="k_partners_sum">—</div>
+          <div class="note">total requested (ADA)</div>
+        </div>
+        <div class="kpiBox">
+          <div class="lbl">Share of requested ADA</div>
+          <div class="val" id="k_partners_share">—</div>
+          <div class="note">of ADA categories total</div>
+        </div>
+        <div class="kpiBox">
+          <div class="lbl">Average ask</div>
+          <div class="val" id="k_partners_avg">—</div>
+          <div class="note">mean requested (ADA)</div>
+        </div>
+      </div>
+
+      <div class="h3">Top Partners asks (receipts)</div>
+      <div class="tableWrap" style="margin-top:10px">
+        <table>
+          <thead><tr><th>Proposal</th><th>Requested</th><th>Receipt</th></tr></thead>
+          <tbody id="partners_top"></tbody>
+        </table>
+      </div>
+    </div>
+
   </div>
 
 <script>
@@ -196,7 +262,6 @@ async function main(){
   document.getElementById('k_ada_req').textContent = `₳${fmt(adaReq)}`;
   document.getElementById('k_usdm_req').textContent = `$USDM ${fmt(usdmReq)}`;
   document.getElementById('k_cap200').textContent = fmt(cap200);
-  document.getElementById('k_cap200_inline').textContent = fmt(cap200);
 
   // obvious findings + AI-easy estimate
   const aiEasy = rows.filter(r => Number(r.flag_f_ai_001||0)===1 || Number(r.flag_f_cat_002||0)===1).length;
@@ -223,7 +288,58 @@ async function main(){
     tbody.appendChild(tr);
   }
 
-  // (Removed: tabs + deep-dive tables). Page is intentionally single-screen + blunt.
+  // AI-themed (title keyword search) + receipts table
+  const aiTitleRe = /\b(ai|ml|llm|bot|agent|agents)\b/i;
+  const aiHits = rows
+    .filter(r => !isMidnight(r.category))
+    .filter(r => aiTitleRe.test(r.proposal_title||''))
+    .map(r => ({
+      title: r.proposal_title||'',
+      cat: r.category||'',
+      amt: Number(r.requested_amount||0),
+      url: r.url||''
+    }));
+  const aiTitleCount = aiHits.length;
+  const aiTitleSum = aiHits.reduce((s,x)=>s+x.amt,0);
+
+  const elAiTitleCount = document.getElementById('k_ai_title_count');
+  const elAiTitleSum = document.getElementById('k_ai_title_sum');
+  if (elAiTitleCount) elAiTitleCount.textContent = fmt(aiTitleCount);
+  if (elAiTitleSum) elAiTitleSum.textContent = `₳${fmt(aiTitleSum)}`;
+
+  const aiTop = document.getElementById('ai_title_top');
+  aiHits.sort((a,b)=>b.amt-a.amt);
+  for (const x of aiHits.slice(0, 12)){
+    const tr=document.createElement('tr');
+    tr.innerHTML = `<td>${x.title}</td><td>${x.cat}</td><td class="num">₳${fmt(x.amt,2)}</td><td>${x.url?`<a href="${x.url}" target="_blank" rel="noreferrer">receipt</a>`:''}</td>`;
+    aiTop.appendChild(tr);
+  }
+
+  // Partners tier-1 concentration
+  const partners = rows
+    .filter(r => (r.category||'') === 'Cardano Partners: Tier-1 Enterprise Integrations')
+    .map(r => ({title:r.proposal_title||'', amt:Number(r.requested_amount||0), url:r.url||''}));
+  const pCount = partners.length;
+  const pSum = partners.reduce((s,x)=>s+x.amt,0);
+  const pShare = adaReq>0 ? (pSum/adaReq)*100 : 0;
+  const pAvg = pCount ? pSum/pCount : 0;
+
+  const elPCount=document.getElementById('k_partners_count');
+  const elPSum=document.getElementById('k_partners_sum');
+  const elPShare=document.getElementById('k_partners_share');
+  const elPAvg=document.getElementById('k_partners_avg');
+  if (elPCount) elPCount.textContent = fmt(pCount);
+  if (elPSum) elPSum.textContent = `₳${fmt(pSum)}`;
+  if (elPShare) elPShare.textContent = `${pShare.toFixed(1)}%`;
+  if (elPAvg) elPAvg.textContent = `₳${fmt(pAvg,0)}`;
+
+  const pTop=document.getElementById('partners_top');
+  partners.sort((a,b)=>b.amt-a.amt);
+  for (const x of partners.slice(0, 12)){
+    const tr=document.createElement('tr');
+    tr.innerHTML = `<td>${x.title}</td><td class="num">₳${fmt(x.amt,2)}</td><td>${x.url?`<a href="${x.url}" target="_blank" rel="noreferrer">receipt</a>`:''}</td>`;
+    pTop.appendChild(tr);
+  }
 }
 
 main();
