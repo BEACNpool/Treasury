@@ -3,9 +3,22 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BEACN · Fund15 Prep (Proposals + Flags)</title>
+  <title>BEACN · Fund15 Prep (Ballot + v0 Triage)</title>
   <link rel="stylesheet" href="site.css" />
   <link rel="stylesheet" href="audit-ui.css" />
+  <style>
+    .tabbar{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 0 0}
+    .tabbtn{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--border);background:transparent;color:var(--muted2);padding:8px 12px;border-radius:10px;cursor:pointer}
+    .tabbtn.active{border-color:rgba(34,211,238,.35);background:rgba(34,211,238,.08);color:var(--trs)}
+    .tab{display:none}
+    .tab.active{display:block}
+    .kpiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:14px 0}
+    .kpiBox{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 16px}
+    .kpiBox .lbl{font-family:var(--mono);font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:1.4px}
+    .kpiBox .val{font-size:22px;font-weight:800;margin-top:6px;letter-spacing:-.3px}
+    .kpiBox .note{font-family:var(--mono);font-size:11px;color:var(--muted2);margin-top:6px;line-height:1.35}
+    .mono{font-family:var(--mono)}
+  </style>
 </head>
 <body>
   <div class="nav">
@@ -25,86 +38,280 @@
   </div>
 
   <div class="wrap">
-    <div class="h1">Fund15 Prep (Proposals + v0 Flags)</div>
+    <div class="h1">Catalyst Fund15 — ballot triage</div>
     <p class="sub">
-      This page is a <strong>pre-vote triage</strong> view built from the public Fund15 proposal list.
-      Flags here are <strong>heuristics</strong> to help you prioritize review — not accusations.
+      Built from the <strong>public Fund15 ballot list</strong>. This is for <strong>pre-vote budgeting + prioritization</strong>.
+      It is <strong>not</strong> a claim of wrongdoing.
     </p>
 
+    <div class="audit-callout">
+      This page is intentionally blunt: <strong>how many proposals</strong>, <strong>how much is being requested</strong>, and where the asks cluster.
+      For historical receipts + delivery patterns, use <a href="catalyst.html">Receipts</a> → <a href="flags.html">Flags</a> → <a href="ai-audit.html">AI Audit</a>.
+    </div>
+
     <div class="disclaimer-banner">
-      ⚠ These flags are NOT receipts and NOT a claim of wrongdoing. They are a filter to find proposals that deserve extra scrutiny.
+      ⚠ Fund15 flags on this page are v0 heuristics (title-based). They are filters, not verdicts.
     </div>
 
-    <div class="audit-hero">
-      <h2 id="kpi_title">Fund15 snapshot</h2>
-      <p id="kpi_sub">Loading…</p>
-      <div class="cta-links">
-        <a href="outputs/offchain/fund15/fund15_voting_ballot_clean.csv" target="_blank" rel="noreferrer">⬇ fund15_voting_ballot_clean.csv</a>
-        <a href="outputs/offchain/fund15/fund15_summary.json" target="_blank" rel="noreferrer">flag summary (json)</a>
-        <a href="https://projectcatalyst.io/funds/15" target="_blank" rel="noreferrer">source: projectcatalyst.io</a>
+    <div class="audit-hero" style="text-align:left;">
+      <h2>Fund15 snapshot</h2>
+      <p id="headline" class="mono" style="margin:0.25rem 0 0 0;">Loading…</p>
+      <div class="cta-links" style="justify-content:flex-start;">
+        <a href="outputs/offchain/fund15/fund15_voting_ballot_raw.csv" target="_blank" rel="noreferrer">Raw ballot CSV</a>
+        <a href="outputs/offchain/fund15/fund15_voting_ballot_clean.csv" target="_blank" rel="noreferrer">Clean ballot CSV</a>
+        <a href="outputs/offchain/fund15/fund15_summary.json" target="_blank" rel="noreferrer">Summary (JSON)</a>
+        <a href="https://projectcatalyst.io/funds/15" target="_blank" rel="noreferrer">Source</a>
       </div>
-    </div>
-
-    <div class="stat-row">
-      <div class="stat-card">
-        <div class="stat-value" id="p_count">—</div>
-        <div class="stat-label">Proposals in ballot list</div>
-      </div>
-      <div class="stat-card highlight">
-        <div class="stat-value" id="ai_like">—</div>
-        <div class="stat-label">F-AI-001-like (AI-compressible)</div>
-      </div>
-      <div class="stat-card highlight">
-        <div class="stat-value" id="content_like">—</div>
-        <div class="stat-label">F-CAT-002-like (content-like)</div>
+      <div class="tabbar" role="tablist" aria-label="Fund15 tabs">
+        <button class="tabbtn active" data-tab="overview">Overview</button>
+        <button class="tabbtn" data-tab="ai-risk">AI risk (v0)</button>
+        <button class="tabbtn" data-tab="deep-dive">Deep dive</button>
+        <button class="tabbtn" data-tab="argument">Argument</button>
       </div>
     </div>
 
-    <div class="card">
-      <div class="h2">Category totals (requested)</div>
-      <div class="note">Sums are from the proposal list requested amounts. This is not “paid”.</div>
-      <div class="tableWrap" style="margin-top:10px">
-        <table>
-          <thead><tr><th>Category</th><th style="text-align:right">Proposals</th><th style="text-align:right">Requested (sum)</th></tr></thead>
-          <tbody id="cat_rows"></tbody>
-        </table>
+    <div id="tab_overview" class="tab active">
+      <div class="kpiGrid">
+        <div class="kpiBox">
+          <div class="lbl">Proposals</div>
+          <div class="val" id="k_proposals">—</div>
+          <div class="note">Ballot list size</div>
+        </div>
+        <div class="kpiBox">
+          <div class="lbl">Requested (ADA categories)</div>
+          <div class="val" id="k_ada_req">—</div>
+          <div class="note">Sum of requested amounts in non-Midnight categories</div>
+        </div>
+        <div class="kpiBox">
+          <div class="lbl">Requested (Midnight $USDM)</div>
+          <div class="val" id="k_usdm_req">—</div>
+          <div class="note">Sum of requested amounts in Midnight: Compact DApps</div>
+        </div>
+        <div class="kpiBox">
+          <div class="lbl">200k clustering</div>
+          <div class="val" id="k_cap200">—</div>
+          <div class="note"># proposals requesting exactly ₳200,000</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="h2">Category totals (requested)</div>
+        <div class="note">This is requested, not paid.</div>
+        <div class="tableWrap" style="margin-top:10px">
+          <table>
+            <thead><tr><th>Category</th><th>Proposals</th><th>Total requested</th><th>Share (ADA only)</th></tr></thead>
+            <tbody id="cat_rows"></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
-    <div class="card">
-      <div class="h2">How to use this for voting</div>
-      <ul class="note">
-        <li>Open the CSV and sort by <code>flag_f_ai_001</code> / <code>flag_f_cat_002</code> to triage.</li>
-        <li>Click the proposal <code>url</code> and verify the actual scope + milestones.</li>
-        <li>Cross-check proposer history in the historical receipts + flags pipeline.</li>
-      </ul>
-      <div class="note" style="margin-top:10px">
-        Historical receipts: <a href="catalyst.html">catalyst.html</a> · Historical flags: <a href="flags.html">flags.html</a> · AI repricing lens: <a href="ai-audit.html">ai-audit.html</a>
+    <div id="tab_ai-risk" class="tab">
+      <div class="card">
+        <div class="h2">Heuristic signals (title-based)</div>
+        <div class="note">
+          These two toggles mirror the heuristic flags on <a href="flags.html">Flags</a>:
+          <code>F-AI-001</code>-like (AI-compressible) and <code>F-CAT-002</code>-like (content-like).
+        </div>
+        <div class="stat-row">
+          <div class="stat-card highlight">
+            <div class="stat-value" id="k_ai_like">—</div>
+            <div class="stat-label">F-AI-001-like matches</div>
+          </div>
+          <div class="stat-card highlight">
+            <div class="stat-value" id="k_content_like">—</div>
+            <div class="stat-label">F-CAT-002-like matches</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="k_ai_in_title">—</div>
+            <div class="stat-label">Titles mentioning “AI”</div>
+          </div>
+        </div>
+
+        <div class="note" style="margin-top:8px">
+          Want to audit quickly? Download the clean CSV and filter:
+          <a href="outputs/offchain/fund15/fund15_voting_ballot_clean.csv" target="_blank" rel="noreferrer">fund15_voting_ballot_clean.csv</a>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab_deep-dive" class="tab">
+      <div class="card">
+        <div class="h2">Sizing buckets (requested)</div>
+        <div class="note">Shows how requests cluster across common price points.</div>
+        <div class="tableWrap" style="margin-top:10px">
+          <table>
+            <thead><tr><th>Bucket</th><th>Proposals</th><th>Total requested</th></tr></thead>
+            <tbody id="size_rows"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="h2">Why the 200k clustering matters</div>
+        <div class="note">
+          A healthy market has a spread of asks. A broken market clusters at the cap.
+          In Fund15, we count both:
+          <ul>
+            <li><strong id="k_cap200_inline">—</strong> proposals requesting exactly <strong>₳200,000</strong>.</li>
+            <li><strong id="k_bucket_100_200">—</strong> proposals in the <strong>₳100k–₳200k</strong> range.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab_argument" class="tab">
+      <div class="card">
+        <div class="h2">The framing (what to say out loud)</div>
+        <div class="note" style="font-size:13px">
+          The thesis is simple:
+          <ul>
+            <li><strong>AI is collapsing the cost of producing many common deliverables.</strong></li>
+            <li>That doesn’t mean “builders are worthless.” It means <strong>we should stop paying 2021 prices</strong>.</li>
+            <li>Fund15 is a budgeting decision. If the deliverable is now cheap to reproduce, voters should demand: tighter scope, smaller budget, faster milestones, and public receipts.</li>
+          </ul>
+
+          Use this pipeline when you vote:
+          <div style="margin-top:10px" class="mono">
+            Receipts → Flags → AI repricing lens
+          </div>
+          <div style="margin-top:6px">
+            <a href="catalyst.html">Receipts</a> · <a href="flags.html">Flags</a> · <a href="ai-audit.html">AI Audit</a>
+          </div>
+        </div>
       </div>
     </div>
 
   </div>
 
 <script>
+const ADA_PRICE = 0.28; // simple display-only; change anytime
+
+function fmt(n, digits=0){
+  return Number(n).toLocaleString(undefined,{maximumFractionDigits:digits});
+}
+
+async function loadCSV(path){
+  const res = await fetch(path);
+  const text = await res.text();
+  const lines = text.trim().split(/\r?\n/);
+  const headers = lines[0].split(',');
+  return lines.slice(1).map(line => {
+    const cols=[]; let cur='', inQ=false;
+    for (let i=0;i<line.length;i++){
+      const ch=line[i];
+      if (ch==='"'){ inQ=!inQ; continue; }
+      if (ch===',' && !inQ){ cols.push(cur); cur=''; }
+      else cur+=ch;
+    }
+    cols.push(cur);
+    const obj={};
+    headers.forEach((h,i)=>obj[h]=cols[i]);
+    return obj;
+  });
+}
+
+function isMidnight(cat){
+  return (cat||'') === 'Midnight: Compact DApps';
+}
+
 async function main(){
-  const s = await (await fetch('outputs/offchain/fund15/fund15_summary.json')).json();
-  document.getElementById('p_count').textContent = (s.proposals_count||0).toLocaleString();
-  document.getElementById('ai_like').textContent = (s.flag_counts?.['F-AI-001_like']||0).toLocaleString();
-  document.getElementById('content_like').textContent = (s.flag_counts?.['F-CAT-002_like']||0).toLocaleString();
+  const rows = await loadCSV('outputs/offchain/fund15/fund15_voting_ballot_clean.csv');
 
-  const updated = s.source_updated || 'public export';
-  document.getElementById('kpi_sub').textContent = `Ballot list: ${s.proposals_count} proposals · Heuristic flags: AI-like ${s.flag_counts?.['F-AI-001_like']||0}, content-like ${s.flag_counts?.['F-CAT-002_like']||0}`;
+  const proposals = rows.length;
+  let adaReq=0, usdmReq=0;
+  let cap200=0;
+  let aiLike=0, contentLike=0;
+  let aiInTitle=0;
 
+  const cats={};
+  for (const r of rows){
+    const cat=r.category||'';
+    const amt=Number(r.requested_amount||0);
+    const title=r.proposal_title||'';
+
+    cats[cat] = cats[cat] || {count:0,sum:0};
+    cats[cat].count += 1;
+    cats[cat].sum += amt;
+
+    if (isMidnight(cat)) usdmReq += amt;
+    else adaReq += amt;
+
+    if (!isMidnight(cat) && Math.abs(amt-200000) < 1e-6) cap200 += 1;
+    if (Number(r.flag_f_ai_001||0)===1) aiLike += 1;
+    if (Number(r.flag_f_cat_002||0)===1) contentLike += 1;
+    if (/\bAI\b/i.test(title)) aiInTitle += 1;
+  }
+
+  // headline
+  const usd = adaReq * ADA_PRICE;
+  document.getElementById('headline').textContent = `${proposals} proposals · requesting ₳${fmt(adaReq)} (≈ $${fmt(usd)}) + $USDM ${fmt(usdmReq)}.`;
+
+  // overview KPIs
+  document.getElementById('k_proposals').textContent = fmt(proposals);
+  document.getElementById('k_ada_req').textContent = `₳${fmt(adaReq)}`;
+  document.getElementById('k_usdm_req').textContent = `$USDM ${fmt(usdmReq)}`;
+  document.getElementById('k_cap200').textContent = fmt(cap200);
+  document.getElementById('k_cap200_inline').textContent = fmt(cap200);
+
+  // risk KPIs
+  document.getElementById('k_ai_like').textContent = fmt(aiLike);
+  document.getElementById('k_content_like').textContent = fmt(contentLike);
+  document.getElementById('k_ai_in_title').textContent = fmt(aiInTitle);
+
+  // categories table
   const tbody=document.getElementById('cat_rows');
-  const cats=s.categories||{};
-  for (const [name, meta] of Object.entries(cats)){
+  const entries=Object.entries(cats);
+  entries.sort((a,b)=> (b[1].sum||0) - (a[1].sum||0));
+  for (const [name, meta] of entries){
     const tr=document.createElement('tr');
-    const sum = meta.requested_amount_sum;
-    const sumFmt = (name||'').includes('Midnight') ? `$USDM ${Number(sum).toLocaleString(undefined,{maximumFractionDigits:2})}` : `₳${Number(sum).toLocaleString(undefined,{maximumFractionDigits:2})}`;
-    tr.innerHTML = `<td>${name}</td><td style="text-align:right">${(meta.count||0).toLocaleString()}</td><td style="text-align:right">${sumFmt}</td>`;
+    const sumFmt = isMidnight(name) ? `$USDM ${fmt(meta.sum,2)}` : `₳${fmt(meta.sum,2)}`;
+    const share = (!isMidnight(name) && adaReq>0) ? `${((meta.sum/adaReq)*100).toFixed(1)}%` : '—';
+    tr.innerHTML = `<td>${name}</td><td class="num">${fmt(meta.count)}</td><td class="num">${sumFmt}</td><td class="num">${share}</td>`;
     tbody.appendChild(tr);
   }
+
+  // sizing buckets (ADA only)
+  const buckets=[
+    {name:'Micro ≤10k', lo:0, hi:10000},
+    {name:'Small 10k–50k', lo:10000, hi:50000},
+    {name:'Medium 50k–100k', lo:50000, hi:100000},
+    {name:'Large 100k–200k', lo:100000, hi:200000},
+    {name:'XL 200k–500k', lo:200000, hi:500000},
+    {name:'Mega 500k+', lo:500000, hi:1e18},
+  ].map(b=>({...b,count:0,sum:0}));
+
+  for (const r of rows){
+    if (isMidnight(r.category)) continue;
+    const amt=Number(r.requested_amount||0);
+    for (const b of buckets){
+      const inRange = (amt >= b.lo) && (b.hi>=1e18 ? true : amt < b.hi);
+      if (inRange){ b.count++; b.sum+=amt; break; }
+    }
+  }
+
+  const big = buckets.find(b=>b.name.startsWith('Large'));
+  document.getElementById('k_bucket_100_200').textContent = fmt(big ? big.count : 0);
+
+  const st=document.getElementById('size_rows');
+  for (const b of buckets){
+    const tr=document.createElement('tr');
+    tr.innerHTML = `<td>${b.name}</td><td class="num">${fmt(b.count)}</td><td class="num">₳${fmt(b.sum,2)}</td>`;
+    st.appendChild(tr);
+  }
+
+  // tabs
+  for (const btn of document.querySelectorAll('.tabbtn')){
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.tabbtn').forEach(x=>x.classList.remove('active'));
+      btn.classList.add('active');
+      const tab=btn.dataset.tab;
+      document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+      document.getElementById('tab_'+tab).classList.add('active');
+    });
+  }
 }
+
 main();
 </script>
 </body>
