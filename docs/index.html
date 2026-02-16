@@ -785,8 +785,23 @@ mark.red {
   <h3>AI Price-Collapse Audit (Receipts-First)</h3>
   <p class="annotation" style="margin-top:-0.5rem;">
     → <a href="ai-audit.html" target="_blank">Open the AI audit dashboard</a> ·
-    <a href="flags.html" target="_blank">View flags</a>
+    <a href="flags.html" target="_blank">View flags</a> ·
+    <a href="catalyst.html" target="_blank">Browse receipts</a>
   </p>
+
+  <div class="annotation" style="margin: 1rem 0 1.25rem;">
+    <strong>Key findings (auto-generated from receipts)</strong><br>
+    <span style="color:var(--ash);">These are triage numbers, not verdicts. Click through for receipts.</span>
+    <ul style="margin:0.75rem 0 0 1.25rem;">
+      <li><strong id="kf-paid-proposals">…</strong> paid Catalyst proposals in the export (distributedToDate present)</li>
+      <li><strong id="kf-total-ada">…</strong> distributed (ADA-coded in export) · <strong id="kf-total-usd">…</strong> distributed (USD-coded in export)</li>
+      <li><strong id="kf-ai-buckets-ada">…</strong> in AI-compressible buckets (v0 heuristic classifier; ADA-coded)</li>
+      <li><strong id="kf-cancelled-paid">…</strong> “cancelled but paid” signals (requires delivery receipts)</li>
+    </ul>
+    <div style="margin-top:0.75rem; font-family:'JetBrains Mono', monospace; font-size:0.75rem; color:var(--ash);">
+      Source: <a href="ai-audit.html" target="_blank">AI audit</a> · <a href="flags.html" target="_blank">Flags</a>
+    </div>
+  </div>
 
   <p class="annotation" style="margin-bottom: 1.5rem;">
     This project started as “publish receipts.” The next step is to ask a harder question:
@@ -1224,6 +1239,72 @@ document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
     }
   } catch (e) {
     el.textContent = '';
+  }
+})();
+
+// ── Key findings: load AI audit + flags (receipts-first) ──
+(async () => {
+  const elPaid = document.getElementById('kf-paid-proposals');
+  const elAda = document.getElementById('kf-total-ada');
+  const elUsd = document.getElementById('kf-total-usd');
+  const elAi = document.getElementById('kf-ai-buckets-ada');
+  const elCan = document.getElementById('kf-cancelled-paid');
+  if (!elPaid || !elAda || !elUsd || !elAi || !elCan) return;
+
+  const fmtAda = (n) => `₳${Math.round(n).toLocaleString()}`;
+  const fmtUsd = (n) => `$${Math.round(n).toLocaleString()}`;
+
+  try {
+    // AI audit summary
+    const sCsv = await fetch('https://beacnpool.github.io/Treasury/outputs/offchain/ai_audit/ai_audit_summary.csv', { cache: 'no-store' }).then(r => r.text());
+    const lines = sCsv.trim().split(/\r?\n/);
+    const headers = lines[0].split(',');
+    const idx = (h) => headers.indexOf(h);
+    const iCat = idx('category');
+    const iCt = idx('paid_projects_count');
+    const iCur = idx('currency');
+    const iTot = idx('distributed_to_date_total');
+
+    let paidCt = null;
+    let totalAda = 0;
+    let totalUsd = 0;
+    let aiBucketsAda = 0;
+
+    const AI_CATS = new Set([
+      'social_media_marketing','video_audio','translation_localization','content_education',
+      'basic_web_dashboard','scraping_data_etl','bots_automation','legal_admin'
+    ]);
+
+    for (let i=1;i<lines.length;i++) {
+      const cols = lines[i].split(',');
+      const cat = cols[iCat];
+      const cur = cols[iCur];
+      const ct = Number(cols[iCt]);
+      const tot = Number(cols[iTot]);
+      if (paidCt === null && Number.isFinite(ct)) paidCt = ct; // same for all rows (per our generator)
+      if (cur === '$ADA') {
+        totalAda += tot;
+        if (AI_CATS.has(cat)) aiBucketsAda += tot;
+      }
+      if (cur === 'USD') totalUsd += tot;
+    }
+
+    if (Number.isFinite(paidCt)) elPaid.textContent = `${paidCt.toLocaleString()}`;
+    elAda.textContent = fmtAda(totalAda);
+    elUsd.textContent = fmtUsd(totalUsd);
+    elAi.textContent = fmtAda(aiBucketsAda);
+  } catch (e) {
+    // keep placeholders
+  }
+
+  try {
+    // flags: cancelled but paid count
+    const fJson = await fetch('https://beacnpool.github.io/Treasury/outputs/offchain/flags/catalyst_flags_v2.json', { cache: 'no-store' }).then(r => r.json());
+    const flags = (fJson && fJson.flags) ? fJson.flags : [];
+    const cancelledPaid = flags.filter(f => f.flag_id === 'F-CAT-003').length;
+    if (Number.isFinite(cancelledPaid)) elCan.textContent = cancelledPaid.toLocaleString();
+  } catch (e) {
+    // ignore
   }
 })();
 </script>
