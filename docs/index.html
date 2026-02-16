@@ -1256,7 +1256,7 @@ document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
   try {
     // AI audit summary
-    const sCsv = await fetch('https://beacnpool.github.io/Treasury/outputs/offchain/ai_audit/ai_audit_summary.csv', { cache: 'no-store' }).then(r => r.text());
+    const sCsv = await fetch('outputs/offchain/ai_audit/ai_audit_summary.csv', { cache: 'no-store' }).then(r => r.text());
     const lines = sCsv.trim().split(/\r?\n/);
     const headers = lines[0].split(',');
     const idx = (h) => headers.indexOf(h);
@@ -1299,7 +1299,7 @@ document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
   try {
     // flags: cancelled but paid count
-    const fJson = await fetch('https://beacnpool.github.io/Treasury/outputs/offchain/flags/catalyst_flags_v2.json', { cache: 'no-store' }).then(r => r.json());
+    const fJson = await fetch('outputs/offchain/flags/catalyst_flags_v2.json', { cache: 'no-store' }).then(r => r.json());
     const flags = (fJson && fJson.flags) ? fJson.flags : [];
     const cancelledPaid = flags.filter(f => f.flag_id === 'F-CAT-003').length;
     if (Number.isFinite(cancelledPaid)) elCan.textContent = cancelledPaid.toLocaleString();

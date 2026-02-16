@@ -1,0 +1,1462 @@
+{
+  "other": [
+    {
+      "distributedToDate_ada": 1800000.0,
+      "projectName": "Masumi: Secure, Compliant AI Agents for companies like BMW, Generali & more \u2013 by Serviceplan Group & NMKR",
+      "fundId": "13",
+      "status": "Completed",
+      "slug": "masumi-secure-compliant-ai-agents-for-companies-like-bmw-generali-and-more-by-serviceplan-group-and-nmkr"
+    },
+    {
+      "distributedToDate_ada": 1512878.78,
+      "projectName": "IOG Catalyst Team : Catalyst Ecosystem Accelerator (Hermes Core architecture development)",
+      "fundId": "10",
+      "status": "Active",
+      "slug": "iog-catalyst-team-catalyst-ecosystem-accelerator-hermes-core-architecture-development"
+    },
+    {
+      "distributedToDate_ada": 1449650.0,
+      "projectName": "Tokenization of Real World Assets (RWA) - Nairobi Securities Exchange / Empowa",
+      "fundId": "12",
+      "status": "Active",
+      "slug": "tokenization-of-real-world-assets-rwa-nairobi-securities-exchange-empowa"
+    },
+    {
+      "distributedToDate_ada": 1302857.0,
+      "projectName": "Ikigai + MLabs \u2013 Hydra app SDK and auction service",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "ikigai-mlabs-hydra-app-sdk-and-auction-service"
+    },
+    {
+      "distributedToDate_ada": 1269000.0,
+      "projectName": "Cutting-edge web3 threat detection for the Cardano Network by Check Point Software Security",
+      "fundId": "12",
+      "status": "Active",
+      "slug": "cutting-edge-web3-threat-detection-for-the-cardano-network-by-check-point-software-security"
+    },
+    {
+      "distributedToDate_ada": 1079000.0,
+      "projectName": "Techstars will help Cardano Builders grow their businesses to drive Cardano's Adoption",
+      "fundId": "13",
+      "status": "Active",
+      "slug": "techstars-will-help-cardano-builders-grow-their-businesses-to-drive-cardanos-adoption"
+    },
+    {
+      "distributedToDate_ada": 1000000.0,
+      "projectName": "Catalyst Working Groups Research & Scoping Analysis by IOG Catalyst Team, Rare Evo, and Sustainable ADA",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "catalyst-working-groups-research-and-scoping-analysis-by-iog-catalyst-team-rare-evo-and-sustainable-ada"
+    },
+    {
+      "distributedToDate_ada": 852000.0,
+      "projectName": "Institutional-Grade Layer-2 for Bitcoin DeFi on Cardano, in collaboration with BitcoinOS, Tesseract and More",
+      "fundId": "13",
+      "status": "Active",
+      "slug": "institutional-grade-layer-2-for-bitcoin-defi-on-cardano-in-collaboration-with-bitcoinos-tesseract-and-more"
+    },
+    {
+      "distributedToDate_ada": 850000.0,
+      "projectName": "New SPO revenue streams for securing bridge infrastructure",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "new-spo-revenue-streams-for-securing-bridge-infrastructure"
+    },
+    {
+      "distributedToDate_ada": 800000.0,
+      "projectName": "USDM: Fiat-Backed STABLECOIN - by Mehen: Cardano's Premiere Fiat-backed Stablecoin",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "usdm-fiat-backed-stablecoin-by-mehen-cardanos-premiere-fiat-backed-stablecoin"
+    },
+    {
+      "distributedToDate_ada": 745000.0,
+      "projectName": "Cardano Accelerator by CV Labs",
+      "fundId": "13",
+      "status": "Active",
+      "slug": "cardano-accelerator-by-cv-labs"
+    },
+    {
+      "distributedToDate_ada": 725000.0,
+      "projectName": "Framework for Authenticity Verification of Tokenized Real-World Assets based on Atala Prism",
+      "fundId": "10",
+      "status": "Active",
+      "slug": "framework-for-authenticity-verification-of-tokenized-real-world-assets-based-on-atala-prism"
+    },
+    {
+      "distributedToDate_ada": 714000.0,
+      "projectName": "IOG Catalyst Team : Ideascale replacement and web-browser based Voting Centre with liquid democracy aka \u201cCatalyst Voices\u201d",
+      "fundId": "10",
+      "status": "Active",
+      "slug": "iog-catalyst-team-ideascale-replacement-and-web-browser-based-voting-centre-with-liquid-democracy-aka-catalyst-voices"
+    },
+    {
+      "distributedToDate_ada": 655000.0,
+      "projectName": "Decentralized Minting | ADA Handle",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "decentralized-minting-or-ada-handle"
+    },
+    {
+      "distributedToDate_ada": 620714.28,
+      "projectName": "Syngenta Agricultural Insight and Earth Observation Data uplifts subsistence farmers into profitability",
+      "fundId": "13",
+      "status": "Active",
+      "slug": "syngenta-agricultural-insight-and-earth-observation-data-uplifts-subsistence-farmers-into-profitability"
+    },
+    {
+      "distributedToDate_ada": 619761.0,
+      "projectName": "MLabs - Purus: PureScript to Plutus Core compiler",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "mlabs-purus-purescript-to-plutus-core-compiler"
+    },
+    {
+      "distributedToDate_ada": 600000.0,
+      "projectName": "Help NMKR to continue operations & develop NFT Infrastructure",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "help-nmkr-to-continue-operations-and-develop-nft-infrastructure"
+    },
+    {
+      "distributedToDate_ada": 588000.0,
+      "projectName": "Sundae Labs Hydra Transaction Stream Plugin",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "sundae-labs-hydra-transaction-stream-plugin"
+    },
+    {
+      "distributedToDate_ada": 588000.0,
+      "projectName": "Sundae Labs Hydra Ledger-only Mode",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "sundae-labs-hydra-ledger-only-mode"
+    },
+    {
+      "distributedToDate_ada": 585000.0,
+      "projectName": "Xerberus Nodes: A Decentralized Risk Rating Agency on Cardano for the World",
+      "fundId": "11",
+      "status": "Active",
+      "slug": "xerberus-nodes-a-decentralized-risk-rating-agency-on-cardano-for-the-world"
+    },
+    {
+      "distributedToDate_ada": 580000.0,
+      "projectName": "Real World Asset Tokenization Minting Capabilities in NMKR Studio",
+      "fundId": "11",
+      "status": "Active",
+      "slug": "real-world-asset-tokenization-minting-capabilities-in-nmkr-studio"
+    },
+    {
+      "distributedToDate_ada": 566900.0,
+      "projectName": "Open-Source On-Chain DAO Governance",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "open-source-on-chain-dao-governance"
+    },
+    {
+      "distributedToDate_ada": 553800.0,
+      "projectName": "Enable Eternl - F10",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "enable-eternl-f10"
+    },
+    {
+      "distributedToDate_ada": 550000.0,
+      "projectName": "Securing Forensic Chain of Custody for Indian State Govt (1million+ cases per year) Using Cardano and Zero-Knowledge Proofs",
+      "fundId": "12",
+      "status": "Completed",
+      "slug": "securing-forensic-chain-of-custody-for-indian-state-govt-1million-cases-per-year-using-cardano-and-zero-knowledge-proofs"
+    },
+    {
+      "distributedToDate_ada": 550000.0,
+      "projectName": "Onboarding Ethereum & EVM Ecosystems to Cardano via Rosen Bridge",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "onboarding-ethereum-and-evm-ecosystems-to-cardano-via-rosen-bridge"
+    }
+  ],
+  "social_media_marketing": [
+    {
+      "distributedToDate_ada": 1644000.0,
+      "projectName": "Draper University x Cardano Founder Residency (Silicon Valley)",
+      "fundId": "13",
+      "status": "Completed",
+      "slug": "draper-university-x-cardano-founder-residency-silicon-valley"
+    },
+    {
+      "distributedToDate_ada": 1189011.8,
+      "projectName": "Creating social implementation use-cases of Cardano in the Shikoku region, Japan.",
+      "fundId": "12",
+      "status": "Active",
+      "slug": "creating-social-implementation-use-cases-of-cardano-in-the-shikoku-region-japan"
+    },
+    {
+      "distributedToDate_ada": 722400.0,
+      "projectName": "EMURGO LM x UNDP Accelerator: Piloting UNDP\u2019s project pipeline through the Cardano blockchain",
+      "fundId": "13",
+      "status": "Active",
+      "slug": "emurgo-lm-x-undp-accelerator-piloting-undps-project-pipeline-through-the-cardano-blockchain"
+    },
+    {
+      "distributedToDate_ada": 500000.0,
+      "projectName": "ENCOINS x Anastasia Labs: Zero-Knowledge Proof Trustless P2P Fiat-to-Crypto On-Ramp for Cardano",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "encoins-x-anastasia-labs-zero-knowledge-proof-trustless-p2p-fiat-to-crypto-on-ramp-for-cardano"
+    },
+    {
+      "distributedToDate_ada": 420000.0,
+      "projectName": "zkFold x Asterizm - Interoperability Solution",
+      "fundId": "13",
+      "status": "Active",
+      "slug": "zkfold-x-asterizm-interoperability-solution"
+    },
+    {
+      "distributedToDate_ada": 401671.4,
+      "projectName": "Orcfax architecture audit",
+      "fundId": "12",
+      "status": "Active",
+      "slug": "orcfax-architecture-audit"
+    },
+    {
+      "distributedToDate_ada": 392000.0,
+      "projectName": "Plastiks and CSA powering plastic waste recovery for Danone and other leading brands with CARDANO built plastic credit marketplace",
+      "fundId": "13",
+      "status": "Active",
+      "slug": "plastiks-and-csa-powering-plastic-waste-recovery-for-danone-and-other-leading-brands-with-cardano-built-plastic-credit-marketplace"
+    },
+    {
+      "distributedToDate_ada": 359348.0,
+      "projectName": "Tokenized Gold on Cardano with the APEX Group",
+      "fundId": "12",
+      "status": "Active",
+      "slug": "tokenized-gold-on-cardano-with-the-apex-group"
+    },
+    {
+      "distributedToDate_ada": 345000.0,
+      "projectName": "zkFold x Anastasia Labs: ZK Bridge using Mithril",
+      "fundId": "12",
+      "status": "Active",
+      "slug": "zkfold-x-anastasia-labs-zk-bridge-using-mithril"
+    },
+    {
+      "distributedToDate_ada": 336000.0,
+      "projectName": "Indigo x Minswap - Peg Stabilizing Liquidity Pools",
+      "fundId": "13",
+      "status": "Active",
+      "slug": "indigo-x-minswap-peg-stabilizing-liquidity-pools"
+    },
+    {
+      "distributedToDate_ada": 315000.0,
+      "projectName": "Reach your people - social media and messaging integrations for DAOs and NFT projects",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "reach-your-people-social-media-and-messaging-integrations-for-daos-and-nft-projects"
+    },
+    {
+      "distributedToDate_ada": 300500.0,
+      "projectName": "Cardano Tax & Accounting Tool",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "cardano-tax-and-accounting-tool"
+    },
+    {
+      "distributedToDate_ada": 300000.0,
+      "projectName": "Real World Assets Tokenization Launchpad by NMKR, FluidTokens & IAMX",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "real-world-assets-tokenization-launchpad-by-nmkr-fluidtokens-and-iamx"
+    },
+    {
+      "distributedToDate_ada": 300000.0,
+      "projectName": "Anastasia Labs X Maestro - Plug \u2018n Play 2.0",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "anastasia-labs-x-maestro-plug-n-play-20"
+    },
+    {
+      "distributedToDate_ada": 296857.14,
+      "projectName": "Anvil x Nuvola: 'C-Hub' - Bringing Collateralization to the Global Stage",
+      "fundId": "13",
+      "status": "Active",
+      "slug": "anvil-x-nuvola-c-hub-bringing-collateralization-to-the-global-stage"
+    },
+    {
+      "distributedToDate_ada": 287307.7,
+      "projectName": "Minswap + Fluid Tokens: a \u201csmart token\u201d DEX on Cardano",
+      "fundId": "12",
+      "status": "Active",
+      "slug": "minswap-fluid-tokens-a-smart-token-dex-on-cardano"
+    },
+    {
+      "distributedToDate_ada": 267024.0,
+      "projectName": "Exhibit Largest Blockchain EXPO(JP)\uff1aCardano is hardly recognized in Japan. Therefore, we will exhibit at one of the largest trade shows to raise awareness and encourage developers to enter the market.\u3000\u65e5\u672c\u3067\u30ab\u30eb\u30c0\u30ce\u306f\u672a\u3060\u8a8d\u77e5\u4e0d\u8db3\u306e\u70ba\u3001\u6700\u5927\u7d1a\u306e\u5c55\u793a\u4f1a\u306b\u51fa\u5c55\u3057\u591a\u304f\u306e\u53c2\u52a0\u8005\u3092\u5dfb\u304d\u8fbc\u307f\u958b\u767a\u3092\u4fc3\u9032\u3057\u307e\u3059\u3002",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "exhibit-largest-blockchain-expojpcardano-is-hardly-recognized-in-japan-therefore-we-will-exhibit-at-one-of-the-largest-trade-shows-to-raise-awareness-and-encourage-developers-to-enter-the-market"
+    },
+    {
+      "distributedToDate_ada": 250000.0,
+      "projectName": "zkFold x zkPass: Bring zkPass to Cardano",
+      "fundId": "12",
+      "status": "Completed",
+      "slug": "zkfold-x-zkpass-bring-zkpass-to-cardano"
+    },
+    {
+      "distributedToDate_ada": 250000.0,
+      "projectName": "Crypto magazine published by Japanese polular Publisher \"Futaba-Sha\"",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "crypto-magazine-published-by-japanese-polular-publisher-futaba-sha"
+    },
+    {
+      "distributedToDate_ada": 246750.0,
+      "projectName": "CHARLI3: Live API with all Cardano DEX aggregated data",
+      "fundId": "13",
+      "status": "Completed",
+      "slug": "charli3-live-api-with-all-cardano-dex-aggregated-data"
+    },
+    {
+      "distributedToDate_ada": 246000.0,
+      "projectName": "The social platform that realizes blockchain authentication even in environments without the internet",
+      "fundId": "12",
+      "status": "Active",
+      "slug": "the-social-platform-that-realizes-blockchain-authentication-even-in-environments-without-the-internet"
+    },
+    {
+      "distributedToDate_ada": 245000.0,
+      "projectName": "Anvil x Nuvola: Collateralization Hub",
+      "fundId": "12",
+      "status": "Completed",
+      "slug": "anvil-x-nuvola-collateralization-hub"
+    },
+    {
+      "distributedToDate_ada": 240000.0,
+      "projectName": "zkFold x Defy: Cross-border payment infra using ZK tech",
+      "fundId": "12",
+      "status": "Active",
+      "slug": "zkfold-x-defy-cross-border-payment-infra-using-zk-tech"
+    },
+    {
+      "distributedToDate_ada": 240000.0,
+      "projectName": "Cardano Based Web3 Blockchain Center in Tokushima-Yoshinogawa Japan",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "cardano-based-web3-blockchain-center-in-tokushima-yoshinogawa-japan"
+    },
+    {
+      "distributedToDate_ada": 238800.0,
+      "projectName": "Begin Wallet Version 2 by Francis, Fluid and IAMX for Voting, Biometric Seedphrase, Payment Module shopify, Wallet can handle Bitcoin",
+      "fundId": "12",
+      "status": "Active",
+      "slug": "begin-wallet-version-2-by-francis-fluid-and-iamx-for-voting-biometric-seedphrase-payment-module-shopify-wallet-can-handle-bitcoin"
+    }
+  ],
+  "video_audio": [
+    {
+      "distributedToDate_ada": 300000.0,
+      "projectName": "Snekx: Cardano\u2019s Best Platform to Kickstart and Promote New Communities and Digital Assets",
+      "fundId": "12",
+      "status": "Completed",
+      "slug": "snekx-cardanos-best-platform-to-kickstart-and-promote-new-communities-and-digital-assets"
+    },
+    {
+      "distributedToDate_ada": 195349.0,
+      "projectName": "[nftcdn.io] Open Source JavaScript NFT Media Viewer/Player (music, video, 3D, etc.)",
+      "fundId": "12",
+      "status": "Completed",
+      "slug": "nftcdnio-open-source-javascript-nft-media-viewerplayer-music-video-3d-etc"
+    },
+    {
+      "distributedToDate_ada": 154012.0,
+      "projectName": "Promotion of Japanese Cardano Products",
+      "fundId": "11",
+      "status": "Active",
+      "slug": "promotion-of-japanese-cardano-products"
+    },
+    {
+      "distributedToDate_ada": 135000.0,
+      "projectName": "Innovation center to promote Cardano and facilitate entrepreneur participation",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "innovation-center-to-promote-cardano-and-facilitate-entrepreneur-participation"
+    },
+    {
+      "distributedToDate_ada": 112000.0,
+      "projectName": "Kaizen Crypto | Cardano 101 Course Video Lessons Translated To Popular Languages",
+      "fundId": "11",
+      "status": "Active",
+      "slug": "kaizen-crypto-or-cardano-101-course-video-lessons-translated-to-popular-languages"
+    },
+    {
+      "distributedToDate_ada": 100000.0,
+      "projectName": "NEWM: Music Video Festival",
+      "fundId": "13",
+      "status": "Completed",
+      "slug": "newm-music-video-festival"
+    },
+    {
+      "distributedToDate_ada": 79028.0,
+      "projectName": "[CASIA] Cardano Asia TikTok Channel (expand Korean, maintain Japanese/Vietnamese/English) + NEW Youtube Channel",
+      "fundId": "12",
+      "status": "Completed",
+      "slug": "casia-cardano-asia-tiktok-channel-expand-korean-maintain-japanesevietnameseenglish-new-youtube-channel"
+    },
+    {
+      "distributedToDate_ada": 74000.0,
+      "projectName": "Cardano SPT (Special Promo Taskforce)",
+      "fundId": "12",
+      "status": "Active",
+      "slug": "cardano-spt-special-promo-taskforce"
+    },
+    {
+      "distributedToDate_ada": 67900.0,
+      "projectName": "[C2VN]: Promoting education through the development of Blockchain lecturer teams at universities in Vietnam (Phase 2: Advanced course on on-chain and off-chain programming on the Cardano Blockchain)",
+      "fundId": "13",
+      "status": "Completed",
+      "slug": "c2vn-promoting-education-through-the-development-of-blockchain-lecturer-teams-at-universities-in-vietnam-phase-2-advanced-course-on-on-chain-and-off-chain-programming-on-the-cardano-blockchain"
+    },
+    {
+      "distributedToDate_ada": 61209.99,
+      "projectName": "Cardano Academy: YouTube Blockchain Education in Amharic",
+      "fundId": "13",
+      "status": "Active",
+      "slug": "cardano-academy-youtube-blockchain-education-in-amharic"
+    },
+    {
+      "distributedToDate_ada": 61000.0,
+      "projectName": "Sync.Land | Metaverse & Video Game Music Licensing (Awen)",
+      "fundId": "11",
+      "status": "Active",
+      "slug": "syncland-or-metaverse-and-video-game-music-licensing-awen"
+    },
+    {
+      "distributedToDate_ada": 57150.0,
+      "projectName": "[FIMI] Podcast Cardano on Telegram for Vietnamese",
+      "fundId": "12",
+      "status": "Completed",
+      "slug": "fimi-podcast-cardano-on-telegram-for-vietnamese"
+    },
+    {
+      "distributedToDate_ada": 49354.0,
+      "projectName": "Cardano for Business & Web2 Devs: Multilingual Video Tutorials by Edda Labs",
+      "fundId": "13",
+      "status": "Active",
+      "slug": "cardano-for-business-and-web2-devs-multilingual-video-tutorials-by-edda-labs"
+    },
+    {
+      "distributedToDate_ada": 22627.0,
+      "projectName": "Lovelace Academy - Free video course \"Plutus Experience\" - Transcription and subtitling to Portuguese",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "lovelace-academy-free-video-course-plutus-experience-transcription-and-subtitling-to-portuguese"
+    },
+    {
+      "distributedToDate_ada": 20628.0,
+      "projectName": "[FIMI] Plutus Pioneer #4 - Translating video dubbing in Vietnamese",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "fimi-plutus-pioneer-4-translating-video-dubbing-in-vietnamese"
+    },
+    {
+      "distributedToDate_ada": 17352.0,
+      "projectName": "[5PC] Cardano Journey - Cardano Education Podcast Series for the Vietnamese Community",
+      "fundId": "12",
+      "status": "Completed",
+      "slug": "5pc-cardano-journey-cardano-education-podcast-series-for-the-vietnamese-community"
+    },
+    {
+      "distributedToDate_ada": 15392.0,
+      "projectName": "[5PC] Cardano Education Video on TikTok for the Vietnamese Community",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "5pc-cardano-education-video-on-tiktok-for-the-vietnamese-community"
+    },
+    {
+      "distributedToDate_ada": 11550.0,
+      "projectName": "OpShin Education - Free Educational Videos about Python Smart Contracts",
+      "fundId": "10",
+      "status": "Active",
+      "slug": "opshin-education-free-educational-videos-about-python-smart-contracts"
+    },
+    {
+      "distributedToDate_ada": 7200.0,
+      "projectName": "Nucast: Music Video Festival 2026",
+      "fundId": "14",
+      "status": "Active",
+      "slug": "nucast-music-video-festival-2026"
+    },
+    {
+      "distributedToDate_ada": 6000.0,
+      "projectName": "Discover Cardano with Ctrl Wallet \u2013 Short Video Series",
+      "fundId": "14",
+      "status": "Active",
+      "slug": "discover-cardano-with-ctrl-wallet-short-video-series"
+    },
+    {
+      "distributedToDate_ada": 0.0,
+      "projectName": "Sneks-on-Chain Media: The First Media Focused Production Incubator for Accelerating Cardano Content Creators",
+      "fundId": "12",
+      "status": "Onboarding",
+      "slug": "sneks-on-chain-media-the-first-media-focused-production-incubator-for-accelerating-cardano-content-creators"
+    }
+  ],
+  "content_education": [
+    {
+      "distributedToDate_ada": 2140000.0,
+      "projectName": "Catalyst Fund Operations by IOG Catalyst Team",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "catalyst-fund-operations-by-iog-catalyst-team"
+    },
+    {
+      "distributedToDate_ada": 710000.0,
+      "projectName": "Wolfram: The AI Revolution and Implications to Project Catalyst",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "wolfram-the-ai-revolution-and-implications-to-project-catalyst"
+    },
+    {
+      "distributedToDate_ada": 276000.0,
+      "projectName": "SundaeSwap Aiken Smart Contracts",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "sundaeswap-aiken-smart-contracts"
+    },
+    {
+      "distributedToDate_ada": 271430.0,
+      "projectName": "MLabs - Cardano Onchain Languages Benchmark",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "mlabs-cardano-onchain-languages-benchmark"
+    },
+    {
+      "distributedToDate_ada": 250000.0,
+      "projectName": "dRepWatch - A transparency web platform for dReps",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "drepwatch-a-transparency-web-platform-for-dreps"
+    },
+    {
+      "distributedToDate_ada": 242000.0,
+      "projectName": "Work Courses: Accelerating Ecosystem Growth With Cardano MastersClass & Proof-Of-Knowledge",
+      "fundId": "13",
+      "status": "Active",
+      "slug": "work-courses-accelerating-ecosystem-growth-with-cardano-mastersclass-and-proof-of-knowledge"
+    },
+    {
+      "distributedToDate_ada": 239200.0,
+      "projectName": "Incentivized Onboarding & Identity in Africa - Leveraging Atala PRISM",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "incentivized-onboarding-and-identity-in-africa-leveraging-atala-prism"
+    },
+    {
+      "distributedToDate_ada": 238374.0,
+      "projectName": "Anastasia Labs - The Trifecta of Data Structures: Merkle Trees, Tries, and Linked Lists for Cutting-Edge Contracts",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "anastasia-labs-the-trifecta-of-data-structures-merkle-trees-tries-and-linked-lists-for-cutting-edge-contracts"
+    },
+    {
+      "distributedToDate_ada": 230000.0,
+      "projectName": "Work Courses: Onboarding The $142B EdTech Industry & The 70M Students Using Digital Learning To Cardano",
+      "fundId": "12",
+      "status": "Completed",
+      "slug": "work-courses-onboarding-the-dollar142b-edtech-industry-and-the-70m-students-using-digital-learning-to-cardano"
+    },
+    {
+      "distributedToDate_ada": 200000.0,
+      "projectName": "Kaizen Crypto | Cardano Dubai Hub - Ecosystem Onboarding and Education",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "kaizen-crypto-or-cardano-dubai-hub-ecosystem-onboarding-and-education"
+    },
+    {
+      "distributedToDate_ada": 200000.0,
+      "projectName": "Gimbalabs - Flagship Course for Aiken",
+      "fundId": "12",
+      "status": "Completed",
+      "slug": "gimbalabs-flagship-course-for-aiken"
+    },
+    {
+      "distributedToDate_ada": 200000.0,
+      "projectName": "Cardano Research and Education Center",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "cardano-research-and-education-center"
+    },
+    {
+      "distributedToDate_ada": 198600.0,
+      "projectName": "Cardano explorer improvements (Cexplorer.io)",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "cardano-explorer-improvements-cexplorerio"
+    },
+    {
+      "distributedToDate_ada": 194634.0,
+      "projectName": "DAOs <3 smart contracts for skill-acquisition and contribution tracking.",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "daos-less3-smart-contracts-for-skill-acquisition-and-contribution-tracking"
+    },
+    {
+      "distributedToDate_ada": 180000.0,
+      "projectName": "Smart Contract Vulnerabilities Game \u2013 Capture the Flag (CTF)",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "smart-contract-vulnerabilities-game-capture-the-flag-ctf"
+    },
+    {
+      "distributedToDate_ada": 180000.0,
+      "projectName": "Cardano House | RNC & DNC 2024 Policy & Education Centers (Awen)",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "cardano-house-or-rnc-and-dnc-2024-policy-and-education-centers-awen"
+    },
+    {
+      "distributedToDate_ada": 169413.0,
+      "projectName": "MeshJS SDK Operations: Supporting Open-Source Library Development, Developer Resources & Builder Community",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "meshjs-sdk-operations-supporting-open-source-library-development-developer-resources-and-builder-community"
+    },
+    {
+      "distributedToDate_ada": 149333.0,
+      "projectName": "Continue SCATDAO Work in Education, Scam Monitoring, and DYOR Reports",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "continue-scatdao-work-in-education-scam-monitoring-and-dyor-reports"
+    },
+    {
+      "distributedToDate_ada": 144000.0,
+      "projectName": "Onboarding Education Platform",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "onboarding-education-platform"
+    },
+    {
+      "distributedToDate_ada": 135500.0,
+      "projectName": "Anastasia Labs - Open Source Production Grade DApps",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "anastasia-labs-open-source-production-grade-dapps"
+    },
+    {
+      "distributedToDate_ada": 135050.0,
+      "projectName": "No-time-for-bootcamp: training for busy entrepreneurs",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "no-time-for-bootcamp-training-for-busy-entrepreneurs"
+    },
+    {
+      "distributedToDate_ada": 128866.0,
+      "projectName": "Community CIP Editor: 1 year budget (continued)",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "community-cip-editor-1-year-budget-continued"
+    },
+    {
+      "distributedToDate_ada": 126500.0,
+      "projectName": "dRep Recruitment, Training, and Ethical Code Development Workshops",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "drep-recruitment-training-and-ethical-code-development-workshops"
+    },
+    {
+      "distributedToDate_ada": 101000.0,
+      "projectName": "Automation Testing Framework for Smart Contract with Courses & Hackathons",
+      "fundId": "12",
+      "status": "Active",
+      "slug": "automation-testing-framework-for-smart-contract-with-courses-and-hackathons"
+    },
+    {
+      "distributedToDate_ada": 100000.0,
+      "projectName": "Minswap Cardano DeFi Onboarding: Educational Content on How to DeFi on Cardano",
+      "fundId": "13",
+      "status": "Completed",
+      "slug": "minswap-cardano-defi-onboarding-educational-content-on-how-to-defi-on-cardano"
+    }
+  ],
+  "legal_admin": [
+    {
+      "distributedToDate_ada": 939000.0,
+      "projectName": "Switzerland for UNHCR (United Nations Refugee Agency)  + Optim Finance - Innovative Donation Platform For Digital Assets - ",
+      "fundId": "13",
+      "status": "Active",
+      "slug": "switzerland-for-unhcr-united-nations-refugee-agency-optim-finance-innovative-donation-platform-for-digital-assets"
+    },
+    {
+      "distributedToDate_ada": 489091.0,
+      "projectName": "Accelerate Mass Adoption: Open Source Atala Wallet SDK with No Seed Phrase Vulnerability and a No-Code Self-Sovereign Identity Platform",
+      "fundId": "12",
+      "status": "Completed",
+      "slug": "accelerate-mass-adoption-open-source-atala-wallet-sdk-with-no-seed-phrase-vulnerability-and-a-no-code-self-sovereign-identity-platform"
+    },
+    {
+      "distributedToDate_ada": 315000.0,
+      "projectName": "Open Source Identity Wallet for Atala PRISM 2.0 and Academic Certificates",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "open-source-identity-wallet-for-atala-prism-20-and-academic-certificates"
+    },
+    {
+      "distributedToDate_ada": 252000.0,
+      "projectName": "Hydra-Enabled Accounting and Micropayments System",
+      "fundId": "12",
+      "status": "Active",
+      "slug": "hydra-enabled-accounting-and-micropayments-system"
+    },
+    {
+      "distributedToDate_ada": 176500.0,
+      "projectName": "Reinventing Voting with Digital Identity, Trust and Anonymity",
+      "fundId": "12",
+      "status": "Completed",
+      "slug": "reinventing-voting-with-digital-identity-trust-and-anonymity"
+    },
+    {
+      "distributedToDate_ada": 165905.0,
+      "projectName": "Easily recoverable Identity Wallets for Atala Prism (SSI Threshold Wallets)",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "easily-recoverable-identity-wallets-for-atala-prism-ssi-threshold-wallets"
+    },
+    {
+      "distributedToDate_ada": 128000.0,
+      "projectName": "Mastering Open Enterprise Agent (Atala PRISM): A Developer Handbook for Decentralized Identity Solutions",
+      "fundId": "11",
+      "status": "Active",
+      "slug": "mastering-open-enterprise-agent-atala-prism-a-developer-handbook-for-decentralized-identity-solutions"
+    },
+    {
+      "distributedToDate_ada": 100000.0,
+      "projectName": "Optim Finance Vaults - DeFi Building Blocks for Cardano",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "optim-finance-vaults-defi-building-blocks-for-cardano"
+    },
+    {
+      "distributedToDate_ada": 100000.0,
+      "projectName": "Maternal Mortality Crisis Solution - DoulaID: an identity app",
+      "fundId": "12",
+      "status": "Completed",
+      "slug": "maternal-mortality-crisis-solution-doulaid-an-identity-app"
+    },
+    {
+      "distributedToDate_ada": 100000.0,
+      "projectName": "Impact Accounting Project-Based Learning",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "impact-accounting-project-based-learning"
+    },
+    {
+      "distributedToDate_ada": 96425.0,
+      "projectName": "Creating world's first digital identity for farmers using satellite imagery and AI",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "creating-worlds-first-digital-identity-for-farmers-using-satellite-imagery-and-ai"
+    },
+    {
+      "distributedToDate_ada": 96000.0,
+      "projectName": "Identity solution for Autonomous AIs living on Cardano",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "identity-solution-for-autonomous-ais-living-on-cardano"
+    },
+    {
+      "distributedToDate_ada": 92100.0,
+      "projectName": "Hotel Guest Identity Verification and Check-in",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "hotel-guest-identity-verification-and-check-in"
+    },
+    {
+      "distributedToDate_ada": 85000.0,
+      "projectName": "Legal Support for Fund 12 Projects",
+      "fundId": "12",
+      "status": "Completed",
+      "slug": "legal-support-for-fund-12-projects"
+    },
+    {
+      "distributedToDate_ada": 85000.0,
+      "projectName": "Developing a Self Sovereign On-chain Identity (SSOI)",
+      "fundId": "12",
+      "status": "Completed",
+      "slug": "developing-a-self-sovereign-on-chain-identity-ssoi"
+    },
+    {
+      "distributedToDate_ada": 76000.0,
+      "projectName": "Optim Finance OUSD - US Dollar Synthetic Stablecoin",
+      "fundId": "11",
+      "status": "Active",
+      "slug": "optim-finance-ousd-us-dollar-synthetic-stablecoin"
+    },
+    {
+      "distributedToDate_ada": 74750.0,
+      "projectName": "Grow AtalaPrism SDK: Adaptable identity storage module || AtalaPrism SDK \u306e\u6210\u9577: \u9069\u5fdc\u53ef\u80fd\u306a ID \u30b9\u30c8\u30ec\u30fc\u30b8 \u30e2\u30b8\u30e5\u30fc\u30eb\u3092\u958b\u767a\u3059\u308b",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "grow-atalaprism-sdk-adaptable-identity-storage-module-oror-atalaprism-sdk-id"
+    },
+    {
+      "distributedToDate_ada": 66500.0,
+      "projectName": "Leveraging National ID system in Ethiopia for more scalable adoption of Cardano in identity solutions",
+      "fundId": "12",
+      "status": "Active",
+      "slug": "leveraging-national-id-system-in-ethiopia-for-more-scalable-adoption-of-cardano-in-identity-solutions"
+    },
+    {
+      "distributedToDate_ada": 54000.0,
+      "projectName": "Implementing the Cardano Foundation Identity Wallet in Landano",
+      "fundId": "12",
+      "status": "Active",
+      "slug": "implementing-the-cardano-foundation-identity-wallet-in-landano"
+    },
+    {
+      "distributedToDate_ada": 54000.0,
+      "projectName": "ID-LATAM: Empowering Decentralized Digital Identity",
+      "fundId": "13",
+      "status": "Active",
+      "slug": "id-latam-empowering-decentralized-digital-identity"
+    },
+    {
+      "distributedToDate_ada": 54000.0,
+      "projectName": "Component 1/4: Web3 Legal Ease: Streamlining Legal Barriers for Business Growth",
+      "fundId": "12",
+      "status": "Active",
+      "slug": "component-14-web3-legal-ease-streamlining-legal-barriers-for-business-growth"
+    },
+    {
+      "distributedToDate_ada": 35000.0,
+      "projectName": "Open Source Python Tool for Linkage Finance Smart Contract Interaction",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "open-source-python-tool-for-linkage-finance-smart-contract-interaction"
+    },
+    {
+      "distributedToDate_ada": 32000.0,
+      "projectName": "Conditional Transfer of Digital Assets via Digital Identity and Verified Credentials",
+      "fundId": "12",
+      "status": "Completed",
+      "slug": "conditional-transfer-of-digital-assets-via-digital-identity-and-verified-credentials"
+    },
+    {
+      "distributedToDate_ada": 31500.0,
+      "projectName": "Prisma DIDs: Decentralized IDs for Verifiable Contributions",
+      "fundId": "14",
+      "status": "Active",
+      "slug": "prisma-dids-decentralized-ids-for-verifiable-contributions"
+    },
+    {
+      "distributedToDate_ada": 25860.0,
+      "projectName": "Legally enforceable contracts in ADA, in compliance with Argentine laws",
+      "fundId": "12",
+      "status": "Active",
+      "slug": "legally-enforceable-contracts-in-ada-in-compliance-with-argentine-laws"
+    }
+  ],
+  "basic_web_dashboard": [
+    {
+      "distributedToDate_ada": 407857.0,
+      "projectName": "Decentralized Demeter.run - Federated Frontend Hosting - New revenue stream for SPOs",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "decentralized-demeterrun-federated-frontend-hosting-new-revenue-stream-for-spos"
+    },
+    {
+      "distributedToDate_ada": 330000.0,
+      "projectName": "Cexplorer 2.0: Newer, Faster, More Powerful",
+      "fundId": "13",
+      "status": "Completed",
+      "slug": "cexplorer-20-newer-faster-more-powerful"
+    },
+    {
+      "distributedToDate_ada": 300000.0,
+      "projectName": "Staking Basket Ecosystem - Explorer for multi-delegation portfolios",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "staking-basket-ecosystem-explorer-for-multi-delegation-portfolios"
+    },
+    {
+      "distributedToDate_ada": 260000.0,
+      "projectName": "catalystexplorer.com for Project Catalyst research, acceleration, & analytics platform",
+      "fundId": "12",
+      "status": "Completed",
+      "slug": "catalystexplorercom-for-project-catalyst-research-acceleration-and-analytics-platform"
+    },
+    {
+      "distributedToDate_ada": 217400.0,
+      "projectName": "VAULT3 - Admin dashboard to manage token-gated content",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "vault3-admin-dashboard-to-manage-token-gated-content"
+    },
+    {
+      "distributedToDate_ada": 205000.0,
+      "projectName": "Paima onchain game integration of Frontend Game Engines & Novel Technology",
+      "fundId": "10",
+      "status": "Active",
+      "slug": "paima-onchain-game-integration-of-frontend-game-engines-and-novel-technology"
+    },
+    {
+      "distributedToDate_ada": 200000.0,
+      "projectName": "Open-Source Datum Explorer: Decode, Understand, Build",
+      "fundId": "13",
+      "status": "Completed",
+      "slug": "open-source-datum-explorer-decode-understand-build"
+    },
+    {
+      "distributedToDate_ada": 199893.0,
+      "projectName": "Governance Platform: Cardano Voltaire CIP-1694 DReps Transparency & Community Portal",
+      "fundId": "12",
+      "status": "Completed",
+      "slug": "governance-platform-cardano-voltaire-cip-1694-dreps-transparency-and-community-portal"
+    },
+    {
+      "distributedToDate_ada": 199800.0,
+      "projectName": "Pool.pm Visual Explorer - Open Source Improved Reboot towards a sustainable community innovation platform",
+      "fundId": "10",
+      "status": "Active",
+      "slug": "poolpm-visual-explorer-open-source-improved-reboot-towards-a-sustainable-community-innovation-platform"
+    },
+    {
+      "distributedToDate_ada": 180000.0,
+      "projectName": "Open-source Hydra Head L2 Web based Explorer and API",
+      "fundId": "12",
+      "status": "Completed",
+      "slug": "open-source-hydra-head-l2-web-based-explorer-and-api"
+    },
+    {
+      "distributedToDate_ada": 173000.0,
+      "projectName": "CatalystExplorer 2.0: AI-powered Exploration, Proposal Tinder, & Funding Transparency at your fingertips [by Lido Nation]",
+      "fundId": "13",
+      "status": "Active",
+      "slug": "catalystexplorer-20-ai-powered-exploration-proposal-tinder-and-funding-transparency-at-your-fingertips-by-lido-nation"
+    },
+    {
+      "distributedToDate_ada": 172666.0,
+      "projectName": "Catalyst Explorer 2.5: Accessible Catalyst Data & Tools",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "catalyst-explorer-25-accessible-catalyst-data-and-tools"
+    },
+    {
+      "distributedToDate_ada": 170000.0,
+      "projectName": "StablePay: Crypto Payment Widget to Allow Decentralized Stablecoins to be Used for Payments in Merchant Websites",
+      "fundId": "12",
+      "status": "Active",
+      "slug": "stablepay-crypto-payment-widget-to-allow-decentralized-stablecoins-to-be-used-for-payments-in-merchant-websites"
+    },
+    {
+      "distributedToDate_ada": 170000.0,
+      "projectName": "Optim OADA OPEN: Local, Open Source OADA Frontend for Developers",
+      "fundId": "13",
+      "status": "Active",
+      "slug": "optim-oada-open-local-open-source-oada-frontend-for-developers"
+    },
+    {
+      "distributedToDate_ada": 148000.0,
+      "projectName": "Catalyst Explorer dRep module: Directory, Community, Draft Ballots",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "catalyst-explorer-drep-module-directory-community-draft-ballots"
+    },
+    {
+      "distributedToDate_ada": 125000.0,
+      "projectName": "Wider accessibility of automatic borrowing - Lenfi Software Development Kit (SDK)",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "wider-accessibility-of-automatic-borrowing-lenfi-software-development-kit-sdk"
+    },
+    {
+      "distributedToDate_ada": 120000.0,
+      "projectName": "[PKL] Cardano Governance Explorer Visualized with Graphs",
+      "fundId": "13",
+      "status": "Completed",
+      "slug": "pkl-cardano-governance-explorer-visualized-with-graphs"
+    },
+    {
+      "distributedToDate_ada": 112000.0,
+      "projectName": "Cardano DAO Governance Dashboard: Voting & Treasury",
+      "fundId": "12",
+      "status": "Completed",
+      "slug": "cardano-dao-governance-dashboard-voting-and-treasury"
+    },
+    {
+      "distributedToDate_ada": 107100.0,
+      "projectName": "Cardano Explorer Upgrade: Advanced Analytics & Visualization",
+      "fundId": "12",
+      "status": "Completed",
+      "slug": "cardano-explorer-upgrade-advanced-analytics-and-visualization"
+    },
+    {
+      "distributedToDate_ada": 100800.0,
+      "projectName": "AdaStat Cardano Explorer - Open Source Improved Reboot towards a first-class community blockchain explorer",
+      "fundId": "11",
+      "status": "Active",
+      "slug": "adastat-cardano-explorer-open-source-improved-reboot-towards-a-first-class-community-blockchain-explorer"
+    },
+    {
+      "distributedToDate_ada": 100000.0,
+      "projectName": "Cexplorer.io: Advanced DRep & SPO analytics",
+      "fundId": "13",
+      "status": "Completed",
+      "slug": "cexplorerio-advanced-drep-and-spo-analytics"
+    },
+    {
+      "distributedToDate_ada": 99500.0,
+      "projectName": "GateKeeper: Reports, Multi-Event Support, & UX/UI Refinement",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "gatekeeper-reports-multi-event-support-and-uxui-refinement"
+    },
+    {
+      "distributedToDate_ada": 84500.0,
+      "projectName": "The Ultimate Cardano Assets Data Portal: Clean Data, Backtesting & Price Models for Native Tokens",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "the-ultimate-cardano-assets-data-portal-clean-data-backtesting-and-price-models-for-native-tokens"
+    },
+    {
+      "distributedToDate_ada": 75000.0,
+      "projectName": "Universal DevTools for Real-time Tracking for 45%+ of Global Websites Support",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "universal-devtools-for-real-time-tracking-for-45percent-of-global-websites-support"
+    },
+    {
+      "distributedToDate_ada": 75000.0,
+      "projectName": "Open source PoolTool.io and sustain for 1 year",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "open-source-pooltoolio-and-sustain-for-1-year"
+    }
+  ],
+  "bots_automation": [
+    {
+      "distributedToDate_ada": 633330.0,
+      "projectName": "MLabs \u2013 CardaNow \u2013 Rapid Infrastructure Caching",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "mlabs-cardanow-rapid-infrastructure-caching"
+    },
+    {
+      "distributedToDate_ada": 547380.0,
+      "projectName": "MLabs \u2013 Cardano Game Engine Wallet - Godot Integration",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "mlabs-cardano-game-engine-wallet-godot-integration"
+    },
+    {
+      "distributedToDate_ada": 487679.0,
+      "projectName": "MLabs: Advancing Plutarch and CTL: CIP Integration, API Enhancements, and Improved Infrastructure",
+      "fundId": "13",
+      "status": "Completed",
+      "slug": "mlabs-advancing-plutarch-and-ctl-cip-integration-api-enhancements-and-improved-infrastructure"
+    },
+    {
+      "distributedToDate_ada": 485095.0,
+      "projectName": "CHARLi3 - V3 Architecture Audit",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "charli3-v3-architecture-audit"
+    },
+    {
+      "distributedToDate_ada": 420000.01,
+      "projectName": "NEWM - Cross Chain Music Streaming App - Mobile Integration [Part I]",
+      "fundId": "11",
+      "status": "Active",
+      "slug": "newm-cross-chain-music-streaming-app-mobile-integration-part-i"
+    },
+    {
+      "distributedToDate_ada": 353714.0,
+      "projectName": "Socious: Work History as Verifiable Credentials",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "socious-work-history-as-verifiable-credentials"
+    },
+    {
+      "distributedToDate_ada": 345714.0,
+      "projectName": "Socious: Decentralized Referral System for DAOs",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "socious-decentralized-referral-system-for-daos"
+    },
+    {
+      "distributedToDate_ada": 319200.0,
+      "projectName": "Revuto - MASTERCARD integration >>> to bring Cardano Native Tokens to Debit Cards supporting crypto <<< and remove friction between crypto liquidity and real-world economic activities -> Subscription Payments!",
+      "fundId": "12",
+      "status": "Active",
+      "slug": "revuto-mastercard-integration-greatergreatergreater-to-bring-cardano-native-tokens-to-debit-cards-supporting-crypto-lesslessless-and-remove-friction-between-crypto-liquidity-and-real-world-economic-ac"
+    },
+    {
+      "distributedToDate_ada": 310000.0,
+      "projectName": "Sundae Labs Automated Price Discovery",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "sundae-labs-automated-price-discovery"
+    },
+    {
+      "distributedToDate_ada": 300000.0,
+      "projectName": "Customizable Staking Baskets Platform - Incentivizing Cardano's Decentralization",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "customizable-staking-baskets-platform-incentivizing-cardanos-decentralization"
+    },
+    {
+      "distributedToDate_ada": 300000.0,
+      "projectName": "CHARLI3 - Off-Chain & CNT Price Feeds (Community feed expansion)",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "charli3-off-chain-and-cnt-price-feeds-community-feed-expansion"
+    },
+    {
+      "distributedToDate_ada": 297136.0,
+      "projectName": "Githoney by TxPipe: Dev bounty system using Marlowe contracts, deep integration with Github",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "githoney-by-txpipe-dev-bounty-system-using-marlowe-contracts-deep-integration-with-github"
+    },
+    {
+      "distributedToDate_ada": 291786.0,
+      "projectName": "MLabs \u2013 CEMScript SDK: get your DApp implementation from annotated on-chain logic state-machine",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "mlabs-cemscript-sdk-get-your-dapp-implementation-from-annotated-on-chain-logic-state-machine"
+    },
+    {
+      "distributedToDate_ada": 285000.0,
+      "projectName": "FluidTokens: Feeless transactions and automatic Smart Contracts",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "fluidtokens-feeless-transactions-and-automatic-smart-contracts"
+    },
+    {
+      "distributedToDate_ada": 272705.0,
+      "projectName": "Message signing for Trezor and Ledger (CIP-8, CIP30)",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "message-signing-for-trezor-and-ledger-cip-8-cip30"
+    },
+    {
+      "distributedToDate_ada": 255000.0,
+      "projectName": "SNEKbot: A Telegram Trading Bot to Onboard 900M Monthly Active Users to Cardano",
+      "fundId": "12",
+      "status": "Active",
+      "slug": "snekbot-a-telegram-trading-bot-to-onboard-900m-monthly-active-users-to-cardano"
+    },
+    {
+      "distributedToDate_ada": 235714.0,
+      "projectName": "Marlowe - Decentralized Oracle Integration",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "marlowe-decentralized-oracle-integration"
+    },
+    {
+      "distributedToDate_ada": 227140.0,
+      "projectName": "MLabs \u2013 Congested Testnet",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "mlabs-congested-testnet"
+    },
+    {
+      "distributedToDate_ada": 226190.0,
+      "projectName": "MLabs - Cardano-Transaction-Library Evolution",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "mlabs-cardano-transaction-library-evolution"
+    },
+    {
+      "distributedToDate_ada": 219999.98,
+      "projectName": "Agora Suite Expansion: NFT Standards and Novel Token Structures Integration",
+      "fundId": "10",
+      "status": "Active",
+      "slug": "agora-suite-expansion-nft-standards-and-novel-token-structures-integration"
+    },
+    {
+      "distributedToDate_ada": 217140.0,
+      "projectName": "MLabs \u2013 Streamlining Cardano Deployment with Enhanced NixOS Modules",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "mlabs-streamlining-cardano-deployment-with-enhanced-nixos-modules"
+    },
+    {
+      "distributedToDate_ada": 200000.0,
+      "projectName": "Staking Basket Bot Open-source",
+      "fundId": "12",
+      "status": "Completed",
+      "slug": "staking-basket-bot-open-source"
+    },
+    {
+      "distributedToDate_ada": 200000.0,
+      "projectName": "Sorbet Wallet Debugger, by Sundae Labs",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "sorbet-wallet-debugger-by-sundae-labs"
+    },
+    {
+      "distributedToDate_ada": 200000.0,
+      "projectName": "Ledger Live Integration Maintenance",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "ledger-live-integration-maintenance"
+    },
+    {
+      "distributedToDate_ada": 191572.0,
+      "projectName": "Asteria by TxPipe: A bot challenge to showcase the capabilities of the UTxO model",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "asteria-by-txpipe-a-bot-challenge-to-showcase-the-capabilities-of-the-utxo-model"
+    }
+  ],
+  "translation_localization": [
+    {
+      "distributedToDate_ada": 978000.0,
+      "projectName": "For the Enterprise Domain, Decentralized Identity Solution Implementation",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "for-the-enterprise-domain-decentralized-identity-solution-implementation"
+    },
+    {
+      "distributedToDate_ada": 380000.0,
+      "projectName": "Sports Crowdfunding system attached to Funclub application based on Cardano chain",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "sports-crowdfunding-system-attached-to-funclub-application-based-on-cardano-chain"
+    },
+    {
+      "distributedToDate_ada": 274140.0,
+      "projectName": "Onboard Japanese Big IP holders onto Cardano space and Build an IP Certification system on the Cardano blockchain",
+      "fundId": "10",
+      "status": "Active",
+      "slug": "onboard-japanese-big-ip-holders-onto-cardano-space-and-build-an-ip-certification-system-on-the-cardano-blockchain"
+    },
+    {
+      "distributedToDate_ada": 253250.0,
+      "projectName": "SPO JAPAN GUILD - Continued operation of the Japanese SPO community",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "spo-japan-guild-continued-operation-of-the-japanese-spo-community"
+    },
+    {
+      "distributedToDate_ada": 217500.0,
+      "projectName": "SJG TOOLS V2 - Stake Pool Setup & Operation TUI Tool in Japanese",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "sjg-tools-v2-stake-pool-setup-and-operation-tui-tool-in-japanese"
+    },
+    {
+      "distributedToDate_ada": 130000.0,
+      "projectName": "High Quality Japanese Translations for Popular Cardano DApps",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "high-quality-japanese-translations-for-popular-cardano-dapps"
+    },
+    {
+      "distributedToDate_ada": 102000.0,
+      "projectName": "Japanese Traditional Craft \"Masu\" Photo Project: Cardano Community Expands through Art",
+      "fundId": "11",
+      "status": "Active",
+      "slug": "japanese-traditional-craft-masu-photo-project-cardano-community-expands-through-art"
+    },
+    {
+      "distributedToDate_ada": 98261.0,
+      "projectName": "dRep TV Hub - Connect 100 dReps with thousands of Voters (Japanese, Vietnamese, English) [TIKTOK_CA]",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "drep-tv-hub-connect-100-dreps-with-thousands-of-voters-japanese-vietnamese-english-tiktokca"
+    },
+    {
+      "distributedToDate_ada": 93105.0,
+      "projectName": "Latam Cardano Community Operations - DAO infrastructure for a Wide Purpose",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "latam-cardano-community-operations-dao-infrastructure-for-a-wide-purpose"
+    },
+    {
+      "distributedToDate_ada": 85000.0,
+      "projectName": "Yaad Labs + AdaLink/Frenchies Club + Cardano Curation: Cardano the Animated Movie",
+      "fundId": "12",
+      "status": "Active",
+      "slug": "yaad-labs-adalinkfrenchies-club-cardano-curation-cardano-the-animated-movie"
+    },
+    {
+      "distributedToDate_ada": 80520.0,
+      "projectName": "Blocklog linked Leader status and Epoch leader notification service - Multilingual Support and Maintenance.",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "blocklog-linked-leader-status-and-epoch-leader-notification-service-multilingual-support-and-maintenance"
+    },
+    {
+      "distributedToDate_ada": 80000.0,
+      "projectName": "Japanese LLC DAO where 1 million people can join and contribute using Cardano's Dapps (From Japan to the World DAO)",
+      "fundId": "12",
+      "status": "Active",
+      "slug": "japanese-llc-dao-where-1-million-people-can-join-and-contribute-using-cardanos-dapps-from-japan-to-the-world-dao"
+    },
+    {
+      "distributedToDate_ada": 75000.0,
+      "projectName": "Catalyst Africa Town Hall: Bridging the Gap for Continental Expansion",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "catalyst-africa-town-hall-bridging-the-gap-for-continental-expansion"
+    },
+    {
+      "distributedToDate_ada": 74720.0,
+      "projectName": "Cardano For the M\u20b3sses - Japanese Book",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "cardano-for-the-maustralsses-japanese-book"
+    },
+    {
+      "distributedToDate_ada": 61931.0,
+      "projectName": "Eastern Town Hall Operation: Cardano & Catalyst Onboarding Platform for The Eastern Hemisphere",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "eastern-town-hall-operation-cardano-and-catalyst-onboarding-platform-for-the-eastern-hemisphere"
+    },
+    {
+      "distributedToDate_ada": 53104.0,
+      "projectName": "Development of AI Translation Catalyst Japanese Web Portal",
+      "fundId": "12",
+      "status": "Active",
+      "slug": "development-of-ai-translation-catalyst-japanese-web-portal"
+    },
+    {
+      "distributedToDate_ada": 45088.0,
+      "projectName": "Cardano Hub Surabaya and Cardano Workshop Jakarta",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "cardano-hub-surabaya-and-cardano-workshop-jakarta"
+    },
+    {
+      "distributedToDate_ada": 40333.0,
+      "projectName": "Spreading Cardano in Turkiye",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "spreading-cardano-in-turkiye"
+    },
+    {
+      "distributedToDate_ada": 40000.0,
+      "projectName": "Japanese government funded: AI chat platform with Fujitsu",
+      "fundId": "14",
+      "status": "Active",
+      "slug": "japanese-government-funded-ai-chat-platform-with-fujitsu"
+    },
+    {
+      "distributedToDate_ada": 40000.0,
+      "projectName": "Cardano-Africa French Community",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "cardano-africa-french-community"
+    },
+    {
+      "distributedToDate_ada": 39480.0,
+      "projectName": "Cardano Education for Ethiopian Universities",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "cardano-education-for-ethiopian-universities"
+    },
+    {
+      "distributedToDate_ada": 33000.0,
+      "projectName": "[Fimi] Cardanotalk for Vietnamese",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "fimi-cardanotalk-for-vietnamese"
+    },
+    {
+      "distributedToDate_ada": 22700.0,
+      "projectName": "European Cardano Community Town Hall - Operation",
+      "fundId": "10",
+      "status": "Completed",
+      "slug": "european-cardano-community-town-hall-operation"
+    },
+    {
+      "distributedToDate_ada": 19907.0,
+      "projectName": "Catalyst School : Chapter Indonesia in collab with Gadjah Mada University (UGM)",
+      "fundId": "10",
+      "status": "Active",
+      "slug": "catalyst-school-chapter-indonesia-in-collab-with-gadjah-mada-university-ugm"
+    },
+    {
+      "distributedToDate_ada": 17550.0,
+      "projectName": "[FIMI] cardano.vn - Cardano information portal for Vietnamese people",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "fimi-cardanovn-cardano-information-portal-for-vietnamese-people"
+    }
+  ],
+  "scraping_data_etl": [
+    {
+      "distributedToDate_ada": 243500.0,
+      "projectName": "Wine Supply Chain Tracking and Reporting System",
+      "fundId": "12",
+      "status": "Active",
+      "slug": "wine-supply-chain-tracking-and-reporting-system"
+    },
+    {
+      "distributedToDate_ada": 175000.0,
+      "projectName": "\u201cData-Driven Catalyst\u201d: Toolkit for on-chain and off-chain data analytics & insight, optimize governance and prevent gaming and abuse",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "data-driven-catalyst-toolkit-for-on-chain-and-off-chain-data-analytics-and-insight-optimize-governance-and-prevent-gaming-and-abuse"
+    },
+    {
+      "distributedToDate_ada": 150000.0,
+      "projectName": "Cardano Analytics Platform powered by LLM",
+      "fundId": "13",
+      "status": "Completed",
+      "slug": "cardano-analytics-platform-powered-by-llm"
+    },
+    {
+      "distributedToDate_ada": 95000.0,
+      "projectName": "Catalyst Onboarding Pipeline Management Platform",
+      "fundId": "12",
+      "status": "Completed",
+      "slug": "catalyst-onboarding-pipeline-management-platform"
+    },
+    {
+      "distributedToDate_ada": 94500.0,
+      "projectName": "TapTools: Cardano Lending/Borrowing Analytics Hub",
+      "fundId": "13",
+      "status": "Completed",
+      "slug": "taptools-cardano-lendingborrowing-analytics-hub"
+    },
+    {
+      "distributedToDate_ada": 58666.8,
+      "projectName": "Onchain analytics for the Cardano ecosystem",
+      "fundId": "14",
+      "status": "Active",
+      "slug": "onchain-analytics-for-the-cardano-ecosystem"
+    },
+    {
+      "distributedToDate_ada": 50800.0,
+      "projectName": "Leverage Trading with Market/Limit Orders on Minswap",
+      "fundId": "14",
+      "status": "Active",
+      "slug": "leverage-trading-with-marketlimit-orders-on-minswap"
+    },
+    {
+      "distributedToDate_ada": 44000.0,
+      "projectName": "Cardanoscan Analytics Charts",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "cardanoscan-analytics-charts"
+    },
+    {
+      "distributedToDate_ada": 30000.0,
+      "projectName": "BACC: banking app-like reporting and accounting",
+      "fundId": "11",
+      "status": "Completed",
+      "slug": "bacc-banking-app-like-reporting-and-accounting"
+    },
+    {
+      "distributedToDate_ada": 20000.0,
+      "projectName": "OgmiosDotnet: Cardano Blockchain Events & Visualisation",
+      "fundId": "14",
+      "status": "Active",
+      "slug": "ogmiosdotnet-cardano-blockchain-events-and-visualisation"
+    }
+  ]
+}

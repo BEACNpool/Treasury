@@ -93,7 +93,7 @@ async function loadCSV(path){
 }
 
 async function main(){
-  const summaryPath = '../outputs/offchain/ai_audit/ai_audit_summary.csv';
+  const summaryPath = 'outputs/offchain/ai_audit/ai_audit_summary.csv';
   const rows = await loadCSV(summaryPath);
 
   // filter ADA-coded
@@ -107,7 +107,7 @@ async function main(){
     tbody.appendChild(tr);
   }
 
-  const exPath = '../outputs/offchain/ai_audit/ai_audit_examples_top25.json';
+  const exPath = 'outputs/offchain/ai_audit/ai_audit_examples_top25.json';
   const ex = await (await fetch(exPath)).json();
   const container = document.getElementById('examples');
   const cats = Object.keys(ex).sort();

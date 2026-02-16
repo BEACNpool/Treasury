@@ -55,9 +55,9 @@
       <div style="margin-top:.35rem;"><span class="pill">Receipts</span> <a href="catalyst.html" target="_blank">Catalyst receipts</a></div>
       <div style="margin-top:.35rem;">
         <span class="pill">Downloads</span>
-        <a href="../outputs/offchain/flags/approved_projects_with_flags.csv" target="_blank">approved_projects_with_flags.csv</a>
+        <a href="outputs/offchain/flags/approved_projects_with_flags.csv" target="_blank">approved_projects_with_flags.csv</a>
         &nbsp;·&nbsp;
-        <a href="../outputs/offchain/flags/proposers_with_flags.csv" target="_blank">proposers_with_flags.csv</a>
+        <a href="outputs/offchain/flags/proposers_with_flags.csv" target="_blank">proposers_with_flags.csv</a>
       </div>
     </div>
 
@@ -117,7 +117,7 @@ function sevBadge(sev){
 }
 
 async function main(){
-  const flagsPath = '../outputs/offchain/flags/catalyst_flags_v2.json';
+  const flagsPath = 'outputs/offchain/flags/catalyst_flags_v2.json';
   const data = await (await fetch(flagsPath)).json();
   const flags = data.flags || [];
 
