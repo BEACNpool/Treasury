@@ -7,11 +7,6 @@
   <link rel="stylesheet" href="site.css" />
   <link rel="stylesheet" href="audit-ui.css" />
   <style>
-    .tabbar{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 0 0}
-    .tabbtn{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--border);background:transparent;color:var(--muted2);padding:8px 12px;border-radius:10px;cursor:pointer}
-    .tabbtn.active{border-color:rgba(34,211,238,.35);background:rgba(34,211,238,.08);color:var(--trs)}
-    .tab{display:none}
-    .tab.active{display:block}
     .kpiGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:14px 0}
     .kpiBox{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 16px}
     .kpiBox .lbl{font-family:var(--mono);font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:1.4px}
@@ -62,15 +57,23 @@
         <a href="outputs/offchain/fund15/fund15_summary.json" target="_blank" rel="noreferrer">Summary (JSON)</a>
         <a href="https://projectcatalyst.io/funds/15" target="_blank" rel="noreferrer">Source</a>
       </div>
-      <div class="tabbar" role="tablist" aria-label="Fund15 tabs">
-        <button class="tabbtn active" data-tab="overview">Overview</button>
-        <button class="tabbtn" data-tab="ai-risk">AI risk (v0)</button>
-        <button class="tabbtn" data-tab="deep-dive">Deep dive</button>
-        <button class="tabbtn" data-tab="argument">Argument</button>
+    </div>
+
+    <div class="card">
+      <div class="h2">Obvious findings (what voters should notice immediately)</div>
+      <ul class="note" style="font-size:13px">
+        <li><strong id="k_proposals_inline">—</strong> proposals on the ballot.</li>
+        <li><strong id="k_ada_req_inline">—</strong> requested in ADA categories (display-only USD estimate at $0.28/ADA).</li>
+        <li><strong id="k_cap200_inline">—</strong> proposals ask for exactly <strong>₳200,000</strong> (cap clustering).</li>
+        <li><strong id="k_ai_easy_count">—</strong> proposals are tagged as <strong>AI-compressible / content-like</strong> by v0 heuristics.</li>
+      </ul>
+      <div class="disclaimer-banner" style="margin-top:12px">
+        ⚠ The “AI-compressible / content-like” count is a <strong>filter</strong>. It is not a claim the work is worthless.
+        It means: <strong>assume the marginal production cost is collapsing</strong> and demand tighter scope + receipts.
       </div>
     </div>
 
-    <div id="tab_overview" class="tab active">
+    <div id="tab_overview">
       <div class="kpiGrid">
         <div class="kpiBox">
           <div class="lbl">Proposals</div>
@@ -106,79 +109,20 @@
       </div>
     </div>
 
-    <div id="tab_ai-risk" class="tab">
-      <div class="card">
-        <div class="h2">Heuristic signals (title-based)</div>
-        <div class="note">
-          These two toggles mirror the heuristic flags on <a href="flags.html">Flags</a>:
-          <code>F-AI-001</code>-like (AI-compressible) and <code>F-CAT-002</code>-like (content-like).
-        </div>
-        <div class="stat-row">
-          <div class="stat-card highlight">
-            <div class="stat-value" id="k_ai_like">—</div>
-            <div class="stat-label">F-AI-001-like matches</div>
-          </div>
-          <div class="stat-card highlight">
-            <div class="stat-value" id="k_content_like">—</div>
-            <div class="stat-label">F-CAT-002-like matches</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value" id="k_ai_in_title">—</div>
-            <div class="stat-label">Titles mentioning “AI”</div>
-          </div>
-        </div>
 
-        <div class="note" style="margin-top:8px">
-          Want to audit quickly? Download the clean CSV and filter:
-          <a href="outputs/offchain/fund15/fund15_voting_ballot_clean.csv" target="_blank" rel="noreferrer">fund15_voting_ballot_clean.csv</a>
-        </div>
+    <div class="card">
+      <div class="h2">AI-compressible (12-month test) — proposed strict guideline</div>
+      <div class="note" style="font-size:13px">
+        For Fund15 triage, we propose a strict “AI-compressible” guideline:
+        <ul>
+          <li><strong>YES (AI-compressible):</strong> A competent builder with modern AI tooling can plausibly deliver the core output in &lt;12 months at a fraction of the requested budget (e.g., dashboards, simple bots, basic scrapers, templated sites, content packs, translations, tutorials).</li>
+          <li><strong>NO (not AI-compressible):</strong> The core value is not the output text/UI — it’s real-world partnerships, field ops, legal/compliance, audited smart contracts, deep infrastructure, security, or long-running operations.</li>
+        </ul>
+        If a proposal falls in the YES bucket, it’s not “bad” — it just means voters should demand:
+        <strong>smaller budget</strong>, <strong>tighter scope</strong>, <strong>faster milestones</strong>, and <strong>public receipts</strong>.
       </div>
-    </div>
-
-    <div id="tab_deep-dive" class="tab">
-      <div class="card">
-        <div class="h2">Sizing buckets (requested)</div>
-        <div class="note">Shows how requests cluster across common price points.</div>
-        <div class="tableWrap" style="margin-top:10px">
-          <table>
-            <thead><tr><th>Bucket</th><th>Proposals</th><th>Total requested</th></tr></thead>
-            <tbody id="size_rows"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="h2">Why the 200k clustering matters</div>
-        <div class="note">
-          A healthy market has a spread of asks. A broken market clusters at the cap.
-          In Fund15, we count both:
-          <ul>
-            <li><strong id="k_cap200_inline">—</strong> proposals requesting exactly <strong>₳200,000</strong>.</li>
-            <li><strong id="k_bucket_100_200">—</strong> proposals in the <strong>₳100k–₳200k</strong> range.</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <div id="tab_argument" class="tab">
-      <div class="card">
-        <div class="h2">The framing (what to say out loud)</div>
-        <div class="note" style="font-size:13px">
-          The thesis is simple:
-          <ul>
-            <li><strong>AI is collapsing the cost of producing many common deliverables.</strong></li>
-            <li>That doesn’t mean “builders are worthless.” It means <strong>we should stop paying 2021 prices</strong>.</li>
-            <li>Fund15 is a budgeting decision. If the deliverable is now cheap to reproduce, voters should demand: tighter scope, smaller budget, faster milestones, and public receipts.</li>
-          </ul>
-
-          Use this pipeline when you vote:
-          <div style="margin-top:10px" class="mono">
-            Receipts → Flags → AI repricing lens
-          </div>
-          <div style="margin-top:6px">
-            <a href="catalyst.html">Receipts</a> · <a href="flags.html">Flags</a> · <a href="ai-audit.html">AI Audit</a>
-          </div>
-        </div>
+      <div class="note" style="margin-top:10px">
+        Download the ballot CSV and filter by heuristics: <a href="outputs/offchain/fund15/fund15_voting_ballot_clean.csv" target="_blank" rel="noreferrer">fund15_voting_ballot_clean.csv</a>
       </div>
     </div>
 
@@ -254,10 +198,18 @@ async function main(){
   document.getElementById('k_cap200').textContent = fmt(cap200);
   document.getElementById('k_cap200_inline').textContent = fmt(cap200);
 
-  // risk KPIs
-  document.getElementById('k_ai_like').textContent = fmt(aiLike);
-  document.getElementById('k_content_like').textContent = fmt(contentLike);
-  document.getElementById('k_ai_in_title').textContent = fmt(aiInTitle);
+  // obvious findings + AI-easy estimate
+  const aiEasy = rows.filter(r => Number(r.flag_f_ai_001||0)===1 || Number(r.flag_f_cat_002||0)===1).length;
+
+  const elProposalsInline = document.getElementById('k_proposals_inline');
+  const elAdaInline = document.getElementById('k_ada_req_inline');
+  const elCap200Inline = document.getElementById('k_cap200_inline');
+  const elAiEasy = document.getElementById('k_ai_easy_count');
+
+  if (elProposalsInline) elProposalsInline.textContent = fmt(proposals);
+  if (elAdaInline) elAdaInline.textContent = `₳${fmt(adaReq)} (≈ $${fmt(usd)})`;
+  if (elCap200Inline) elCap200Inline.textContent = fmt(cap200);
+  if (elAiEasy) elAiEasy.textContent = fmt(aiEasy);
 
   // categories table
   const tbody=document.getElementById('cat_rows');
@@ -271,45 +223,7 @@ async function main(){
     tbody.appendChild(tr);
   }
 
-  // sizing buckets (ADA only)
-  const buckets=[
-    {name:'Micro ≤10k', lo:0, hi:10000},
-    {name:'Small 10k–50k', lo:10000, hi:50000},
-    {name:'Medium 50k–100k', lo:50000, hi:100000},
-    {name:'Large 100k–200k', lo:100000, hi:200000},
-    {name:'XL 200k–500k', lo:200000, hi:500000},
-    {name:'Mega 500k+', lo:500000, hi:1e18},
-  ].map(b=>({...b,count:0,sum:0}));
-
-  for (const r of rows){
-    if (isMidnight(r.category)) continue;
-    const amt=Number(r.requested_amount||0);
-    for (const b of buckets){
-      const inRange = (amt >= b.lo) && (b.hi>=1e18 ? true : amt < b.hi);
-      if (inRange){ b.count++; b.sum+=amt; break; }
-    }
-  }
-
-  const big = buckets.find(b=>b.name.startsWith('Large'));
-  document.getElementById('k_bucket_100_200').textContent = fmt(big ? big.count : 0);
-
-  const st=document.getElementById('size_rows');
-  for (const b of buckets){
-    const tr=document.createElement('tr');
-    tr.innerHTML = `<td>${b.name}</td><td class="num">${fmt(b.count)}</td><td class="num">₳${fmt(b.sum,2)}</td>`;
-    st.appendChild(tr);
-  }
-
-  // tabs
-  for (const btn of document.querySelectorAll('.tabbtn')){
-    btn.addEventListener('click', ()=>{
-      document.querySelectorAll('.tabbtn').forEach(x=>x.classList.remove('active'));
-      btn.classList.add('active');
-      const tab=btn.dataset.tab;
-      document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-      document.getElementById('tab_'+tab).classList.add('active');
-    });
-  }
+  // (Removed: tabs + deep-dive tables). Page is intentionally single-screen + blunt.
 }
 
 main();
