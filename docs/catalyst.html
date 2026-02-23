@@ -71,9 +71,9 @@
         <div class="note" id="kpi_scraped">—</div>
       </div>
       <div class="kpi">
-        <div class="lbl">Distributed (USD)</div>
+        <div class="lbl">Distributed (ADA)</div>
         <div class="val" id="kpi_dist">—</div>
-        <div class="note">from proposer totals (USD)</div>
+        <div class="note">sum of fund distributions (ADA)</div>
       </div>
       <div class="kpi">
         <div class="lbl">Concentration</div>
@@ -85,8 +85,8 @@
     <div class="card">
       <div class="row">
         <div>
-          <strong>Fund distributions (USD)</strong>
-          <div class="note">Derived from the raw scrape. Values shown in $M.</div>
+          <strong>Fund distributions (ADA)</strong>
+          <div class="note">Derived from the raw scrape. Values shown in M ADA.</div>
         </div>
         <a class="btn" href="outputs/offchain/catalyst/funds.csv" target="_blank" rel="noreferrer">Download funds.csv</a>
       </div>
@@ -101,8 +101,8 @@
         <table>
           <thead><tr><th>View</th><th></th></tr></thead>
           <tbody>
-            <tr><td>Top by distributed (USD)</td><td><button class="btn" data-view="lb_usd">View</button></td></tr>
             <tr><td>Top by distributed (ADA)</td><td><button class="btn" data-view="lb_ada">View</button></td></tr>
+            <tr><td>Top by distributed (USD)</td><td><button class="btn" data-view="lb_usd">View</button></td></tr>
             <tr><td>Top by total projects</td><td><button class="btn" data-view="lb_total">View</button></td></tr>
             <tr><td>Top by funded projects</td><td><button class="btn" data-view="lb_funded">View</button></td></tr>
             <tr><td>Top by completed projects</td><td><button class="btn" data-view="lb_completed">View</button></td></tr>
@@ -140,7 +140,12 @@
       const sum = JSON.parse(await fetchText('outputs/offchain/catalyst/summary.json'));
       document.getElementById('kpi_props').textContent = fmt(sum.counts?.proposers_total);
       document.getElementById('kpi_scraped').textContent = `scraped: ${sum.generated_at_utc || 'unknown'}`;
-      document.getElementById('kpi_dist').textContent = new Intl.NumberFormat('en-US',{maximumFractionDigits:0}).format(sum.totals_usd?.distributed_usd || 0);
+      // Prefer ADA display: proposer-level ADA fields in the current scrape are unreliable/0.
+      // So we compute "Distributed (ADA)" from the per-fund rollup (funds.csv).
+      // (This matches what the fund chart shows below.)
+      const frows_for_kpi = parseCSV(await fetchText('outputs/offchain/catalyst/funds.csv')).rows;
+      const totalAda = frows_for_kpi.reduce((acc,r)=> acc + (toNum(r.distributed_ada)||0), 0);
+      document.getElementById('kpi_dist').textContent = new Intl.NumberFormat('en-US',{maximumFractionDigits:0}).format(totalAda);
     } catch(e) {}
 
     try {
@@ -154,11 +159,11 @@
     try {
       const frows = parseCSV(await fetchText('outputs/offchain/catalyst/funds.csv')).rows;
       const labels = frows.map(r=>'F'+r.fund_id);
-      const usdM = frows.map(r => (toNum(r.distributed_usd) || 0) / 1e6);
+      const adaM = frows.map(r => (toNum(r.distributed_ada) || 0) / 1e6);
 
       new Chart(document.getElementById('fundChart'),{
         type:'bar',
-        data:{ labels, datasets:[{label:'Distributed ($M)', data: usdM, backgroundColor:'rgba(129,140,248,.65)', borderRadius:5}]},
+        data:{ labels, datasets:[{label:'Distributed (M ADA)', data: adaM, backgroundColor:'rgba(129,140,248,.65)', borderRadius:5}]}, 
         options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, interaction:{mode:'index',intersect:false},
           scales:{ x:{grid:{display:false},ticks:{color:'#94a3b8',maxTicksLimit:10}}, y:{grid:{color:'rgba(26,35,50,.6)'},ticks:{color:'#94a3b8'}}}}
       });
@@ -195,7 +200,7 @@
       if(viewer) viewer.open = true;
       const rows = await loadIndex();
       const sorted = [...rows].sort((a,b)=> cfg.desc ? ((b[cfg.key]||0)-(a[cfg.key]||0)) : ((a[cfg.key]||0)-(b[cfg.key]||0)) );
-      renderTable(table, sorted, ['name','username','total_projects','funded_projects','completed_projects','total_distributed_usd','distributed_ada_from_json','catalyst_url'], 30);
+      renderTable(table, sorted, ['name','username','total_projects','funded_projects','completed_projects','distributed_ada_from_json','total_distributed_usd','catalyst_url'], 30);
       if(viewer) viewer.scrollIntoView({behavior:'smooth', block:'start'});
     }
 
