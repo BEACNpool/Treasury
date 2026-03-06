@@ -1,5 +1,12 @@
 # Treasury — Cardano Treasury Inflows/Outflows (Open Research)
 
+## 🌐 GitHub Pages
+- Live dashboard (main): https://beacnpool.github.io/Treasury/
+- Full dashboard: https://beacnpool.github.io/Treasury/dashboard.html
+- Treasury flows: https://beacnpool.github.io/Treasury/treasury.html
+- Catalyst: https://beacnpool.github.io/Treasury/catalyst.html
+- AI audit view: https://beacnpool.github.io/Treasury/ai-audit.html
+
 [![Validate Outputs](https://github.com/BEACNpool/Treasury/actions/workflows/validate.yml/badge.svg)](https://github.com/BEACNpool/Treasury/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
